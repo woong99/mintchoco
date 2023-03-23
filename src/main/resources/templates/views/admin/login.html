@@ -7,10 +7,6 @@
     <title>Title</title>
     <link rel="stylesheet" href="/css/views/main.css">
     <script>
-        function goSignUp() {
-            location.href = '/owner/signUp';
-        }
-
         function onLogin() {
             $("#frm").attr("action", "/admin/login.do");
             $("#frm").submit();
@@ -35,12 +31,6 @@
                         </div>
                         <div class="d-grid gap-2 mb-3">
                             <button type="button" class="btn btn-primary" onclick="onLogin()">로그인</button>
-                        </div>
-                        <div class="d-grid gap-2 mb-3">
-                            <button type="button" class="btn btn-primary" onclick="goSignUp()">회원가입</button>
-                        </div>
-                        <div class="text-center">
-                            <a href="#">Forgot password?</a>
                         </div>
                     </form>
                 </div>

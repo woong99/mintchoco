@@ -19,3 +19,5 @@ spring:
   thymeleaf:
     cache: false
     check-template-location: true
+server:
+  port: 8081

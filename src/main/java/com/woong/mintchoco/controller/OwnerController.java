@@ -45,7 +45,7 @@ public class OwnerController {
 
     @RequestMapping("/signUp.do")
     public String signUpAction(UserVO userVO, ModelMap model) {
-        if (userService.signUp(userVO) == null) {
+        if (userService.ownerSignUp(userVO) == null) {
             model.addAttribute("message", "회원가입에 실패했습니다.");
             model.addAttribute("returnUrl", "/owner/sign-up");
             return "/views/common/message";

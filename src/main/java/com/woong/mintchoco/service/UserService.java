@@ -21,7 +21,7 @@ public class UserService implements UserDetailsService {
         return userRepository.existsByUserId(id);
     }
 
-    public User signUp(UserVO userVO) {
+    public User ownerSignUp(UserVO userVO) {
         if (!userRepository.existsByUserId(userVO.getUserId())) {
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             userVO.setUserPwd(passwordEncoder.encode(userVO.getUserPwd()));
@@ -30,6 +30,17 @@ public class UserService implements UserDetailsService {
             return null;
         }
     }
+
+    public User userSignUp(UserVO userVO) {
+        if (!userRepository.existsByUserId(userVO.getUserId())) {
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            userVO.setUserPwd(passwordEncoder.encode(userVO.getUserPwd()));
+            return userRepository.save(User.toOwnerEntity(userVO));
+        } else {
+            return null;
+        }
+    }
+
 
     @Override
     public User loadUserByUsername(String username) throws UsernameNotFoundException {

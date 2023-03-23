@@ -35,11 +35,10 @@ public class WebSecurityConfig {
             "/bootstrap/**",
             "/css/**",
             "/js/**",
-            "/owner/login",
-            "/owner/signUp",
-            "/owner/signUp.do",
-            "/owner/duplicateCheck.do",
-            "/admin/login"
+            "/*/login",
+            "/*/signUp",
+            "/*/signUp.do",
+            "/*/duplicateCheck.do"
     };
 
     @Bean
