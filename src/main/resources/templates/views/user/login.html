@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaultLayout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/css/views/main.css">
+    <script>
+        function goSignUp() {
+            location.href = '/user/signUp';
+        }
+
+        function onLogin() {
+            $("#frm").attr("action", "/user/login.do");
+            $("#frm").submit();
+        }
+    </script>
+</head>
+<body>
+<th:block layout:fragment="content">
+    <div class="container-fluid">
+        <div class="row justify-content-center align-items-center vh-100">
+            <div class="col-lg-4 col-md-6 col-sm-8 col-10">
+                <div class="form-wrapper">
+                    <h1 class="text-center mb-4">User Login Form</h1>
+                    <form id="frm" method="post">
+                        <div class="mb-3">
+                            <label for="userId" class="form-label">아이디</label>
+                            <input type="text" class="form-control" id="userId" name="userId" aria-describedby="idHelp">
+                        </div>
+                        <div class="mb-3">
+                            <label for="userPwd" class="form-label">비밀번호</label>
+                            <input type="password" class="form-control" id="userPwd" name="userPwd">
+                        </div>
+                        <div class="d-grid gap-2 mb-3">
+                            <button type="button" class="btn btn-primary" onclick="onLogin()">로그인</button>
+                        </div>
+                        <div class="d-grid gap-2 mb-3">
+                            <button type="button" class="btn btn-primary" onclick="goSignUp()">회원가입</button>
+                        </div>
+                        <div class="text-center">
+                            <a href="#">Forgot password?</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+</body>
+</html>

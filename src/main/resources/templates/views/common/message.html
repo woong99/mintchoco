@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script th:inline="javascript">
+        const message = [[${message}]];
+        const returnUrl = [[${returnUrl}]];
+        alert(message);
+        location.href = returnUrl;
+    </script>
+</head>
+<body>
+
+</body>
+</html>
