@@ -7,9 +7,9 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
@@ -29,7 +29,7 @@ public class CustomAuthFailureHandler extends SimpleUrlAuthenticationFailureHand
             errorMessage = "아이디 또는 비밀번호가 일치하지 않습니다.";
         } else if (exception instanceof UsernameNotFoundException) {
             errorMessage = "존재하지 않는 계정입니다.";
-        } else if (exception instanceof AuthenticationCredentialsNotFoundException) {
+        } else if (exception instanceof LockedException) {
             errorMessage = "허가되지 않은 계정입니다. 관리자에게 문의해주세요.";
         } else if (exception instanceof DisabledException) {
             errorMessage = "권한이 없는 계정입니다.";

@@ -5,7 +5,6 @@ import com.woong.mintchoco.repository.UserRepository;
 import com.woong.mintchoco.vo.UserVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -37,8 +36,6 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findByUserId(username);
         if (user == null) {
             throw new UsernameNotFoundException("등록된 사용자가 아닙니다.");
-        } else if (user.getHasPermission().equals("N")) {
-            throw new AuthenticationCredentialsNotFoundException("허가된 사용자가 아닙니다.");
         }
         return user;
     }

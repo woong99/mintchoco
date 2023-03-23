@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -39,6 +40,12 @@ public class OwnerAuthenticatorProvider implements AuthenticationProvider {
             log.info("[사장님 페이지 - 로그인] 권한이 없습니다. 아이디 : {}, 권한 : {}", user.getUserId(),
                     user.getAuthority().getAuthority());
             throw new DisabledException("권한이 없는 계정입니다.");
+        }
+
+        if (user.getHasPermission().equals("N")) {
+            log.info("[사장님 페이지 - 로그인] 허가되지 않은 사용자입니다. 아이디 : {}, 권한 : {}", user.getUserId(),
+                    user.getAuthority().getAuthority());
+            throw new LockedException("허가된 사용자가 아닙니다.");
         }
 
         return new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
