@@ -35,6 +35,8 @@ public class WebSecurityConfig {
             "/bootstrap/**",
             "/css/**",
             "/js/**",
+            "/fontawesome-free/**",
+            "/img/**",
             "/*/login",
             "/*/signUp",
             "/*/signUp.do",
