@@ -1,5 +1,6 @@
 package com.woong.mintchoco.vo;
 
+import com.woong.mintchoco.domain.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,4 +20,17 @@ public class UserVO {
     private String tel;
 
     private String businessNumber;
+
+    private String email;
+
+    public static UserVO toUserVO(User user) {
+        return UserVO.builder()
+                .userId(user.getUserId())
+                .userPwd(user.getUserPwd())
+                .name(user.getName())
+                .tel(user.getTel())
+                .email(user.getEmail())
+                .businessNumber(user.getBusinessNumber())
+                .build();
+    }
 }

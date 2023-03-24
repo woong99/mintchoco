@@ -35,6 +35,8 @@ public class User extends UserBaseEntity implements UserDetails {
 
     private String tel;
 
+    private String email;
+
     private String userId;
 
     private String userPwd;
@@ -53,6 +55,7 @@ public class User extends UserBaseEntity implements UserDetails {
         return User.builder()
                 .name(userVO.getName())
                 .tel(userVO.getTel())
+                .email(userVO.getEmail())
                 .userId(userVO.getUserId())
                 .userPwd(userVO.getUserPwd())
                 .authority(Authority.OWNER)
