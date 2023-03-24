@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" lang="ko">
+<head>
+    <th:block th:replace="~{fragments/owner/commonHead}"></th:block>
+</head>
+<body>
+<th:block th:replace="~{fragments/owner/commonHeader}"/>
+<th:block th:replace="~{fragments/owner/commonSideBar}"/>
+<th:block layout:fragment="content"/>
+<th:block th:replace="~{fragments/owner/commonFooter}"/>
+</body>
+</html>
