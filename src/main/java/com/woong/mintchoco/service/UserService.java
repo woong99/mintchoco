@@ -1,7 +1,7 @@
 package com.woong.mintchoco.service;
 
 import com.woong.mintchoco.domain.User;
-import com.woong.mintchoco.repository.UserRepository;
+import com.woong.mintchoco.repository.user.UserRepository;
 import com.woong.mintchoco.vo.UserVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
