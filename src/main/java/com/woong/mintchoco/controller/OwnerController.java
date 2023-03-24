@@ -1,11 +1,13 @@
 package com.woong.mintchoco.controller;
 
+import com.woong.mintchoco.service.OwnerService;
 import com.woong.mintchoco.service.UserService;
 import com.woong.mintchoco.vo.UserVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class OwnerController {
 
     private final UserService userService;
+
+    private final OwnerService ownerService;
 
     @RequestMapping("/login")
     public String login(
@@ -64,5 +68,38 @@ public class OwnerController {
     @RequestMapping("/main")
     public String main() {
         return "/views/owner/main";
+    }
+
+    /**
+     * 사장님 페이지 > 사장님 정보 > 사장님 정보 수정
+     *
+     * @param authentication 인증 정보
+     * @param model          모델
+     * @return "/views/owner/profile/ownerInfo"
+     */
+    @RequestMapping("/profile/info")
+    public String profileInfo(Authentication authentication, ModelMap model) {
+        UserVO userVO = ownerService.getUserInfo(authentication.getName());
+        model.addAttribute("userVO", userVO);
+        return "/views/owner/profile/ownerInfo";
+    }
+
+    /**
+     * 사장님 페이지 > 사장님 정보 > 사장님 정보 수정 > 수정 action
+     *
+     * @param authentication 인증 정보
+     * @param userVO         사용자 정보
+     * @param model          모델
+     * @return "/views/common/message"
+     */
+    @Transactional
+    @RequestMapping("/profile/info/update.do")
+    public String profileInfoUpdate(Authentication authentication, UserVO userVO, ModelMap model) {
+        userVO.setUserId(authentication.getName());
+        ownerService.updateUserInfo(userVO);
+
+        model.addAttribute("message", "사장님 정보가 수정되었습니다.");
+        model.addAttribute("returnUrl", "/owner/profile/info");
+        return "/views/common/message";
     }
 }
