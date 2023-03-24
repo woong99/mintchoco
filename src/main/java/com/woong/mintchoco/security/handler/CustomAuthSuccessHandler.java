@@ -1,7 +1,7 @@
 package com.woong.mintchoco.security.handler;
 
 import com.woong.mintchoco.domain.User;
-import com.woong.mintchoco.repository.UserRepository;
+import com.woong.mintchoco.repository.user.UserRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

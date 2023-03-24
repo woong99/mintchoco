@@ -6,7 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import com.woong.mintchoco.domain.User;
-import com.woong.mintchoco.repository.UserRepository;
+import com.woong.mintchoco.repository.user.UserRepository;
 import com.woong.mintchoco.vo.UserVO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
