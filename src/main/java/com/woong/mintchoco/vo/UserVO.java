@@ -16,6 +16,10 @@ public class UserVO {
 
     private String userPwd;
 
+    private String newPwd;
+
+    private String reNewPwd;
+
     private String name;
 
     private String tel;

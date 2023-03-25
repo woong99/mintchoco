@@ -1,4 +1,4 @@
-package com.woong.mintchoco.exception;
+package com.woong.mintchoco.exception.advice;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ui.Model;

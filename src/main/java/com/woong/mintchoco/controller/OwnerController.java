@@ -145,4 +145,40 @@ public class OwnerController {
         ownerService.deleteUserProfileImage(userVO);
         return ResponseEntity.ok().build();
     }
+
+    /**
+     * 사장님 정보 > 비밀번호 변경
+     *
+     * @return "/views/owner/profile/ownerPassword"
+     */
+    @RequestMapping("/profile/password")
+    public String profilePassword() {
+        return "/views/owner/profile/ownerPassword";
+    }
+
+    /**
+     * 사장님 정보 > 비밀번호 변경 > 비밀번호 변경 action
+     *
+     * @param authentication 인증 정보
+     * @param userVO         사용자 정보
+     * @param model          모델
+     * @return "/views/common/message"
+     */
+    @Transactional
+    @RequestMapping("/profile/password/update.do")
+    public String profilePasswordChange(Authentication authentication, UserVO userVO, ModelMap model) {
+        if (!userVO.getNewPwd().equals(userVO.getReNewPwd())) {
+            model.addAttribute("type", MessageType.msgUrl.getMessage());
+            model.addAttribute("message", "새 비밀번호와 새 비밀번호 확인이 일치하지 않습니다.");
+            model.addAttribute("returnUrl", "/owner/profile/password");
+            return "/views/common/message";
+        }
+        
+        userService.changePassword(authentication, userVO);
+
+        model.addAttribute("type", MessageType.msgUrl.getMessage());
+        model.addAttribute("message", "비밀번호가 성공적으로 변경되었습니다!");
+        model.addAttribute("returnUrl", "/owner/profile/password");
+        return "/views/common/message";
+    }
 }
