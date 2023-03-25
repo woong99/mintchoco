@@ -61,4 +61,18 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                 .where(qAttachFile.id.eq(attachFileId))
                 .execute();
     }
+
+    /**
+     * 사용자의 비밀번호를 변경한다.
+     *
+     * @param userVO 유저 정보
+     */
+    @Override
+    public void updateUserPwd(UserVO userVO) {
+        jpaQueryFactory
+                .update(qUser)
+                .set(qUser.userPwd, userVO.getNewPwd())
+                .where(qUser.userId.eq(userVO.getUserId()))
+                .execute();
+    }
 }
