@@ -1,5 +1,6 @@
 package com.woong.mintchoco.controller;
 
+import com.woong.mintchoco.common.MessageType;
 import com.woong.mintchoco.service.UserService;
 import com.woong.mintchoco.vo.UserVO;
 import lombok.RequiredArgsConstructor;
@@ -25,12 +26,13 @@ public class UserController {
             @RequestParam(value = "message", required = false) String message,
             Authentication authentication,
             ModelMap model) {
-        
+
         if (authentication != null) {
             return "redirect:/user/main";
         }
 
         if (error != null && error.equals("true")) {
+            model.addAttribute("type", MessageType.msgUrl.getMessage());
             model.addAttribute("message", message);
             model.addAttribute("returnUrl", "/user/login");
             return "/views/common/message";
@@ -41,10 +43,12 @@ public class UserController {
     @RequestMapping("/signUp.do")
     public String signUpAction(UserVO userVO, ModelMap model) {
         if (userService.userSignUp(userVO) == null) {
+            model.addAttribute("type", MessageType.msgUrl.getMessage());
             model.addAttribute("message", "회원가입에 실패했습니다.");
             model.addAttribute("returnUrl", "/user/sign-up");
             return "/views/common/message";
         }
+        model.addAttribute("type", MessageType.msgUrl.getMessage());
         model.addAttribute("message", "회원가입에 성공했습니다.");
         model.addAttribute("returnUrl", "/user/login");
         return "/views/common/message";

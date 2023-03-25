@@ -1,16 +1,25 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script th:inline="javascript">
-        const message = [[${message}]];
-        const returnUrl = [[${returnUrl}]];
-        alert(message);
-        location.href = returnUrl;
-    </script>
+    <th:block th:if="${type} == 'msg+url'">
+        <script th:inline="javascript">
+            const message = [[${message}]];
+            const returnUrl = [[${returnUrl}]];
+            alert(message);
+            location.href = returnUrl;
+        </script>
+    </th:block>
+    <th:block th:if="${type} == 'msg+back'">
+        <script th:inline="javascript">
+            const message = [[${message}]];
+            alert(message);
+            history.back();
+        </script>
+    </th:block>
+
 </head>
 <body>
-
 </body>
 </html>
