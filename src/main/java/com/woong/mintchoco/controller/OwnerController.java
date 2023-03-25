@@ -1,10 +1,16 @@
 package com.woong.mintchoco.controller;
 
+import com.woong.mintchoco.common.MessageType;
+import com.woong.mintchoco.domain.AttachFile;
+import com.woong.mintchoco.service.FileManageService;
 import com.woong.mintchoco.service.OwnerService;
 import com.woong.mintchoco.service.UserService;
 import com.woong.mintchoco.vo.UserVO;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +18,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequestMapping("/owner")
@@ -22,6 +29,9 @@ public class OwnerController {
     private final UserService userService;
 
     private final OwnerService ownerService;
+
+    private final FileManageService fileManageService;
+
 
     @RequestMapping("/login")
     public String login(
@@ -35,6 +45,7 @@ public class OwnerController {
         }
 
         if (error != null && error.equals("true")) {
+            model.addAttribute("type", MessageType.msgUrl.getMessage());
             model.addAttribute("message", message);
             model.addAttribute("returnUrl", "/owner/login");
             return "/views/common/message";
@@ -50,10 +61,12 @@ public class OwnerController {
     @RequestMapping("/signUp.do")
     public String signUpAction(UserVO userVO, ModelMap model) {
         if (userService.ownerSignUp(userVO) == null) {
+            model.addAttribute("type", MessageType.msgUrl.getMessage());
             model.addAttribute("message", "회원가입에 실패했습니다.");
             model.addAttribute("returnUrl", "/owner/sign-up");
             return "/views/common/message";
         }
+        model.addAttribute("type", MessageType.msgUrl.getMessage());
         model.addAttribute("message", "회원가입에 성공했습니다.\n관리자의 승인이 이루어진 이후부터 로그인이 가능합니다.");
         model.addAttribute("returnUrl", "/owner/login");
         return "/views/common/message";
@@ -94,12 +107,42 @@ public class OwnerController {
      */
     @Transactional
     @RequestMapping("/profile/info/update.do")
-    public String profileInfoUpdate(Authentication authentication, UserVO userVO, ModelMap model) {
+    public String profileInfoUpdate(Authentication authentication, UserVO userVO, @RequestParam("file")
+    MultipartFile file, ModelMap model) throws IOException {
         userVO.setUserId(authentication.getName());
+        if (!file.isEmpty()) {
+            AttachFile profileImage = fileManageService.saveFile(file);
+            if (profileImage == null) {
+                model.addAttribute("type", MessageType.msgUrl.getMessage());
+                model.addAttribute("message", "파일의 이름이나 확장자를 확인해주세요.");
+                model.addAttribute("returnUrl", "/owner/profile/info");
+                return "/views/common/message";
+            }
+            userVO.setProfileImage(profileImage);
+        }
+
         ownerService.updateUserInfo(userVO);
 
+        model.addAttribute("type", MessageType.msgUrl.getMessage());
         model.addAttribute("message", "사장님 정보가 수정되었습니다.");
         model.addAttribute("returnUrl", "/owner/profile/info");
         return "/views/common/message";
+    }
+
+    /**
+     * 사장님 정보 > 사장님 정보 수정 > 프로필 사진 삭제 action
+     *
+     * @param authentication 인증 정보
+     * @return ResponseEntity
+     */
+    @Transactional
+    @RequestMapping("/profile/info/deleteProfileImage.do")
+    public ResponseEntity<Void> removeProfileImage(Authentication authentication) {
+        UserVO userVO = ownerService.getUserInfo(authentication.getName());
+        if (userVO.getProfileImage() == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        ownerService.deleteUserProfileImage(userVO);
+        return ResponseEntity.ok().build();
     }
 }

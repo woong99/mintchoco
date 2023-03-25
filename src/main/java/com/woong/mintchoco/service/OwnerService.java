@@ -31,4 +31,13 @@ public class OwnerService {
     public void updateUserInfo(UserVO userVO) {
         userRepository.updateUserInfo(userVO);
     }
+
+    /**
+     * 사용자의 프로필 사진을 삭제한다.
+     *
+     * @param userVO 사용자 정보
+     */
+    public void deleteUserProfileImage(UserVO userVO) {
+        userRepository.deleteUserProfileImage(userVO);
+    }
 }

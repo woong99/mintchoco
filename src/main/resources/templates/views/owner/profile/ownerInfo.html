@@ -26,9 +26,10 @@
                     <div class="card">
                         <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
 
-                            <img src="/img/profile-img.jpg" alt="Profile" class="rounded-circle">
-                            <h2>Kevin Anderson</h2>
-                            <h3>Web Designer</h3>
+                            <img th:src="${userVO.profileImage != null} ? ${userVO.profileImage.savedPath} : '/img/profile-img.jpg'"
+                                 alt="Profile" class="rounded-circle">
+                            <h2 th:text="${userVO.name}"></h2>
+                            <!--                            <h3>Web Designer</h3>-->
                             <div class="social-links mt-2">
                                 <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
                                 <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
@@ -57,17 +58,28 @@
                                 <div class="tab-pane fade show active profile-edit pt-3" id="profile-edit">
 
                                     <!-- Profile Edit Form -->
-                                    <form name="frm" id="frm" method="post">
+                                    <form name="frm" id="frm" method="post" enctype="multipart/form-data">
                                         <div class="row mb-3">
+
                                             <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">프로필
                                                 사진</label>
                                             <div class="col-md-8 col-lg-9">
-                                                <img src="/img/profile-img.jpg" alt="Profile">
+                                                <img
+                                                        th:src="${userVO.profileImage != null} ? ${userVO.profileImage.savedPath} : '/img/default-user.svg'"
+                                                        alt="Profile" id="profile"/>
                                                 <div class="pt-2">
-                                                    <a href="#" class="btn btn-primary btn-sm"
-                                                       title="Upload new profile image"><i class="bi bi-upload"></i></a>
-                                                    <a href="#" class="btn btn-danger btn-sm"
-                                                       title="Remove my profile image"><i class="bi bi-trash"></i></a>
+                                                    <button type="button" class="btn btn-primary btn-sm"
+                                                            title="Upload new profile image" id="imageUpload"><i
+                                                            class="bi bi-upload"></i>
+                                                    </button>
+                                                    <input type="file" id="profileImage" name="file"
+                                                           style="display: none"
+                                                           onchange="readURL(this)" accept=".jpg,.jpeg,.svg,.png"
+                                                    />
+                                                    <button th:if="${userVO.profileImage != null}" type="button"
+                                                            class="btn btn-danger btn-sm"
+                                                            title="Remove my profile image" id="imageDelete"><i
+                                                            class="bi bi-trash"></i></button>
                                                 </div>
                                             </div>
                                         </div>
@@ -113,7 +125,7 @@
                                         </div>
                                         <div class="text-center">
                                             <button type="button" class="btn btn-primary" onclick="fn_submit()">
-                                                수정하
+                                                수정하기
                                             </button>
                                         </div>
                                     </form><!-- End Profile Edit Form -->

@@ -5,4 +5,6 @@ import com.woong.mintchoco.vo.UserVO;
 public interface UserRepositoryCustom {
 
     void updateUserInfo(UserVO userVO);
+
+    void deleteUserProfileImage(UserVO userVO);
 }

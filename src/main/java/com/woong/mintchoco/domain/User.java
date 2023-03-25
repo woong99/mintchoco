@@ -7,6 +7,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
@@ -40,6 +42,10 @@ public class User extends UserBaseEntity implements UserDetails {
     private String userId;
 
     private String userPwd;
+
+    @OneToOne
+    @JoinColumn(name = "file_id")
+    private AttachFile profileImage;
 
     @Enumerated(EnumType.STRING)
     private Authority authority;
