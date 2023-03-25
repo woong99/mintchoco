@@ -19,5 +19,16 @@ spring:
   thymeleaf:
     cache: false
     check-template-location: true
+  servlet:
+    multipart:
+      max-file-size: 5MB # 파일 하나의 최대
+      max-request-size: 5MB # 요청의 최대
 server:
   port: 8081
+  tomcat:
+    max-swallow-size: 20MB
+file:
+  dir: /Users/woong_9yo/Desktop/WorkPlace/mintchoco/upload/
+  image:
+    ext: .jpg,.jpeg,.svg,.png
+    max-size: 5242880
