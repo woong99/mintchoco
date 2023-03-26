@@ -44,27 +44,27 @@
                 alert("아이디 중복 검사를 해주세요.");
                 return false;
             }
-            if (!isEmpty($("#id").val())) {
+            if (isEmpty($("#id").val())) {
                 alert("아이디를 입력해주세요.");
                 $("#id").focus();
                 return false;
             }
-            if (!isEmpty($("#password").val())) {
+            if (isEmpty($("#password").val())) {
                 alert("비밀번호를 입력해주세요.");
                 $("#password").focus();
                 return false;
             }
-            if (!isEmpty($("#name").val())) {
+            if (isEmpty($("#name").val())) {
                 alert("이름을 입력해주세요.");
                 $("#name").focus();
                 return false;
             }
-            if (!isEmpty($("#tel").val())) {
+            if (isEmpty($("#tel").val())) {
                 alert("전화번호를 입력해주세요.");
                 $("#tel").focus();
                 return false;
             }
-            if (!isEmpty($("#businessNumber").val())) {
+            if (isEmpty($("#businessNumber").val())) {
                 alert("사업자 번호를 입력해주세요.");
                 $("#businessNumber").focus();
                 return false;
