@@ -5,6 +5,7 @@ import com.woong.mintchoco.domain.AttachFile;
 import com.woong.mintchoco.service.FileManageService;
 import com.woong.mintchoco.service.OwnerService;
 import com.woong.mintchoco.service.UserService;
+import com.woong.mintchoco.vo.StoreVO;
 import com.woong.mintchoco.vo.UserVO;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
@@ -173,12 +174,69 @@ public class OwnerController {
             model.addAttribute("returnUrl", "/owner/profile/password");
             return "/views/common/message";
         }
-        
+
         userService.changePassword(authentication, userVO);
 
         model.addAttribute("type", MessageType.msgUrl.getMessage());
         model.addAttribute("message", "비밀번호가 성공적으로 변경되었습니다!");
         model.addAttribute("returnUrl", "/owner/profile/password");
+        return "/views/common/message";
+    }
+
+
+    /**
+     * 사장님 페이지 > 가게 정보 > 가게 정보 등록/수정
+     *
+     * @param authentication 인증 정보
+     * @param model          모델
+     * @return "/views/owner/store/storeForm"
+     */
+    @RequestMapping("/store/form")
+    public String storeForm(Authentication authentication, ModelMap model) {
+        StoreVO storeVO = ownerService.getStoreInfo(authentication);
+        String command = storeVO == null ? "insert" : "update";
+
+        model.addAttribute("command", command);
+        model.addAttribute("storeVO", storeVO);
+        return "/views/owner/store/storeForm";
+    }
+
+
+    /**
+     * 사장님 페이지 > 가게 정보 > 가게 정보 등록/수정 > 등록 action
+     *
+     * @param authentication 인증 정보
+     * @param storeVO        가게 정보
+     * @param model          모델
+     * @return "/views/common/message"
+     */
+    @RequestMapping("/store/form/insert.do")
+    public String storeFormInsert(Authentication authentication, StoreVO storeVO, ModelMap model) {
+        ownerService.insertStoreInfo(authentication, storeVO);
+
+        model.addAttribute("type", MessageType.msgUrl.getMessage());
+        model.addAttribute("message", "등록이 완료되었습니다.");
+        model.addAttribute("returnUrl", "/owner/store/form");
+        return "/views/common/message";
+    }
+
+
+    /**
+     * 사장님 페이지 > 가게 정보 > 가게 정보 등록/수정 > 수정 action
+     *
+     * @param authentication 인증 정보
+     * @param storeVO        가게 정보
+     * @param model          모델
+     * @return "/views/common/message"
+     */
+    @Transactional
+    @RequestMapping("/store/form/update.do")
+    public String storeFormUpdate(Authentication authentication, StoreVO storeVO, ModelMap model) {
+        ownerService.updateStoreInfo(authentication, storeVO);
+
+        model.addAttribute("type", MessageType.msgUrl.getMessage());
+        model.addAttribute("message", "수정이 완료되었습니다.");
+        model.addAttribute("returnUrl", "/owner/store/form");
         return "/views/common/message";
     }
 }
