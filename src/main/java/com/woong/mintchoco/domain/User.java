@@ -4,6 +4,7 @@ import com.woong.mintchoco.vo.UserVO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -43,9 +44,14 @@ public class User extends UserBaseEntity implements UserDetails {
 
     private String userPwd;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "file_id")
     private AttachFile profileImage;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id")
+    @Setter
+    private Store store;
 
     @Enumerated(EnumType.STRING)
     private Authority authority;
