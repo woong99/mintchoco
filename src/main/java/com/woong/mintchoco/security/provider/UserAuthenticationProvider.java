@@ -27,7 +27,7 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();
         String password = (String) authentication.getCredentials();
-        User user = userService.loadUserByUsername(username);
+        User user = userService.loadUserByUsername(username).getUser();
         String dbPassword = user.getPassword();
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 

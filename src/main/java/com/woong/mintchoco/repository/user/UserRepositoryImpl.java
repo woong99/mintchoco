@@ -4,6 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.woong.mintchoco.domain.QAttachFile;
 import com.woong.mintchoco.domain.QUser;
 import com.woong.mintchoco.vo.UserVO;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -27,16 +28,18 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
         if (userVO.getProfileImage() == null) {
             jpaQueryFactory
                     .update(qUser)
-                    .set(List.of(qUser.name, qUser.email, qUser.businessNumber, qUser.tel),
-                            List.of(userVO.getName(), userVO.getEmail(), userVO.getBusinessNumber(), userVO.getTel()))
+                    .set(List.of(qUser.name, qUser.email, qUser.businessNumber, qUser.tel, qUser.updatedAt),
+                            List.of(userVO.getName(), userVO.getEmail(), userVO.getBusinessNumber(), userVO.getTel(),
+                                    LocalDateTime.now()))
                     .where(qUser.userId.eq(userVO.getUserId()))
                     .execute();
         } else {
             jpaQueryFactory
                     .update(qUser)
-                    .set(List.of(qUser.name, qUser.email, qUser.businessNumber, qUser.tel, qUser.profileImage),
+                    .set(List.of(qUser.name, qUser.email, qUser.businessNumber, qUser.tel, qUser.profileImage,
+                                    qUser.updatedAt),
                             List.of(userVO.getName(), userVO.getEmail(), userVO.getBusinessNumber(), userVO.getTel(),
-                                    userVO.getProfileImage()))
+                                    userVO.getProfileImage(), LocalDateTime.now()))
                     .where(qUser.userId.eq(userVO.getUserId()))
                     .execute();
         }
@@ -54,6 +57,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
         jpaQueryFactory
                 .update(qUser)
                 .set(qUser.profileImage, userVO.getProfileImage())
+                .set(qUser.updatedAt, LocalDateTime.now())
                 .where(qUser.userId.eq(userVO.getUserId()))
                 .execute();
         jpaQueryFactory
@@ -72,6 +76,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
         jpaQueryFactory
                 .update(qUser)
                 .set(qUser.userPwd, userVO.getNewPwd())
+                .set(qUser.updatedAt, LocalDateTime.now())
                 .where(qUser.userId.eq(userVO.getUserId()))
                 .execute();
     }
