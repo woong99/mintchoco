@@ -34,7 +34,8 @@ $(function () {
                 method: "GET"
             })
                 .done(() => {
-                    $("#profile").attr("src", "/img/default-user.svg")
+                    $("#profile").attr("src", "/img/default-user.svg");
+                    $("#cardProfileImage").attr("src", "/img/default-user.svg");
                     $("#imageDelete").remove();
                 })
                 .fail(() => {
@@ -150,10 +151,12 @@ function readURL(input) {
         const reader = new FileReader();
         reader.onload = function (e) {
             $("#profile").attr("src", e.target.result);
+            $("#cardProfileImage").attr("src", e.target.result);
         };
         reader.readAsDataURL(input.files[0]);
     } else {
         $("#profile").attr("src", "");
+        $("#cardProfileImage").attr("src", "");
     }
 }
 
