@@ -1,7 +1,9 @@
 package com.woong.mintchoco.controller;
 
+import com.woong.mintchoco.annotation.AuthUser;
 import com.woong.mintchoco.common.MessageType;
 import com.woong.mintchoco.domain.AttachFile;
+import com.woong.mintchoco.domain.User;
 import com.woong.mintchoco.service.FileManageService;
 import com.woong.mintchoco.service.OwnerService;
 import com.woong.mintchoco.service.UserService;
@@ -87,13 +89,13 @@ public class OwnerController {
     /**
      * 사장님 페이지 > 사장님 정보 > 사장님 정보 수정
      *
-     * @param authentication 인증 정보
-     * @param model          모델
+     * @param user  인증 정보
+     * @param model 모델
      * @return "/views/owner/profile/ownerInfo"
      */
     @RequestMapping("/profile/info")
-    public String profileInfo(Authentication authentication, ModelMap model) {
-        UserVO userVO = ownerService.getUserInfo(authentication.getName());
+    public String profileInfo(@AuthUser User user, ModelMap model) {
+        UserVO userVO = ownerService.getUserInfo(user);
         model.addAttribute("userVO", userVO);
         return "/views/owner/profile/ownerInfo";
     }
@@ -101,16 +103,16 @@ public class OwnerController {
     /**
      * 사장님 페이지 > 사장님 정보 > 사장님 정보 수정 > 수정 action
      *
-     * @param authentication 인증 정보
-     * @param userVO         사용자 정보
-     * @param model          모델
+     * @param user   인증 정보
+     * @param userVO 사용자 정보
+     * @param model  모델
      * @return "/views/common/message"
      */
     @Transactional
     @RequestMapping("/profile/info/update.do")
-    public String profileInfoUpdate(Authentication authentication, UserVO userVO, @RequestParam("file")
+    public String profileInfoUpdate(@AuthUser User user, UserVO userVO, @RequestParam("file")
     MultipartFile file, ModelMap model) throws IOException {
-        userVO.setUserId(authentication.getName());
+        userVO.setUserId(user.getUserId());
         if (!file.isEmpty()) {
             AttachFile profileImage = fileManageService.saveFile(file);
             if (profileImage == null) {
@@ -133,17 +135,16 @@ public class OwnerController {
     /**
      * 사장님 정보 > 사장님 정보 수정 > 프로필 사진 삭제 action
      *
-     * @param authentication 인증 정보
+     * @param user 인증 정보
      * @return ResponseEntity
      */
     @Transactional
     @RequestMapping("/profile/info/deleteProfileImage.do")
-    public ResponseEntity<Void> removeProfileImage(Authentication authentication) {
-        UserVO userVO = ownerService.getUserInfo(authentication.getName());
-        if (userVO.getProfileImage() == null) {
+    public ResponseEntity<Void> removeProfileImage(@AuthUser User user) {
+        if (user.getProfileImage() == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        ownerService.deleteUserProfileImage(userVO);
+        ownerService.deleteUserProfileImage(UserVO.toUserVO(user));
         return ResponseEntity.ok().build();
     }
 
@@ -160,14 +161,15 @@ public class OwnerController {
     /**
      * 사장님 정보 > 비밀번호 변경 > 비밀번호 변경 action
      *
-     * @param authentication 인증 정보
-     * @param userVO         사용자 정보
-     * @param model          모델
+     * @param user   인증 정보
+     * @param userVO 사용자 정보
+     * @param model  모델
      * @return "/views/common/message"
      */
     @Transactional
     @RequestMapping("/profile/password/update.do")
-    public String profilePasswordChange(Authentication authentication, UserVO userVO, ModelMap model) {
+    public String profilePasswordChange(@AuthUser User user, UserVO userVO,
+                                        ModelMap model) {
         if (!userVO.getNewPwd().equals(userVO.getReNewPwd())) {
             model.addAttribute("type", MessageType.msgUrl.getMessage());
             model.addAttribute("message", "새 비밀번호와 새 비밀번호 확인이 일치하지 않습니다.");
@@ -175,7 +177,7 @@ public class OwnerController {
             return "/views/common/message";
         }
 
-        userService.changePassword(authentication, userVO);
+        userService.changePassword(user, userVO);
 
         model.addAttribute("type", MessageType.msgUrl.getMessage());
         model.addAttribute("message", "비밀번호가 성공적으로 변경되었습니다!");
@@ -187,13 +189,14 @@ public class OwnerController {
     /**
      * 사장님 페이지 > 가게 정보 > 가게 정보 등록/수정
      *
-     * @param authentication 인증 정보
-     * @param model          모델
+     * @param user  인증 정보
+     * @param model 모델
      * @return "/views/owner/store/storeForm"
      */
+    @Transactional
     @RequestMapping("/store/form")
-    public String storeForm(Authentication authentication, ModelMap model) {
-        StoreVO storeVO = ownerService.getStoreInfo(authentication);
+    public String storeForm(@AuthUser User user, ModelMap model) {
+        StoreVO storeVO = ownerService.getStoreInfo(user);
         String command = storeVO == null ? "insert" : "update";
 
         model.addAttribute("command", command);
@@ -205,14 +208,14 @@ public class OwnerController {
     /**
      * 사장님 페이지 > 가게 정보 > 가게 정보 등록/수정 > 등록 action
      *
-     * @param authentication 인증 정보
-     * @param storeVO        가게 정보
-     * @param model          모델
+     * @param user    인증 정보
+     * @param storeVO 가게 정보
+     * @param model   모델
      * @return "/views/common/message"
      */
     @RequestMapping("/store/form/insert.do")
-    public String storeFormInsert(Authentication authentication, StoreVO storeVO, ModelMap model) {
-        ownerService.insertStoreInfo(authentication, storeVO);
+    public String storeFormInsert(@AuthUser User user, StoreVO storeVO, ModelMap model) {
+        ownerService.insertStoreInfo(user, storeVO);
 
         model.addAttribute("type", MessageType.msgUrl.getMessage());
         model.addAttribute("message", "등록이 완료되었습니다.");
@@ -224,15 +227,15 @@ public class OwnerController {
     /**
      * 사장님 페이지 > 가게 정보 > 가게 정보 등록/수정 > 수정 action
      *
-     * @param authentication 인증 정보
-     * @param storeVO        가게 정보
-     * @param model          모델
+     * @param user    인증 정보
+     * @param storeVO 가게 정보
+     * @param model   모델
      * @return "/views/common/message"
      */
     @Transactional
     @RequestMapping("/store/form/update.do")
-    public String storeFormUpdate(Authentication authentication, StoreVO storeVO, ModelMap model) {
-        ownerService.updateStoreInfo(authentication, storeVO);
+    public String storeFormUpdate(@AuthUser User user, StoreVO storeVO, ModelMap model) {
+        ownerService.updateStoreInfo(user, storeVO);
 
         model.addAttribute("type", MessageType.msgUrl.getMessage());
         model.addAttribute("message", "수정이 완료되었습니다.");
