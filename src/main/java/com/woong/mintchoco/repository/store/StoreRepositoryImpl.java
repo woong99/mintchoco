@@ -4,6 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
 import com.woong.mintchoco.domain.QStore;
 import com.woong.mintchoco.vo.StoreVO;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -30,9 +31,10 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                         .update(qStore)
                         .set(
                                 List.of(qStore.name, qStore.intro, qStore.zipCode, qStore.address, qStore.tel,
-                                        qStore.closedDays),
+                                        qStore.closedDays, qStore.updatedAt),
                                 List.of(storeVO.getName(), storeVO.getIntro(), storeVO.getZipCode(),
-                                        storeVO.getAddress(), storeVO.getTel(), storeVO.getClosedDays())
+                                        storeVO.getAddress(), storeVO.getTel(), storeVO.getClosedDays(),
+                                        LocalDateTime.now())
                         )
                         .where(qStore.id.eq(id));
 
