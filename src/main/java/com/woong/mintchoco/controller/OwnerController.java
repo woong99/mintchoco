@@ -9,6 +9,7 @@ import com.woong.mintchoco.service.OwnerService;
 import com.woong.mintchoco.service.UserService;
 import com.woong.mintchoco.vo.StoreVO;
 import com.woong.mintchoco.vo.UserVO;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -241,5 +243,16 @@ public class OwnerController {
         model.addAttribute("message", "수정이 완료되었습니다.");
         model.addAttribute("returnUrl", "/owner/store/form");
         return "/views/common/message";
+    }
+
+    /**
+     * Thymeleaf 에서 현재 페이지의 url 을 사용하기 위해 model 객체에 담아주는 메소드
+     *
+     * @param request request
+     * @return url
+     */
+    @ModelAttribute("url")
+    public String contextPath(HttpServletRequest request) {
+        return request.getServletPath();
     }
 }
