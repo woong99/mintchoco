@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
@@ -19,6 +20,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.ToString.Exclude;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,6 +32,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 @ToString
 @Builder
 public class User extends UserBaseEntity implements UserDetails {
+
+    @Serial
+    private static final long serialVersionUID = -2246490400695224910L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -46,11 +52,14 @@ public class User extends UserBaseEntity implements UserDetails {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "file_id")
+    @Setter
+    @Exclude
     private AttachFile profileImage;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
     @Setter
+    @Exclude
     private Store store;
 
     @Enumerated(EnumType.STRING)
@@ -109,5 +118,9 @@ public class User extends UserBaseEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public User getUser() {
+        return this;
     }
 }
