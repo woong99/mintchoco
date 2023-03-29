@@ -149,20 +149,31 @@ function fn_submit(command) {
         }
     }
 
-    if (command === 'insert') {
-        if (confirm("등록하시겠습니까?")) {
-            frm.attr("action", "/owner/store/form/insert.do");
-            frm.submit();
+    /* 주소를 좌표로 변환 */
+    const geocoder = new kakao.maps.services.Geocoder();
+    geocoder.addressSearch(address.val(), function (result, status) {
+        if (status === kakao.maps.services.Status.OK) {
+            const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+            $('#latitude').val(coords.getLat());
+            $('#longitude').val(coords.getLng());
+            if (command === 'insert') {
+                if (confirm("등록하시겠습니까?")) {
+                    frm.attr("action", "/owner/store/form/insert.do");
+                    frm.submit();
+                }
+            } else if (command === 'update') {
+                if (confirm("수정하시겠습니까?")) {
+                    frm.attr("action", "/owner/store/form/update.do");
+                    frm.submit();
+                }
+            } else {
+                alert("잘못된 접근입니다.");
+                return false;
+            }
+        } else {
+            alert("주소를 변환하는 과정에서 오류가 발생했습니다.\n관리자에게 문의해주세요.");
         }
-    } else if (command === 'update') {
-        if (confirm("수정하시겠습니까?")) {
-            frm.attr("action", "/owner/store/form/update.do");
-            frm.submit();
-        }
-    } else {
-        alert("잘못된 접근입니다.");
-        return false;
-    }
+    })
 }
 
 

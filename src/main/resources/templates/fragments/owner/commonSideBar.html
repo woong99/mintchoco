@@ -50,10 +50,10 @@
                     <i class="bi bi-journal-text"></i><span>가게 정보</span><i class="bi bi-chevron-down ms-auto"></i>
                 </a>
                 <ul id="forms-nav" class="nav-content collapse"
-                    th:classappend="${url eq '/owner/store/form' ? 'show' : ''}"
+                    th:classappend="${(url eq '/owner/store/info' || url eq '/owner/store/form') ? 'show' : ''}"
                     data-bs-parent="#sidebar-nav">
                     <li>
-                        <a href="/owner/store/info">
+                        <a href="/owner/store/info" th:classappend="${url eq '/owner/store/info' ? 'active' : ''}">
                             <i class="bi bi-circle"></i><span>가게 정보 보기</span>
                         </a>
                     </li>

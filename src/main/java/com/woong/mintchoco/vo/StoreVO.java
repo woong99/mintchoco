@@ -22,6 +22,10 @@ public class StoreVO {
 
     private String detailAddress;       // 상세주소
 
+    private String latitude;            // 위도
+
+    private String longitude;           // 경도
+
     private String tel;                 // 전화번호
 
     private String weekdayStart;        // 평일 영업 시작 시간
@@ -44,6 +48,12 @@ public class StoreVO {
 
     private String closedDays;          // 휴무일
 
+    private String formattedWeekdayOpeningHours;    // 포매팅된 평일 영업 시간
+
+    private String formattedSaturdayOpeningHours;   // 포매팅된 토요일 영업 시간
+
+    private String formattedSundayOpeningHours;     // 포매팅된 일요일 영업 시간
+
     public static StoreVO toStoreVO(Store store) {
         return StoreVO.builder()
                 .name(store.getName())
@@ -51,6 +61,8 @@ public class StoreVO {
                 .zipCode(store.getZipCode())
                 .address(store.getAddress())
                 .detailAddress(store.getDetailAddress())
+                .latitude(store.getLatitude())
+                .longitude(store.getLongitude())
                 .tel(store.getTel())
                 .weekdayStart(store.getWeekdayStart())
                 .weekdayEnd(store.getWeekdayEnd())

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <th:block th:replace="~{fragments/owner/commonHead}"></th:block>
+</head>
+<body>
+<script type="text/javascript"
+        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=e7a749edf75d913a4c1481392ca6eced&libraries=services"></script>
+<div id="storeInfoMap" class="w-100 vh-100 position-relative">
+    <div class="d-none position-fixed top-0 end-0 bottom-0 start-0 d-flex justify-content-center align-items-center"
+         style="background: rgba(0,0,0,0.4); z-index: 4" id="spinner">
+        <div class="spinner-border z-999" role="status"
+             style="width: 7rem; height: 7rem;">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+    <div class="position-absolute top-0 end-0 d-block overflow-hidden z-999 bg-white mt-4 me-4 p-2 border border-2 rounded-5 pointer"
+         style="border-color: #d7d7d7" onclick="fn_reCurrentPlace()">
+        <div class="d-flex align-items-center">
+            <div class="icon d-flex align-items-center pe-1 fs-5">
+                <i class="bx bx-current-location"></i>
+            </div>
+            <div>현재 위치로</div>
+        </div>
+    </div>
+</div>
+<script th:inline="javascript">
+    const container = document.getElementById("storeInfoMap");
+    const latitude = [[${request.getParameter('latitude')}]];
+    const longitude = [[${request.getParameter('longitude')}]];
+    const position = new kakao.maps.LatLng(latitude, longitude);
+    const storeName = [[${request.getParameter('name')}]]
+    let markers = [];
+
+    /* 가게 위치 표시 */
+    const options = {
+        center: position,
+        level: 2
+    }
+    let map = new kakao.maps.Map(container, options);
+
+    /* 가게 위치 오버레이 생성 */
+    const content = '<div class="bottom-middle-bubble px-2 py-1">' + storeName + '</div>';
+    const customOverlay = new kakao.maps.CustomOverlay({
+        position,
+        content
+    })
+    customOverlay.setMap(map);
+
+    /* 현재 위치 표시 */
+    navigator.geolocation.getCurrentPosition(function (position) {
+        const currentLatitude = position.coords.latitude;
+        const currentLongitude = position.coords.longitude;
+        const currentPosition = new kakao.maps.LatLng(currentLatitude, currentLongitude);
+        const marker = new kakao.maps.Marker({
+            position: currentPosition
+        })
+        marker.setMap(map);
+        markers.push(marker);
+    })
+
+    /* 현재 위치로 이동 */
+    function fn_reCurrentPlace() {
+        $("#spinner").removeClass("d-none");
+        navigator.geolocation.getCurrentPosition(function (position) {
+            const currentLatitude = position.coords.latitude;
+            const currentLongitude = position.coords.longitude;
+            const currentPosition = new kakao.maps.LatLng(currentLatitude, currentLongitude);
+            const marker = new kakao.maps.Marker({
+                position: currentPosition
+            })
+            map.setCenter(currentPosition)
+            markers[0].setMap(null)
+            markers.pop()
+            marker.setMap(map);
+            markers.push(marker);
+            $("#spinner").addClass("d-none");
+        })
+    }
+</script>
+</body>
+</html>
