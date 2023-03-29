@@ -28,6 +28,7 @@ public class UserVO {
 
     private String email;
 
+    @ToString.Exclude
     private AttachFile profileImage;
 
     public static UserVO toUserVO(User user) {
