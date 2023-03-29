@@ -30,10 +30,12 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                 jpaQueryFactory
                         .update(qStore)
                         .set(
-                                List.of(qStore.name, qStore.intro, qStore.zipCode, qStore.address, qStore.tel,
+                                List.of(qStore.name, qStore.intro, qStore.zipCode, qStore.address, qStore.latitude,
+                                        qStore.longitude, qStore.tel,
                                         qStore.closedDays, qStore.updatedAt),
                                 List.of(storeVO.getName(), storeVO.getIntro(), storeVO.getZipCode(),
-                                        storeVO.getAddress(), storeVO.getTel(), storeVO.getClosedDays(),
+                                        storeVO.getAddress(), storeVO.getLatitude(), storeVO.getLongitude(),
+                                        storeVO.getTel(), storeVO.getClosedDays(),
                                         LocalDateTime.now())
                         )
                         .where(qStore.id.eq(id));

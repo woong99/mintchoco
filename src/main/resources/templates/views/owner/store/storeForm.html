@@ -5,6 +5,8 @@
         layout:decorate="~{layout/mainDefaultLayout}">
 <body>
 <th:block layout:fragment="content">
+    <script type="text/javascript"
+            src="//dapi.kakao.com/v2/maps/sdk.js?appkey=e7a749edf75d913a4c1481392ca6eced&libraries=services"></script>
     <script src="/js/owner/store/storeForm.js"></script>
     <main id="main" class="main">
 
@@ -24,6 +26,8 @@
                     <div class="card-body">
                         <h5 class="card-title">가게 정보 등록/수정</h5>
                         <form id="frm" name="frm">
+                            <input type="hidden" id="latitude" name="latitude"/>
+                            <input type="hidden" id="longitude" name="longitude"/>
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="row mb-3">

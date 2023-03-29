@@ -25,7 +25,7 @@ public class Store extends BaseEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 4304254191931937770L;
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -39,6 +39,10 @@ public class Store extends BaseEntity implements Serializable {
     private String address;             // 주소
 
     private String detailAddress;       // 상세주소
+
+    private String latitude;            // 위도
+
+    private String longitude;           // 경도
 
     private String tel;                 // 전화번호
 
@@ -69,6 +73,8 @@ public class Store extends BaseEntity implements Serializable {
                 .zipCode(storeVO.getZipCode())
                 .address(storeVO.getAddress())
                 .detailAddress(storeVO.getDetailAddress())
+                .latitude(storeVO.getLatitude())
+                .longitude(storeVO.getLongitude())
                 .tel(storeVO.getTel())
                 .weekdayStart(storeVO.getWeekdayStart())
                 .weekdayEnd(storeVO.getWeekdayEnd())
