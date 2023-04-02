@@ -7,12 +7,15 @@ import com.woong.mintchoco.domain.User;
 import com.woong.mintchoco.service.FileManageService;
 import com.woong.mintchoco.service.OwnerService;
 import com.woong.mintchoco.service.UserService;
+import com.woong.mintchoco.vo.MenuGroupVO;
 import com.woong.mintchoco.vo.StoreVO;
 import com.woong.mintchoco.vo.UserVO;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -272,6 +275,7 @@ public class OwnerController {
         return "/views/owner/store/storeInfo";
     }
 
+
     /**
      * 사장님 페이지 > 가게 정보 > 가게 정보 보기 > 위치안내 > 지도
      *
@@ -280,6 +284,97 @@ public class OwnerController {
     @RequestMapping("/store/info/map")
     public String storeInfoMap() {
         return "/views/owner/store/storeInfoMap";
+    }
+
+
+    /**
+     * 사장님 페이지 > 메뉴 정보 > 메뉴 관리
+     *
+     * @param user  인증 정보
+     * @param model 모델
+     * @return "/views/owner/menu/menuInfo"
+     */
+    @RequestMapping("/menu/info")
+    public String menuInfo(@AuthUser User user, ModelMap model) {
+        List<MenuGroupVO> menuGroupVOList = ownerService.selectAllMenuGroup(user);
+
+        model.addAttribute("menuGroupVOList", menuGroupVOList);
+        return "/views/owner/menu/menuInfo";
+    }
+
+
+    /**
+     * 사장님 페이지 > 메뉴 정보 > 메뉴 관리 > 메뉴그룹 추가 > 등록 action
+     *
+     * @param user        인증 정보
+     * @param menuGroupVO 메뉴 그룹 정보
+     * @param model       모델
+     * @return "/views/common/message"
+     */
+    @RequestMapping("/menu/info/menuGroup/insert.do")
+    public String menuGroupInsert(@AuthUser User user, MenuGroupVO menuGroupVO, ModelMap model) {
+        ownerService.insertMenuGroup(user, menuGroupVO);
+
+        model.addAttribute("type", MessageType.msgUrl.getMessage());
+        model.addAttribute("message", "등록이 완료되었습니다.");
+        model.addAttribute("returnUrl", "/owner/menu/info");
+        return "/views/common/message";
+    }
+
+
+    /**
+     * 사장님 페이지 > 메뉴 정보 > 메뉴 관리 > 메뉴그룹 수정 > 메뉴그룹 단일 조회
+     *
+     * @param id 메뉴그룹 ID
+     * @return ResponseEntity
+     */
+    @RequestMapping("/menu/info/menuGroup/select.do")
+    public ResponseEntity<MenuGroupVO> menuGroupSelect(@RequestParam("id") Long id) {
+        MenuGroupVO menuGroupVO;
+        try {
+            menuGroupVO = ownerService.selectMenuGroup(id);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(menuGroupVO);
+    }
+
+
+    /**
+     * 사장님 페이지 > 메뉴 정보 > 메뉴 관리 > 메뉴그룹 수정 > 수정 action
+     *
+     * @param menuGroupVO 메뉴그룹 정보
+     * @param model       모델
+     * @return "/views/common/message"
+     */
+    @Transactional
+    @RequestMapping("/menu/info/menuGroup/update.do")
+    public String menuGroupUpdate(MenuGroupVO menuGroupVO, ModelMap model) {
+        ownerService.updateMenuGroup(menuGroupVO);
+
+        model.addAttribute("type", MessageType.msgUrl.getMessage());
+        model.addAttribute("message", "수정이 완료되었습니다.");
+        model.addAttribute("returnUrl", "/owner/menu/info");
+        return "/views/common/message";
+    }
+
+
+    /**
+     * 사장님 페이지 > 메뉴 관리 > 메뉴그룹 순서변경 > 순서변경 action
+     *
+     * @param menuGroupIdList 메뉴그룹 ID 리스트
+     * @param model           모델
+     * @return "/views/common/message"
+     */
+    @Transactional
+    @RequestMapping("/menu/info/menuGroup/orderUpdate.do")
+    public String menuGroupOrderUpdate(@RequestParam("menuGroupIdList") Long[] menuGroupIdList, ModelMap model) {
+        ownerService.updateMenuGroupOrder(menuGroupIdList);
+
+        model.addAttribute("type", MessageType.msgUrl.getMessage());
+        model.addAttribute("message", "저장이 완료되었습니다.");
+        model.addAttribute("returnUrl", "/owner/menu/info");
+        return "/views/common/message";
     }
 
 

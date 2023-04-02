@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html
+        layout:decorate="~{layout/mainDefaultLayout}"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block layout:fragment="content">
+    <script src="/js/jquery/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+    <script src="/js/owner/menu/menuInfo.js"></script>
+    <main class="main" id="main">
+        <div class="pagetitle">
+            <h1>메뉴 관리</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/owner/main">Home</a></li>
+                    <li class="breadcrumb-item">메뉴 정보</li>
+                    <li class="breadcrumb-item active">메뉴 관리</li>
+                </ol>
+            </nav>
+        </div><!-- End Page Title -->
+        <section class="section profile">
+            <div class="row">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-title">
+                            <ul class="nav nav-tabs nav-tabs-bordered">
+                                <li class="nav-item">
+                                    <button class="nav-link active" data-bs-target="#menuConfig"
+                                            data-bs-toggle="tab">
+                                        메뉴 설정
+                                    </button>
+                                </li>
+                                <li class="nav-item">
+                                    <button class="nav-link" data-bs-toggle="tab">옵션 설정</button>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tab-content">
+                            <!-- 메뉴 설정 S -->
+                            <div class="tab-pane fade show active " id="menuConfig">
+                                <div class="float-end d-flex mb-3">
+                                    <button class="btn btn-primary d-flex align-items-center me-2"
+                                            data-bs-target="#menuGroupOrderModal"
+                                            data-bs-toggle="modal" th:if="${!#lists.isEmpty(menuGroupVOList)}"
+                                            type="button">
+                                        <div class="icon d-flex align-items-center fs-5 pe-1">
+                                            <i class="bx bx-move"></i>
+                                        </div>
+                                        <div>메뉴그룹 순서변경</div>
+                                    </button>
+                                    <button class="btn btn-primary d-flex align-items-center"
+                                            data-bs-target="#menuGroupModal"
+                                            data-bs-toggle="modal" type="button">
+                                        <div class="icon d-flex align-items-center fs-5 pe-1">
+                                            <i class="bx bxs-book-content"></i>
+                                        </div>
+                                        <div>메뉴그룹 추가</div>
+                                    </button>
+                                </div>
+                                <!-- 메뉴그룹 추가 모달 S -->
+                                <div aria-hidden="true" aria-labelledby="menuGroupModalLabel" class="modal fade"
+                                     data-bs-backdrop="static" data-bs-keyboard="false" id="menuGroupModal"
+                                     tabindex="-1">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <form class="w-100" id="menuGroupModalForm">
+                                            <input id="menuGroupId" name="id" type="hidden">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h1 class="modal-title fs-5" id="menuGroupModalLabel">메뉴그룹 추가</h1>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="mb-4">
+                                                        <label class="form-label fs-6" for="menuGroupTitle">메뉴그룹명 <em
+                                                                class="text-danger">*</em></label>
+                                                        <div class="float-end text-secondary count-text-limit"
+                                                             id="menuGroupTitleLength">
+                                                            0/20
+                                                        </div>
+                                                        <input class="form-control" id="menuGroupTitle"
+                                                               name="menuGroupTitle"
+                                                               placeholder="예) 민트초코 세트 메뉴" type="text">
+                                                    </div>
+                                                    <div class="mb-4">
+                                                        <label class="form-label" for="menuGroupExplanation">메뉴그룹
+                                                            설명 </label>
+                                                        <div class="float-end text-secondary count-text-limit"
+                                                             id="menuGroupExplanationLength">0/70
+                                                        </div>
+                                                        <textarea class="form-control no-resize-textarea"
+                                                                  id="menuGroupExplanation" name="menuGroupExplanation"
+                                                                  placeholder="예) 민트초코를 담은 세트 메뉴입니다."
+                                                        ></textarea>
+                                                    </div>
+                                                    <div class="btn-group col-4">
+                                                        <div class="col-6">
+                                                            <input checked class="btn-check" id="menuGroupExposure"
+                                                                   name="menuGroupExposure" type="radio" value="Y">
+                                                            <label class="btn btn-outline-primary w-100"
+                                                                   for="menuGroupExposure"
+                                                                   style="border-bottom-right-radius: 0; border-top-right-radius: 0;">노출</label>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <input class="btn-check" id="menuGroupNonExposure"
+                                                                   name="menuGroupExposure"
+                                                                   type="radio" value="N">
+                                                            <label class="btn btn-outline-primary w-100"
+                                                                   for="menuGroupNonExposure"
+                                                                   style="border-bottom-left-radius: 0; border-top-left-radius: 0;">비노출</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button class="btn btn-secondary px-4"
+                                                            id="menuGroupModalCancel" type="button">
+                                                        취소
+                                                    </button>
+                                                    <button class="btn btn-primary px-4" data-command="insert"
+                                                            id="menuGroupModalSubmit" type="button">추가
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <!-- 메뉴그룹 추가 모달 E -->
+                                <!-- 메뉴그룹 순서변경 모달 S -->
+                                <div aria-hidden="true" aria-labelledby="menuGroupModalLabel" class="modal fade"
+                                     data-bs-backdrop="static" data-bs-keyboard="false" id="menuGroupOrderModal"
+                                     tabindex="-1">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="menuGroupOrderModalLabel">메뉴그룹
+                                                    순서변경</h1>
+                                            </div>
+                                            <div class="modal-body" id="sortable">
+                                                <form id="menuGroupOrderFrm">
+                                                    <input id="menuGroupIdList" name="menuGroupIdList" type="hidden">
+                                                </form>
+                                                <div class="list-group align-items-center"
+                                                     th:data-id="${menuGroupVO.id}"
+                                                     th:data-order="${menuGroupVO.menuGroupOrder}"
+                                                     th:each="menuGroupVO : ${menuGroupVOList}"
+                                                     th:id="${'menuGroupOrder' + menuGroupVOStat.count}">
+                                                    <div class="list-group-item d-flex align-items-center justify-content-between col-12">
+                                                        <span th:text="${menuGroupVO.menuGroupTitle}"></span>
+                                                        <div class="icon">
+                                                            <i class="bx bx-list-ul fs-2"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button class="btn btn-secondary px-4"
+                                                        id="menuGroupOrderModalCancel" type="button">
+                                                    취소
+                                                </button>
+                                                <button class="btn btn-primary px-4" data-command="insert"
+                                                        id="menuGroupOrderModalSubmit" type="button">저장
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 메뉴그룹 순서변경 모달 E -->
+                                <div class="card clear">
+                                    <!-- 메뉴가 있는 경우 S -->
+                                    <div class="card-body" th:if="${!#lists.isEmpty(menuGroupVOList)}">
+                                        <div class="card-title float-end d-block d-sm-none">
+                                            <div class="d-flex align-items-center">
+                                                <div class="icon d-flex align-items-center pe-1">
+                                                    <i class="bx bxs-pencil"></i>
+                                                </div>
+                                                <div class="pe-1">: 수정</div>
+                                                <div class="icon d-flex align-items-center pe-1">
+                                                    <i class="bx bx-trash"></i>
+                                                </div>
+                                                <div class="pe-1">: 삭제</div>
+                                                <div class="icon d-flex align-items-center pe-1">
+                                                    <i class="bx bxs-plus-circle"></i>
+                                                </div>
+                                                <div>: 메뉴 추가</div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion mt-5 clear">
+                                            <div class="accordion-item" th:each="menuGroupVO : ${menuGroupVOList}">
+                                                <h2 class="accordion-header d-flex position-relative">
+                                                    <button class="accordion-button align-items-center"
+                                                            data-bs-toggle="collapse"
+                                                            th:data-bs-target="${'#menu' + menuGroupVOStat.count}"
+                                                            th:utext="${menuGroupVO.getMenuGroupTitle() + '<h5 class=&quot;mb-0 ms-2&quot;><span class=&quot;badge rounded-pill text-bg-primary&quot;>' + (menuGroupVO.menuGroupExposure == 'Y' ?  '노출' : '비노출') + '</span></h5>'}"
+                                                            type="button">
+                                                    </button>
+                                                    <div class="position-absolute top-0 end-0 d-flex align-items-center h-100 z-3 me-4rem">
+                                                        <button class="btn btn-primary btn-sm d-flex align-items-center me-2 me-sm-3 menu-group-edit"
+                                                                th:data-id="${menuGroupVO.id}">
+                                                            <div class="icon d-flex align-items-center pe-sm-1">
+                                                                <i class="bx bxs-pencil"></i>
+                                                            </div>
+                                                            <div class="d-none d-sm-block">수정</div>
+                                                        </button>
+                                                        <button class="btn btn-primary btn-sm d-flex align-items-center me-2 me-sm-3 menu-group-remove"
+                                                                th:data-id="${menuGroupVO.id}">
+                                                            <div class="icon d-flex align-items-center pe-sm-1">
+                                                                <i class="bx bx-trash"></i>
+                                                            </div>
+                                                            <div class="d-none d-sm-block">삭제</div>
+                                                        </button>
+                                                        <button class="btn btn-primary btn-sm d-flex align-items-center">
+                                                            <div class="icon d-flex align-items-center pe-sm-1">
+                                                                <i class="bx bxs-plus-circle"></i>
+                                                            </div>
+                                                            <div class="d-none d-sm-block">메뉴 추가</div>
+                                                        </button>
+                                                    </div>
+                                                </h2>
+                                                <div class="accordion-collapse collapse show"
+                                                     th:id="${'menu' + menuGroupVOStat.count}">
+                                                    <div class="accordion-body">
+                                                        <!--  TODO : 메뉴 설명 ui 추가하기 -->
+                                                        메뉴메뉴메뉴메뉴
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- 메뉴가 있는 경우 E -->
+
+                                    <!-- 메뉴가 없는 경우 S -->
+                                    <div class="card-body text-center py-5 fs-2"
+                                         th:if="${#lists.isEmpty(menuGroupVOList)}">
+                                        <div>
+                                            <div class="icon"
+                                                 style="font-size: 6rem;">
+                                                <i class="ri  ri-file-excel-line"></i>
+                                            </div>
+                                            <div>
+                                                등록된 메뉴가 없습니다.
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <!-- 메뉴가 없는 경우 E -->
+                                </div>
+                            </div>
+                            <!-- 메뉴 설정 E -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main><!-- End #main -->
+</th:block>
+</body>
+</html>
