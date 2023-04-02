@@ -45,7 +45,8 @@
             </li><!-- End Components Nav -->
 
             <li class="nav-item">
-                <a class="nav-link" th:classappend="${url ne '/owner/store/form' ? 'collapsed' : ''}"
+                <a class="nav-link"
+                   th:classappend="${(url ne '/owner/store/form' && url ne '/owner/store/info') ? 'collapsed' : ''}"
                    data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
                     <i class="bi bi-journal-text"></i><span>가게 정보</span><i class="bi bi-chevron-down ms-auto"></i>
                 </a>
@@ -66,14 +67,16 @@
             </li><!-- End Forms Nav -->
 
             <li class="nav-item">
-                <a class="nav-link collapsed" data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
+                <a class="nav-link" th:classappend="${url ne '/owner/menu/info' ? 'collapsed' : ''}"
+                   data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
                     <i class="bi bi-layout-text-window-reverse"></i><span>메뉴 정보</span><i
                         class="bi bi-chevron-down ms-auto"></i>
                 </a>
-                <ul id="tables-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                <ul id="tables-nav" class="nav-content collapse"
+                    th:classappend="${url eq '/owner/menu/info' ? 'show' : ''}" data-bs-parent="#sidebar-nav">
                     <li>
-                        <a href="tables-general.html">
-                            <i class="bi bi-circle"></i><span>메뉴 정보 보기</span>
+                        <a href="/owner/menu/info" th:classappend="${url eq '/owner/menu/info' ? 'active' : ''}">
+                            <i class="bi bi-circle"></i><span>메뉴 관리</span>
                         </a>
                     </li>
                     <li>
