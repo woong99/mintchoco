@@ -274,6 +274,23 @@ h6 {
 /* Accordion */
 .accordion-item {
     border: 1px solid #ebeef4;
+    margin-bottom: 1.5rem;
+    border-radius: var(--bs-accordion-border-radius);
+}
+
+.accordion-item:not(:first-of-type) {
+    border-top: 1px solid #ebeef4;
+}
+
+.accordion-body {
+    /*background-color: #fafcff;*/
+}
+
+.accordion-button {
+    border-top-left-radius: var(--bs-accordion-inner-border-radius);
+    border-top-right-radius: var(--bs-accordion-inner-border-radius);
+    background-color: var(--bs-accordion-active-bg);
+    color: #012970;
 }
 
 .accordion-button:focus {
@@ -1267,6 +1284,43 @@ h6 {
     cursor: pointer;
 }
 
+.z-3 {
+    z-index: 3;
+}
+
 .z-999 {
     z-index: 999;
+}
+
+.clear {
+    clear: both;
+}
+
+.no-resize-textarea {
+    resize: none;
+}
+
+.count-text-limit {
+    font-size: 0.8rem;
+}
+
+.count-text-limit.vibration {
+    animation: vibration 0.1s infinite;
+}
+
+@keyframes vibration {
+    from {
+        transform: rotate(10deg);
+    }
+    to {
+        transform: rotate(-1deg);
+    }
+}
+
+.me-5rem {
+    margin-right: 5rem;
+}
+
+.me-4rem {
+    margin-right: 4rem;
 }
