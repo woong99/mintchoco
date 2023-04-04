@@ -1,4 +1,4 @@
-package com.woong.mintchoco.repository.menu;
+package com.woong.mintchoco.repository.menu.group;
 
 import com.woong.mintchoco.domain.MenuGroup;
 import java.util.List;
