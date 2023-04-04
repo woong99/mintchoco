@@ -1,4 +1,4 @@
-package com.woong.mintchoco.repository.menu;
+package com.woong.mintchoco.repository.menu.group;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.woong.mintchoco.domain.QMenuGroup;
