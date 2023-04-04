@@ -1324,3 +1324,42 @@ h6 {
 .me-4rem {
     margin-right: 4rem;
 }
+
+.fs-0-8 {
+    font-size: 0.8rem;
+}
+
+.bg-gray-light {
+    background-color: #f7f7f7;;
+}
+
+.bg-gray {
+    background-color: #e5e5e5;
+}
+
+.text-gray {
+    color: #b7b7b7;
+}
+
+.border-gray-light {
+    border-color: #e8e8e8;
+}
+
+.border-left-radius {
+    border-top-left-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
+}
+
+.border-right-radius {
+    border-top-right-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+}
+
+.col-3-half {
+    flex: 0 0 auto;
+    width: 28.571428571%;
+}
+
+.not-last-border-bottom:not(:last-of-type) {
+    border-bottom: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color) !important;
+}

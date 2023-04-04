@@ -2,13 +2,19 @@ package com.woong.mintchoco.service;
 
 import com.woong.mintchoco.domain.AttachFile;
 import com.woong.mintchoco.domain.MenuGroup;
+import com.woong.mintchoco.domain.MenuOption;
+import com.woong.mintchoco.domain.MenuOptionGroup;
 import com.woong.mintchoco.domain.Store;
 import com.woong.mintchoco.domain.User;
 import com.woong.mintchoco.repository.FileRepository;
-import com.woong.mintchoco.repository.menu.MenuGroupRepository;
+import com.woong.mintchoco.repository.menu.group.MenuGroupRepository;
+import com.woong.mintchoco.repository.menu.option.MenuOptionRepository;
+import com.woong.mintchoco.repository.menu.option.group.MenuOptionGroupRepository;
 import com.woong.mintchoco.repository.store.StoreRepository;
 import com.woong.mintchoco.repository.user.UserRepository;
 import com.woong.mintchoco.vo.MenuGroupVO;
+import com.woong.mintchoco.vo.MenuOptionGroupVO;
+import com.woong.mintchoco.vo.MenuOptionVO;
 import com.woong.mintchoco.vo.StoreVO;
 import com.woong.mintchoco.vo.UserVO;
 import java.util.List;
@@ -30,6 +36,10 @@ public class OwnerService {
     private final StoreRepository storeRepository;
 
     private final MenuGroupRepository menuGroupRepository;
+
+    private final MenuOptionGroupRepository menuOptionGroupRepository;
+
+    private final MenuOptionRepository menuOptionRepository;
 
     /**
      * 사용자의 아이디로 사용자의 정보를 조회환다.
@@ -166,6 +176,53 @@ public class OwnerService {
         menuGroupRepository.updateMenuGroupOrder(menuGroupIdList);
     }
 
+
+    public List<MenuOptionGroupVO> selectAllMenuOptionGroup(User user) {
+        Long storeId = user.getStore().getId();
+
+        return menuOptionGroupRepository.selectAllMenuOptionGroupWithMenuOptionOrderByMenuOrder(storeId).stream()
+                .map(MenuOptionGroupVO::toMenuOptionGroupVO).toList();
+    }
+
+
+    @Transactional
+    public void insertMenuOptionGroup(User user, MenuOptionGroupVO menuOptionGroupVO, MenuOptionVO menuOptionVO) {
+        Store store = storeRepository.findById(user.getStore().getId()).orElseThrow(NoSuchElementException::new);
+        menuOptionGroupVO.setStore(store);
+        MenuOptionGroup menuOptionGroup = menuOptionGroupRepository.save(
+                MenuOptionGroup.toMenuOptionGroup(menuOptionGroupVO));
+
+        List<MenuOptionVO> menuOptionVOList = menuOptionVO.getMenuOptionVOList();
+        for (MenuOptionVO data : menuOptionVOList) {
+            data.setMenuOptionGroup(menuOptionGroup);
+            menuOptionRepository.save(MenuOption.toMenuOption(data));
+        }
+    }
+
+
+    public MenuOptionGroupVO selectMenuOptionGroup(Long menuOptionGroupId) {
+        return MenuOptionGroupVO.toMenuOptionGroupVO(
+                menuOptionGroupRepository.selectMenuOptionGroupWithMenuOptionOrderByMenuOrder(menuOptionGroupId));
+    }
+
+
+    @Transactional
+    public void updateMenuOptionGroup(MenuOptionGroupVO menuOptionGroupVO) {
+        MenuOptionGroup menuOptionGroup = menuOptionGroupRepository.findById(menuOptionGroupVO.getMenuOptionGroupId())
+                .orElseThrow(NoSuchElementException::new);
+        menuOptionGroup.setTitle(menuOptionGroupVO.getMenuOptionGroupTitle());
+        menuOptionGroup.setRequired(menuOptionGroupVO.getMenuOptionGroupRequired());
+        menuOptionGroup.setMaxSelect(menuOptionGroupVO.getMenuOptionGroupMaxSelect());
+
+        menuOptionGroup = menuOptionGroupRepository.save(menuOptionGroup);
+        menuOptionRepository.deleteByMenuOptionGroupId(menuOptionGroup.getId());
+
+        for (MenuOptionVO data : menuOptionGroupVO.getMenuOptionVOList()) {
+            data.setMenuOptionGroup(menuOptionGroup);
+            MenuOption menuOption = MenuOption.toMenuOption(data);
+            menuOptionRepository.save(menuOption);
+        }
+    }
 
     /**
      * 영업 유무에 따른 정보를 변경하는 메소드

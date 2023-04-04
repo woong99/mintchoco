@@ -8,6 +8,8 @@ import com.woong.mintchoco.service.FileManageService;
 import com.woong.mintchoco.service.OwnerService;
 import com.woong.mintchoco.service.UserService;
 import com.woong.mintchoco.vo.MenuGroupVO;
+import com.woong.mintchoco.vo.MenuOptionGroupVO;
+import com.woong.mintchoco.vo.MenuOptionVO;
 import com.woong.mintchoco.vo.StoreVO;
 import com.woong.mintchoco.vo.UserVO;
 import jakarta.servlet.http.HttpServletRequest;
@@ -297,8 +299,10 @@ public class OwnerController {
     @RequestMapping("/menu/info")
     public String menuInfo(@AuthUser User user, ModelMap model) {
         List<MenuGroupVO> menuGroupVOList = ownerService.selectAllMenuGroup(user);
+        List<MenuOptionGroupVO> menuOptionGroupVOList = ownerService.selectAllMenuOptionGroup(user);
 
         model.addAttribute("menuGroupVOList", menuGroupVOList);
+        model.addAttribute("menuOptionGroupVOList", menuOptionGroupVOList);
         return "/views/owner/menu/menuInfo";
     }
 
@@ -373,6 +377,59 @@ public class OwnerController {
 
         model.addAttribute("type", MessageType.msgUrl.getMessage());
         model.addAttribute("message", "저장이 완료되었습니다.");
+        model.addAttribute("returnUrl", "/owner/menu/info");
+        return "/views/common/message";
+    }
+
+
+    /**
+     * 사장님 페이지 > 메뉴 관리 > 옵션 설정 > 옵션 추가 > 등록 action
+     *
+     * @param user              인증 정보
+     * @param menuOptionGroupVO 메뉴 옵션 그룹 정보
+     * @param menuOptionVO      메뉴 옵션 정보
+     * @param model             모델
+     * @return "/views/common/message"
+     */
+    @RequestMapping("/menu/info/menuGroup/menuOptionGroup/insert.do")
+    public String menuOptionGroupInsert(@AuthUser User user, MenuOptionGroupVO menuOptionGroupVO,
+                                        MenuOptionVO menuOptionVO, ModelMap model) {
+        ownerService.insertMenuOptionGroup(user, menuOptionGroupVO, menuOptionVO);
+
+        model.addAttribute("type", MessageType.msgUrl.getMessage());
+        model.addAttribute("message", "추가가 완료되었습니다.");
+        model.addAttribute("returnUrl", "/owner/menu/info");
+        return "/views/common/message";
+    }
+
+
+    /**
+     * 사장님 페이지 > 메뉴 관리 > 옵션 설정 > 옵션 상세 조회
+     *
+     * @param menuOptionGroupId 메뉴 옵션 그룹 ID
+     * @return ResponseEntity
+     */
+    @RequestMapping("/menu/info/menuGroup/menuOptionGroup/select.do")
+    public ResponseEntity<MenuOptionGroupVO> menuOptionGroupSelect(@RequestParam("id") Long menuOptionGroupId) {
+        MenuOptionGroupVO menuOptionGroupVO = ownerService.selectMenuOptionGroup(menuOptionGroupId);
+
+        return ResponseEntity.ok(menuOptionGroupVO);
+    }
+
+
+    /**
+     * 사장님 페이지 > 메뉴 관리 > 옵션 설정 > 옵션 수정 > 수정 action
+     *
+     * @param menuOptionGroupVO 메유 옵션 그룹 정보
+     * @param model             모델
+     * @return "/views/common/message"
+     */
+    @RequestMapping("/menu/info/menuGroup/menuOptionGroup/update.do")
+    public String menuOptionGroupUpdate(MenuOptionGroupVO menuOptionGroupVO, ModelMap model) {
+        ownerService.updateMenuOptionGroup(menuOptionGroupVO);
+
+        model.addAttribute("type", MessageType.msgUrl.getMessage());
+        model.addAttribute("message", "수정이 완료되었습니다.");
         model.addAttribute("returnUrl", "/owner/menu/info");
         return "/views/common/message";
     }
