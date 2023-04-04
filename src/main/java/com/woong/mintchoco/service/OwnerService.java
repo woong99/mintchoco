@@ -177,6 +177,11 @@ public class OwnerService {
     }
 
 
+    /**
+     * 모든 메뉴 옵션 그룹과 연관된 옵션들을 조회한다.
+     * @param user 인증 정보
+     * @return 모든 메뉴 옵션 그룹 및 연관된 옵션들
+     */
     public List<MenuOptionGroupVO> selectAllMenuOptionGroup(User user) {
         Long storeId = user.getStore().getId();
 
@@ -185,6 +190,12 @@ public class OwnerService {
     }
 
 
+    /**
+     * 메뉴 옵션 그룹과 메뉴 옵션들을 저장한다.
+     * @param user 인증 정보
+     * @param menuOptionGroupVO 메뉴 옵션 그룹 정보
+     * @param menuOptionVO 메뉴 옵션 정보
+     */
     @Transactional
     public void insertMenuOptionGroup(User user, MenuOptionGroupVO menuOptionGroupVO, MenuOptionVO menuOptionVO) {
         Store store = storeRepository.findById(user.getStore().getId()).orElseThrow(NoSuchElementException::new);
@@ -200,12 +211,21 @@ public class OwnerService {
     }
 
 
+    /**
+     * 단일 메뉴 옵션 그룹과 연관된 메뉴 옵션들을 조회한다.
+     * @param menuOptionGroupId 메뉴 옵션 그룹 ID
+     * @return 단일 메뉴 옵션 그룹 및 연관된 메뉴 옵션들
+     */
     public MenuOptionGroupVO selectMenuOptionGroup(Long menuOptionGroupId) {
         return MenuOptionGroupVO.toMenuOptionGroupVO(
                 menuOptionGroupRepository.selectMenuOptionGroupWithMenuOptionOrderByMenuOrder(menuOptionGroupId));
     }
 
 
+    /**
+     * 메뉴 옵션 그룹 및 연관된 메뉴 옵션들을 수정한다.
+     * @param menuOptionGroupVO 메뉴 옵션 그룹 정보
+     */
     @Transactional
     public void updateMenuOptionGroup(MenuOptionGroupVO menuOptionGroupVO) {
         MenuOptionGroup menuOptionGroup = menuOptionGroupRepository.findById(menuOptionGroupVO.getMenuOptionGroupId())
