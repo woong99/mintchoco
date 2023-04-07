@@ -8,8 +8,10 @@ import com.woong.mintchoco.service.FileManageService;
 import com.woong.mintchoco.service.OwnerService;
 import com.woong.mintchoco.service.UserService;
 import com.woong.mintchoco.vo.MenuGroupVO;
+import com.woong.mintchoco.vo.MenuOptionGroupMenuVO;
 import com.woong.mintchoco.vo.MenuOptionGroupVO;
 import com.woong.mintchoco.vo.MenuOptionVO;
+import com.woong.mintchoco.vo.MenuVO;
 import com.woong.mintchoco.vo.StoreVO;
 import com.woong.mintchoco.vo.UserVO;
 import jakarta.servlet.http.HttpServletRequest;
@@ -299,7 +301,7 @@ public class OwnerController {
     @RequestMapping("/menu/info")
     public String menuInfo(@AuthUser User user, ModelMap model) {
         List<MenuGroupVO> menuGroupVOList = ownerService.selectAllMenuGroup(user);
-        List<MenuOptionGroupVO> menuOptionGroupVOList = ownerService.selectAllMenuOptionGroup(user);
+        List<MenuOptionGroupVO> menuOptionGroupVOList = ownerService.selectAllMenuOptionGroupWithMenuOption(user);
 
         model.addAttribute("menuGroupVOList", menuGroupVOList);
         model.addAttribute("menuOptionGroupVOList", menuOptionGroupVOList);
@@ -430,6 +432,196 @@ public class OwnerController {
 
         model.addAttribute("type", MessageType.msgUrl.getMessage());
         model.addAttribute("message", "수정이 완료되었습니다.");
+        model.addAttribute("returnUrl", "/owner/menu/info");
+        return "/views/common/message";
+    }
+
+
+    /**
+     * 사장님 페이지 > 메뉴 관리 > 메뉴 설정 > 메뉴 추가 > 등록 action
+     *
+     * @param menuGroupId 메뉴 그룹 ID
+     * @param menuVO      메뉴 정보
+     * @param model       모델
+     * @return "/views/common/message"
+     */
+    @RequestMapping("/menu/info/menu/insert.do")
+    public String menuInsert(@RequestParam("menuGroupId") Long menuGroupId, MenuVO menuVO, ModelMap model) {
+        ownerService.insertMenu(menuGroupId, menuVO);
+
+        model.addAttribute("type", MessageType.msgUrl.getMessage());
+        model.addAttribute("message", "추가가 완료되었습니다.");
+        model.addAttribute("returnUrl", "/owner/menu/info");
+        return "/views/common/message";
+    }
+
+
+    /**
+     * 사장님 페이지 > 메뉴 관리 > 메뉴 설정 > 메뉴 단일 조회
+     *
+     * @param menuId 메뉴 ID
+     * @return 단일 메뉴 정보
+     */
+    @RequestMapping("/menu/info/menu/select.do")
+    public ResponseEntity<MenuVO> menuSelect(@RequestParam("menuId") Long menuId) {
+        MenuVO menuVO = ownerService.selectMenu(menuId);
+
+        return ResponseEntity.ok(menuVO);
+    }
+
+
+    /**
+     * 사장님 페이지 > 메뉴 관리 > 메뉴 설정 > 메뉴 수정 > 수정 action
+     *
+     * @param menuVO 메뉴 정보
+     * @param model  모델
+     * @return "/views/common/message"
+     */
+    @Transactional
+    @RequestMapping("/menu/info/menu/update.do")
+    public String menuUpdate(MenuVO menuVO, ModelMap model) {
+        ownerService.updateMenu(menuVO);
+
+        model.addAttribute("type", MessageType.msgUrl.getMessage());
+        model.addAttribute("message", "수정이 완료되었습니다.");
+        model.addAttribute("returnUrl", "/owner/menu/info");
+        return "/views/common/message";
+    }
+
+
+    /**
+     * 사장님 페이지 > 메뉴 관리 > 메뉴 설정 > 메뉴 다수 조회
+     *
+     * @param menuGroupId 메뉴 그룹 ID
+     * @return 다수 메뉴 정보
+     */
+    @RequestMapping("/menu/info/menus/select.do")
+    public ResponseEntity<List<MenuVO>> menusSelect(@RequestParam("menuGroupId") Long menuGroupId) {
+        return ResponseEntity.ok(ownerService.selectMenus(menuGroupId));
+    }
+
+
+    /**
+     * 사장님 페이지 > 메뉴 관리 > 메뉴 설정 > 메뉴 순서 변경
+     *
+     * @param menuIdList 메뉴 ID 리스트
+     * @param model      모델
+     * @return "/views/common/message"
+     */
+    @RequestMapping("/menu/info/menus/orderUpdate.do")
+    public String menusOrderUpdate(@RequestParam("menuIdList") Long[] menuIdList, ModelMap model) {
+        ownerService.updateMenusOrder(menuIdList);
+
+        model.addAttribute("type", MessageType.msgUrl.getMessage());
+        model.addAttribute("message", "저장이 완료되었습니다.");
+        model.addAttribute("returnUrl", "/owner/menu/info");
+        return "/views/common/message";
+    }
+
+
+    /**
+     * 사장님 페이지 > 메뉴 관리 > 메뉴 설정 > 옵션그룹 연결
+     *
+     * @param user   인증 정보
+     * @param menuId 메뉴 ID
+     * @param model  모델
+     * @return "/fragments/owner/menu/optionGroupConnectModal"
+     */
+    @RequestMapping("/menu/info/menuOptionGroup")
+    public String menuOptionGroup(@AuthUser User user, @RequestParam("menuId") Long menuId, ModelMap model) {
+        List<MenuOptionGroupVO> menuOptionGroupVOList = ownerService.selectAllMenuOptionGroup(user);
+        List<MenuOptionGroupMenuVO> menuOptionGroupMenuVOList = ownerService.selectMenuOptionGroupConnectMenu(menuId);
+
+        model.addAttribute("menuOptionGroupVOList", menuOptionGroupVOList);
+        model.addAttribute("menuOptionGroupMenuVOList", menuOptionGroupMenuVOList);
+        return "/fragments/owner/menu/optionGroupConnectModal";
+    }
+
+
+    /**
+     * 사장님 페이지 > 메뉴 관리 > 메뉴 설정 > 옵션그룹 연결 > 등록 action
+     *
+     * @param optionGroupIdList 메뉴 옵션 그룹 ID 리스트
+     * @param menuId            메뉴 ID
+     * @param model             모델
+     * @return "/views/common/message"
+     */
+    @RequestMapping("/menu/info/menu/connectOptionGroup")
+    public String connectOptionGroup(@RequestParam("optionGroupIdList") Long[] optionGroupIdList,
+                                     @RequestParam("menuId") Long menuId, ModelMap model) {
+        ownerService.insertMenuOptionGroupConnectMenu(optionGroupIdList, menuId);
+
+        model.addAttribute("type", MessageType.msgUrl.getMessage());
+        model.addAttribute("message", "저장이 완료되었습니다.");
+        model.addAttribute("returnUrl", "/owner/menu/info");
+        return "/views/common/message";
+    }
+
+
+    /**
+     * 사장님 페이지 > 메뉴 관리 > 옵션 설정 > 메뉴와 연결된 옵션 그룹 조회
+     *
+     * @param menuOptionGroupId 메뉴 옵션 그룹 ID
+     * @return 메뉴와 연결된 옵션 그룹 정보
+     */
+    @RequestMapping("/menu/info/menuOptionGroup/connectedMenu")
+    public ResponseEntity<List<MenuVO>> menuOptionGroupConnectedMenu(
+            @RequestParam("menuOptionGroupId") Long menuOptionGroupId) {
+        List<MenuVO> menuVOList = ownerService.selectMenuOptionGroupConnectedMenu(menuOptionGroupId);
+
+        return ResponseEntity.ok(menuVOList);
+    }
+
+
+    /**
+     * 사장님 페이지 > 메뉴 관리 > 옵션 설정 > 옵션 그룹 삭제 > 삭제 action
+     *
+     * @param menuOptionGroupId 메뉴 옵션 그룹 ID
+     * @param model             모델
+     * @return "/views/common/message"
+     */
+    @RequestMapping("/menu/info/menuOptionGroup/delete.do")
+    public String menuOptionGroupDelete(@RequestParam("menuOptionGroupId") Long menuOptionGroupId, ModelMap model) {
+        ownerService.deleteMenuOptionGroup(menuOptionGroupId);
+
+        model.addAttribute("type", MessageType.msgUrl.getMessage());
+        model.addAttribute("message", "삭제가 완료되었습니다.");
+        model.addAttribute("returnUrl", "/owner/menu/info");
+        return "/views/common/message";
+    }
+
+
+    /**
+     * 사장님 페이지 > 메뉴 관리 > 메뉴 설정 > 메뉴 삭제 > 삭제 action
+     *
+     * @param menuId 메뉴 ID
+     * @param model  모델
+     * @return "/views/common/message"
+     */
+    @RequestMapping("/menu/info/menu/delete.do")
+    public String menuDelete(@RequestParam("menuId") Long menuId, ModelMap model) {
+        ownerService.deleteMenu(menuId);
+
+        model.addAttribute("type", MessageType.msgUrl.getMessage());
+        model.addAttribute("message", "삭제가 완료되었습니다.");
+        model.addAttribute("returnUrl", "/owner/menu/info");
+        return "/views/common/message";
+    }
+
+
+    /**
+     * 사장님 페이지 > 메뉴 관리 > 메뉴 설정 > 메뉴 그룹 삭제 > 삭제 action
+     *
+     * @param menuGroupId 메뉴 그룹 ID
+     * @param model       모델
+     * @return "/views/common/message"
+     */
+    @RequestMapping("/menu/info/menuGroup/delete.do")
+    public String menuGroupDelete(@RequestParam("menuGroupId") Long menuGroupId, ModelMap model) {
+        ownerService.deleteMenuGroup(menuGroupId);
+
+        model.addAttribute("type", MessageType.msgUrl.getMessage());
+        model.addAttribute("message", "삭제가 완료되었습니다.");
         model.addAttribute("returnUrl", "/owner/menu/info");
         return "/views/common/message";
     }

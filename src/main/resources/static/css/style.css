@@ -296,6 +296,11 @@ h6 {
 .accordion-button:focus {
     outline: 0;
     box-shadow: none;
+    z-index: auto
+}
+
+.accordion-button:hover {
+    z-index: auto;
 }
 
 .accordion-button:not(.collapsed) {

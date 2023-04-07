@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="menuGroupModal">
+    <div aria-hidden="true" aria-labelledby="menuGroupModalLabel" class="modal fade"
+         data-bs-backdrop="static" data-bs-keyboard="false" id="menuGroupModal"
+         tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <form class="w-100" id="menuGroupModalForm">
+                <input id="menuGroupId" name="id" type="hidden">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="menuGroupModalLabel">메뉴그룹 추가</h1>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-4">
+                            <label class="form-label fs-6" for="menuGroupTitle">메뉴그룹명 <em
+                                    class="text-danger">*</em></label>
+                            <div class="float-end text-secondary count-text-limit"
+                                 id="menuGroupTitleLength">
+                                0/20
+                            </div>
+                            <input class="form-control" id="menuGroupTitle"
+                                   name="menuGroupTitle"
+                                   placeholder="예) 민트초코 세트 메뉴" type="text">
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label" for="menuGroupExplanation">메뉴그룹
+                                설명 </label>
+                            <div class="float-end text-secondary count-text-limit"
+                                 id="menuGroupExplanationLength">0/70
+                            </div>
+                            <textarea class="form-control no-resize-textarea"
+                                      id="menuGroupExplanation" name="menuGroupExplanation"
+                                      placeholder="예) 민트초코를 담은 세트 메뉴입니다."
+                            ></textarea>
+                        </div>
+                        <div class="btn-group col-4">
+                            <div class="col-6">
+                                <input checked class="btn-check" id="menuGroupExposure"
+                                       name="menuGroupExposure" type="radio" value="Y">
+                                <label class="btn btn-outline-primary w-100"
+                                       for="menuGroupExposure"
+                                       style="border-bottom-right-radius: 0; border-top-right-radius: 0;"
+                                       출>노출</label>
+                            </div>
+                            <div class="col-6">
+                                <input class="btn-check" id="menuGroupNonExposure"
+                                       name="menuGroupExposure"
+                                       type="radio" value="N">
+                                <label class="btn btn-outline-primary w-100"
+                                       for="menuGroupNonExposure"
+                                       style="border-bottom-left-radius: 0; border-top-left-radius: 0;">비노출</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary px-4"
+                                id="menuGroupModalCancel" type="button">
+                            취소
+                        </button>
+                        <button class="btn btn-primary px-4" data-command="insert"
+                                id="menuGroupModalSubmit" type="button">추가
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</th:block>
+</html>

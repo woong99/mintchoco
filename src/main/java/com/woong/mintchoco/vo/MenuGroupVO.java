@@ -2,6 +2,7 @@ package com.woong.mintchoco.vo;
 
 import com.woong.mintchoco.domain.MenuGroup;
 import com.woong.mintchoco.domain.Store;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,6 +30,8 @@ public class MenuGroupVO {
 
     private Store store;
 
+    private List<MenuVO> menuVOList;
+
     public static MenuGroupVO toMenuGroupVO(MenuGroup menuGroup) {
         return MenuGroupVO.builder()
                 .id(menuGroup.getId())
@@ -36,6 +39,7 @@ public class MenuGroupVO {
                 .menuGroupExplanation(menuGroup.getExplanation())
                 .menuGroupExposure(menuGroup.getExposure())
                 .menuGroupOrder(menuGroup.getGroupOrder())
+                .menuVOList(menuGroup.getMenus().stream().map(MenuVO::toMenuVO).toList())
                 .build();
     }
 }

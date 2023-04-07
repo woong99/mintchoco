@@ -127,8 +127,12 @@ $(function () {
     /* 옵션그룹 추가/수정 모달 취소 버튼 이벤트 */
     $("#menuOptionGroupModalCancel").click(() => {
         if (confirm("작성하신 내용은 저장되지 않습니다. 정말 취소하시겠습니까?")) {
+            const menuOptionGroupModalSubmit = $("#menuOptionGroupModalSubmit");
             $("#menuOptionGroupModal").modal('hide');
             $("#menuOptionGroupTitle").val("");
+            $("#menuOptionGroupModalLabel").text("옵션그룹 추가");
+            menuOptionGroupModalSubmit.text("추가");
+            menuOptionGroupModalSubmit.attr("data-command", "insert");
             $(".menu-option-content").not(":first").remove();
             $(".menu-option").val("");
             $(".menu-option-price").val("");
@@ -431,6 +435,248 @@ $(function () {
                 menuOptionGroupModal.modal('show');
             })
     })
+
+    /* 메뉴 추가 버튼 이벤트 */
+    $(".menuAddBtn").click(function () {
+        $("#menuModalMenuGroupId").val($(this).attr("data-id"));
+        $("#menuModal").modal("show");
+    })
+
+    /* 메뉴 추가/수정 메뉴명 글자수 제한 */
+    $("#menuTitle").keyup(function (e) {
+        countContentLengthWithText($(this), $("#menuTitleLength"), 20);
+    })
+
+    /* 메뉴 추가/수정 메뉴 설명 글자수 제한 */
+    $("#menuExplanation").keyup(function (e) {
+        countContentLengthWithText($(this), $("#menuExplanationLength"), 70);
+    })
+
+    /* 메뉴 추가/수정 메뉴 가격 글자수 제한 및 유효성 검사 */
+    $("#menuPrice").keyup(function (e) {
+        if (e.keyCode !== 37 && e.keyCode !== 39) {
+            $(this).val($(this).val().replaceAll(/[^0-9.]/g, ''));
+            $(this).val($(this).val().replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,'));
+            countContentLength($(this), 11);
+        }
+    })
+
+    /* 메뉴 추가/수정 모달 취소 이벤트 */
+    $("#menuModalCancel").click(() => {
+        if (confirm("작성하신 내용은 저장되지 않습니다. 정말 취소하시겠습니까?")) {
+            $("#menuModal").modal('hide');
+            const menuModalSubmit = $("#menuModalSubmit");
+            $("#menuModalLabel").text("메뉴 추가")
+            $("#menuTitle").val("");
+            $("#menuExplanation").val("");
+            $("#menuPrice").val("");
+            $("#menuExposure").prop("checked", true);
+            $("#menuTitleLength").text("0/20");
+            $("#menuExplanationLength").text("0/70");
+            $("#menuModalMenuId").val("");
+            menuModalSubmit.text("추가");
+            menuModalSubmit.attr("data-command", "insert");
+            $("#menuModalMenuGroupId").val("");
+        }
+    })
+
+    /* 메뉴 추가/수정 모달 추가/수정 이벤트 */
+    $("#menuModalSubmit").click(() => {
+        const menuTitle = $("#menuTitle");
+        const menuExplanation = $("#menuExplanation");
+        const menuPrice = $("#menuPrice");
+        const command = $("#menuModalSubmit").attr("data-command");
+        const frm = $("#menuModalForm");
+
+        if (isEmpty(menuTitle.val())) {
+            alert("메뉴명을 입력해주세요.");
+            menuTitle.focus();
+            return false;
+        }
+
+        if (isEmpty(menuExplanation.val())) {
+            alert("메뉴 설명을 입력해주세요.");
+            menuExplanation.focus();
+            return false;
+        }
+
+        if (isEmpty(menuPrice.val())) {
+            alert("메뉴 가격을 입력해주세요.");
+            menuPrice.focus();
+            return false;
+        }
+
+        menuPrice.val(menuPrice.val().replaceAll(",", ""));
+
+        if (command === 'insert') {
+            if (confirm("추가하시겠습니까?")) {
+                frm.attr("action", "/owner/menu/info/menu/insert.do");
+                $("#menuModalMenuId").attr("disabled", true);
+                frm.submit();
+            }
+        } else if (command === 'update') {
+            if (confirm("수정하시겠습니까?")) {
+                frm.attr("action", "/owner/menu/info/menu/update.do");
+                frm.submit();
+            }
+        } else {
+            alert("잘못된 접근입니다.");
+            location.reload();
+        }
+    })
+
+    /* 메뉴 수정 버튼 이벤트 */
+    $(".menu-edit").click(function (e) {
+        $.ajax({
+            url: '/owner/menu/info/menu/select.do',
+            data: {menuId: $(this).attr("data-id")}
+        })
+            .done(res => {
+                $("#menuModalLabel").text("메뉴 수정");
+                $("#menuTitle").val(res.menuTitle);
+                $("#menuTitleLength").text(res.menuTitle.length + "/20");
+                $("#menuExplanation").val(res.menuExplanation);
+                $("#menuExplanationLength").text(res.menuExplanation.length + "/70");
+                $("#menuPrice").val(res.menuPrice);
+                if (res.menuExposure === 'Y') {
+                    $("input[name='menuExposure']:radio[value='Y']").prop("checked", true);
+                } else {
+                    $("input[name='menuExposure']:radio[value='N']").prop("checked", true);
+                }
+                const menuModalSubmit = $("#menuModalSubmit");
+                menuModalSubmit.text("수정");
+                menuModalSubmit.attr("data-command", 'update');
+                $("#menuModalMenuId").val($(this).attr("data-id"));
+                $("#menuModal").modal("show");
+            })
+            .fail(res => {
+                alert("메뉴를 조회할 수 없습니다.");
+            })
+    });
+
+    /* 메뉴 순서변경 모달 drag&drop 이벤트 */
+    $("#menuSortable").sortable({
+        revert: true
+    }).disableSelection();
+
+    /* 메뉴 순서변경 버튼 이벤트 */
+    $(".menuReOrderBtn").click(function () {
+        $.ajax({
+            url: "/owner/menu/info/menus/select.do",
+            data: {menuGroupId: $(this).attr("data-id")}
+        })
+            .done((res) => {
+                let content = "";
+                res.forEach((data) => {
+                    content += `
+                                <div class="list-group align-items-center menu-order-modal-list-group" data-id="${data.menuId}">
+                                        <div class="list-group-item d-flex align-items-center justify-content-between col-12">
+                                        <span>${data.menuTitle}</span>
+                                            <div class="icon">
+                                                <i class="bx bx-list-ul fs-2"></i>
+                                           </div>
+                                         </div>
+                                </div>
+                                `
+                })
+                $("#menuOrderFrm").after(content)
+                $("#menuOrderModal").modal("show");
+            })
+            .error(() => {
+                alert("메뉴 조회에 실패했습니다.");
+            })
+    })
+
+    /* 메뉴 순서변경 모달 취소 버튼 이벤트 */
+    $("#menuOrderModalCancel").click(() => {
+        if (confirm(cancelMessage)) {
+            $("#menuOrderModal").modal("hide");
+        }
+    })
+
+    /* 메뉴 순서변경 모달 저장 버튼 이벤트 */
+    $("#menuOrderModalSubmit").click(() => {
+        const frm = $("#menuOrderFrm");
+        let menuIdList = [];
+        $(".menu-order-modal-list-group").each((index, data) => {
+            menuIdList.push($(data).attr("data-id"));
+        });
+
+        if (confirm(saveMessage)) {
+            $("#menuIdList").val(menuIdList);
+            frm.attr("action", "/owner/menu/info/menus/orderUpdate.do");
+            frm.submit();
+        }
+    });
+
+    /* 옵션그룹 연결 버튼 이벤트 */
+    $(".menu-add-option-group").click(function () {
+        const menuId = parseInt($(this).attr("data-id"));
+        $.ajax({
+            url: "/owner/menu/info/menuOptionGroup",
+            data: {menuId}
+        })
+            .done(res => {
+                $("#optionGroupConnectModalWrapper").append(res);
+                $("#optionGroupConnectModal").modal("show");
+                $("#menuId").val(menuId);
+                $("#menuOptionConnectSortable").sortable({
+                    revert: true,
+                    items: ".menu-option-connect-sortable"
+                }).disableSelection();
+            })
+            .fail(() => {
+                alert("옵션그룹을 조회할 수 없습니다.")
+            })
+    })
+
+    /* 옵션그룹 삭제 버튼 이벤트 */
+    $(".menu-option-group-delete").click(function () {
+        const menuOptionGroupId = parseInt($(this).attr("data-id"));
+        $.ajax({
+            url: "/owner/menu/info/menuOptionGroup/connectedMenu",
+            data: {menuOptionGroupId}
+        })
+            .done(res => {
+                let message = deleteMessage + " 이 옵션그룹과 연결된 메뉴에서도 삭제됩니다.";
+                if (res.length > 0) {
+                    message += "\n\n===== 연결된 메뉴 =====\n"
+                    res.forEach(item => {
+                        message += "\n" + item.menuTitle;
+                    });
+                }
+
+                if (confirm(message)) {
+                    const menuOptionGroupFrm = $("#menuOptionGroupFrm");
+                    $("#menuOptionGroupIdToRemove").val(menuOptionGroupId);
+                    menuOptionGroupFrm.attr("action", "/owner/menu/info/menuOptionGroup/delete.do");
+                    menuOptionGroupFrm.submit();
+                }
+            })
+            .fail(() => {
+                alert("삭제에 실패했습니다.");
+            })
+    })
+
+    /* 메뉴 삭제 버튼 이벤트 */
+    $(".menu-remove").click((function () {
+        if (confirm(deleteMessage)) {
+            const menuRemoveFrm = $("#menuRemoveFrm");
+            $("#menuRemoveId").val($(this).attr("data-id"));
+            menuRemoveFrm.attr("action", "/owner/menu/info/menu/delete.do");
+            menuRemoveFrm.submit();
+        }
+    }))
+
+    /* 메뉴 그룹 삭제 버튼 이벤트 */
+    $(".menu-group-delete").click(function () {
+        if (confirm(deleteMessage)) {
+            const menuRemoveFrm = $("#menuRemoveFrm");
+            $("#menuGroupRemoveId").val($(this).attr("data-id"));
+            menuRemoveFrm.attr("action", "/owner/menu/info/menuGroup/delete.do");
+            menuRemoveFrm.submit();
+        }
+    })
 })
 
 /* 최대 글자수 체크 및 글자수 표시 텍스트 갱신 */
@@ -477,6 +723,52 @@ $(document).on("click", ".menu-option-delete", function () {
         const toastLiveExample = document.getElementById("toast");
         const toast = new bootstrap.Toast(toastLiveExample, {delay: 1800});
         toast.show();
+    }
+})
+
+/* 옵션그룹 연결 모달 연결 추가 버튼 이벤트 */
+$(document).on("click", ".menu-option-connect-btn", function () {
+    $(this).removeClass("menu-option-connect-btn");
+    $(this).addClass("menu-option-disconnect-btn");
+    $(this).children("i").removeClass("bxs-plus-circle");
+    $(this).children("i").addClass("bxs-minus-circle");
+    $(".menu-option-connected").append($(this).closest(".list-group"));
+    $(this).closest(".list-group").addClass("menu-option-connect-sortable");
+    $(this).replaceWith(optionDisconnectNode);
+});
+
+/* 옵션그룹 연결 모달 연결 삭제 버튼 이벤트 */
+$(document).on("click", ".menu-option-disconnect-btn", function () {
+    $(this).removeClass("menu-option-disconnect-btn");
+    $(this).addClass("menu-option-connect-btn");
+    $(this).children("i").removeClass("bxs-minus-circle");
+    $(this).children("i").addClass("bxs-plus-circle");
+    $(".menu-option-unconnected").append($(this).closest(".list-group"));
+    $(this).closest(".list-group").removeClass("menu-option-connect-sortable")
+    $(this).parent().replaceWith(optionConnectNode);
+});
+
+
+/* 옵션그룹 연결 모달 취소 버튼 이벤트 */
+$(document).on("click", "#optionGroupConnectModalCancel", function () {
+    if (confirm(cancelMessage)) {
+        const optionGroupConnectModal = $("#optionGroupConnectModal");
+        optionGroupConnectModal.modal("hide")
+        optionGroupConnectModal.remove();
+    }
+})
+
+/* 옵션그룹 연결 모달 저장 버튼 이벤트 */
+$(document).on("click", "#optionGroupConnectModalSubmit", function () {
+    const optionGroupConnectFrm = $("#optionGroupConnectFrm");
+    let optionGroupIdList = [];
+    $(".menu-option-connect-sortable").each((index, data) => {
+        optionGroupIdList.push(parseInt($(data).attr("data-id")));
+    })
+    $("#optionGroupIdList").val(optionGroupIdList);
+    if (confirm(saveMessage)) {
+        optionGroupConnectFrm.attr("action", "/owner/menu/info/menu/connectOptionGroup");
+        optionGroupConnectFrm.submit();
     }
 })
 
@@ -535,3 +827,18 @@ function optionContent() {
     }
     return content;
 }
+
+const optionDisconnectNode =
+    `<div class="d-flex align-items-center">
+        <div class="icon pointer menu-option-disconnect-btn d-flex align-items-center me-2">
+            <i class="bx bxs-minus-circle fs-3"></i>
+        </div>
+        <div class="icon pointer menu-option-connect-reorder-btn d-flex align-items-center">
+            <i class="bx bx-list-ul fs-2"></i>
+        </div>
+    </div>`
+
+const optionConnectNode =
+    `<div class="icon pointer menu-option-connect-btn">
+        <i class="bx bxs-plus-circle fs-3"></i>
+    </div>`

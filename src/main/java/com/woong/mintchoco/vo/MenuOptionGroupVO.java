@@ -30,13 +30,22 @@ public class MenuOptionGroupVO {
 
     private Store store;
 
-    public static MenuOptionGroupVO toMenuOptionGroupVO(MenuOptionGroup menuOptionGroup) {
+    public static MenuOptionGroupVO toMenuOptionGroupVOWithMenuOption(MenuOptionGroup menuOptionGroup) {
         return MenuOptionGroupVO.builder()
                 .menuOptionGroupId(menuOptionGroup.getId())
                 .menuOptionGroupTitle(menuOptionGroup.getTitle())
                 .menuOptionGroupRequired(menuOptionGroup.getRequired())
                 .menuOptionGroupMaxSelect(menuOptionGroup.getMaxSelect())
                 .menuOptionVOList(menuOptionGroup.getMenuOptions().stream().map(MenuOptionVO::toMenuOptionVO).toList())
+                .build();
+    }
+
+    public static MenuOptionGroupVO toMenuOptionGroupVO(MenuOptionGroup menuOptionGroup) {
+        return MenuOptionGroupVO.builder()
+                .menuOptionGroupId(menuOptionGroup.getId())
+                .menuOptionGroupTitle(menuOptionGroup.getTitle())
+                .menuOptionGroupRequired(menuOptionGroup.getRequired())
+                .menuOptionGroupMaxSelect(menuOptionGroup.getMaxSelect())
                 .build();
     }
 }
