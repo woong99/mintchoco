@@ -3,6 +3,8 @@ package com.woong.mintchoco.user;
 import com.woong.mintchoco.global.auth.model.UserVO;
 import com.woong.mintchoco.global.auth.service.UserService;
 import com.woong.mintchoco.global.common.MessageType;
+import com.woong.mintchoco.global.common.ModelUtils;
+import com.woong.mintchoco.global.common.URL;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -32,10 +34,8 @@ public class UserController {
         }
 
         if (error != null && error.equals("true")) {
-            model.addAttribute("type", MessageType.msgUrl.getMessage());
-            model.addAttribute("message", message);
-            model.addAttribute("returnUrl", "/user/login");
-            return "/views/common/message";
+            ModelUtils.modelMessage(MessageType.MSG_URL, message, "/user/login", model);
+            return URL.MESSAGE.url();
         }
         return "/views/user/login";
     }
@@ -43,15 +43,11 @@ public class UserController {
     @RequestMapping("/signUp.do")
     public String signUpAction(UserVO userVO, ModelMap model) {
         if (userService.userSignUp(userVO) == null) {
-            model.addAttribute("type", MessageType.msgUrl.getMessage());
-            model.addAttribute("message", "회원가입에 실패했습니다.");
-            model.addAttribute("returnUrl", "/user/sign-up");
-            return "/views/common/message";
+            ModelUtils.modelMessage(MessageType.MSG_URL, "회원가입에 실패했습니다.", "/user/sign-up", model);
+            return URL.MESSAGE.url();
         }
-        model.addAttribute("type", MessageType.msgUrl.getMessage());
-        model.addAttribute("message", "회원가입에 성공했습니다.");
-        model.addAttribute("returnUrl", "/user/login");
-        return "/views/common/message";
+        ModelUtils.modelMessage(MessageType.MSG_URL, "회원가입에 성공했습니다.", "/user/login", model);
+        return URL.MESSAGE.url();
     }
 
     @RequestMapping("/duplicateCheck.do")

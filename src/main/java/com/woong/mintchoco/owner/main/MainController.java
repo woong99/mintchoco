@@ -3,6 +3,8 @@ package com.woong.mintchoco.owner.main;
 import com.woong.mintchoco.global.auth.model.UserVO;
 import com.woong.mintchoco.global.auth.service.UserService;
 import com.woong.mintchoco.global.common.MessageType;
+import com.woong.mintchoco.global.common.ModelUtils;
+import com.woong.mintchoco.global.common.URL;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -30,10 +32,8 @@ public class MainController {
         }
 
         if (error != null && error.equals("true")) {
-            model.addAttribute("type", MessageType.msgUrl.getMessage());
-            model.addAttribute("message", message);
-            model.addAttribute("returnUrl", "/owner/login");
-            return "/views/common/message";
+            ModelUtils.modelMessage(MessageType.MSG_URL, message, "/owner/login", model);
+            return URL.MESSAGE.url();
         }
         return "/views/owner/login";
     }
@@ -46,15 +46,12 @@ public class MainController {
     @RequestMapping("/signUp.do")
     public String signUpAction(UserVO userVO, ModelMap model) {
         if (userService.ownerSignUp(userVO) == null) {
-            model.addAttribute("type", MessageType.msgUrl.getMessage());
-            model.addAttribute("message", "회원가입에 실패했습니다.");
-            model.addAttribute("returnUrl", "/owner/sign-up");
-            return "/views/common/message";
+            ModelUtils.modelMessage(MessageType.MSG_URL, "회원가입에 실패했습니다.", "/owner/sign-up", model);
+            return URL.MESSAGE.url();
         }
-        model.addAttribute("type", MessageType.msgUrl.getMessage());
-        model.addAttribute("message", "회원가입에 성공했습니다.\n관리자의 승인이 이루어진 이후부터 로그인이 가능합니다.");
-        model.addAttribute("returnUrl", "/owner/login");
-        return "/views/common/message";
+        ModelUtils.modelMessage(MessageType.MSG_URL, "회원가입에 성공했습니다.\n관리자의 승인이 이루어진 이후부터 로그인이 가능합니다.", "/owner/login",
+                model);
+        return URL.MESSAGE.url();
     }
 
     @RequestMapping("/duplicateCheck.do")

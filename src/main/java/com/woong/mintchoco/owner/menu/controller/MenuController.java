@@ -2,7 +2,10 @@ package com.woong.mintchoco.owner.menu.controller;
 
 import com.woong.mintchoco.global.annotation.AuthUser;
 import com.woong.mintchoco.global.auth.entity.User;
+import com.woong.mintchoco.global.common.Message;
 import com.woong.mintchoco.global.common.MessageType;
+import com.woong.mintchoco.global.common.ModelUtils;
+import com.woong.mintchoco.global.common.URL;
 import com.woong.mintchoco.owner.menu.model.MenuGroupVO;
 import com.woong.mintchoco.owner.menu.model.MenuOptionGroupVO;
 import com.woong.mintchoco.owner.menu.model.MenuVO;
@@ -60,10 +63,8 @@ public class MenuController {
     public String menuInsert(@RequestParam("menuGroupId") Long menuGroupId, MenuVO menuVO, ModelMap model) {
         menuService.insertMenu(menuGroupId, menuVO);
 
-        model.addAttribute("type", MessageType.msgUrl.getMessage());
-        model.addAttribute("message", "추가가 완료되었습니다.");
-        model.addAttribute("returnUrl", "/owner/menu/info");
-        return "/views/common/message";
+        ModelUtils.modelMessage(MessageType.MSG_URL, Message.SUCCESS_INSERT, URL.MENU_INFO, model);
+        return URL.MESSAGE.url();
     }
 
 
@@ -93,10 +94,8 @@ public class MenuController {
     public String menuUpdate(MenuVO menuVO, ModelMap model) {
         menuService.updateMenu(menuVO);
 
-        model.addAttribute("type", MessageType.msgUrl.getMessage());
-        model.addAttribute("message", "수정이 완료되었습니다.");
-        model.addAttribute("returnUrl", "/owner/menu/info");
-        return "/views/common/message";
+        ModelUtils.modelMessage(MessageType.MSG_URL, Message.SUCCESS_UPDATE, URL.MENU_INFO, model);
+        return URL.MESSAGE.url();
     }
 
 
@@ -123,10 +122,8 @@ public class MenuController {
     public String menusOrderUpdate(@RequestParam("menuIdList") Long[] menuIdList, ModelMap model) {
         menuService.updateMenusOrder(menuIdList);
 
-        model.addAttribute("type", MessageType.msgUrl.getMessage());
-        model.addAttribute("message", "저장이 완료되었습니다.");
-        model.addAttribute("returnUrl", "/owner/menu/info");
-        return "/views/common/message";
+        ModelUtils.modelMessage(MessageType.MSG_URL, Message.SUCCESS_SAVE, URL.MENU_INFO, model);
+        return URL.MESSAGE.url();
     }
 
     /**
@@ -140,10 +137,8 @@ public class MenuController {
     public String menuDelete(@RequestParam("menuId") Long menuId, ModelMap model) {
         menuService.deleteMenu(menuId);
 
-        model.addAttribute("type", MessageType.msgUrl.getMessage());
-        model.addAttribute("message", "삭제가 완료되었습니다.");
-        model.addAttribute("returnUrl", "/owner/menu/info");
-        return "/views/common/message";
+        ModelUtils.modelMessage(MessageType.MSG_URL, Message.SUCCESS_DELETE, URL.MENU_INFO, model);
+        return URL.MESSAGE.url();
     }
 
     /**
@@ -159,9 +154,7 @@ public class MenuController {
                                      @RequestParam("menuId") Long menuId, ModelMap model) {
         menuService.insertMenuOptionGroupConnectMenu(optionGroupIdList, menuId);
 
-        model.addAttribute("type", MessageType.msgUrl.getMessage());
-        model.addAttribute("message", "저장이 완료되었습니다.");
-        model.addAttribute("returnUrl", "/owner/menu/info");
-        return "/views/common/message";
+        ModelUtils.modelMessage(MessageType.MSG_URL, Message.SUCCESS_SAVE, URL.MENU_INFO, model);
+        return URL.MESSAGE.url();
     }
 }

@@ -8,7 +8,7 @@ public class CustomException extends RuntimeException implements Serializable {
     private final ErrorCode errorCode;
 
     public CustomException(ErrorCode errorCode) {
-        super(errorCode.getMessage());
+        super(errorCode.Message());
         this.errorCode = errorCode;
     }
 

@@ -3,6 +3,7 @@ package com.woong.mintchoco.owner.profile.exception;
 import com.woong.mintchoco.global.auth.exception.password.DuplicatePasswordException;
 import com.woong.mintchoco.global.auth.exception.password.InvalidPasswordException;
 import com.woong.mintchoco.global.common.MessageType;
+import com.woong.mintchoco.global.common.URL;
 import com.woong.mintchoco.owner.profile.controller.ProfileController;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ui.Model;
@@ -23,9 +24,9 @@ public class ProfileControllerAdvice {
     @ExceptionHandler(InvalidPasswordException.class)
     public String invalidPasswordExceptionHandler(InvalidPasswordException e, Model model) {
         log.info(e.getMessage());
-        model.addAttribute("type", MessageType.msgBack.getMessage());
+        model.addAttribute("type", MessageType.MSG_BACK.messageType());
         model.addAttribute("message", e.getMessage());
-        return "views/common/message";
+        return URL.MESSAGE.url();
     }
 
     /**
@@ -38,8 +39,8 @@ public class ProfileControllerAdvice {
     @ExceptionHandler(DuplicatePasswordException.class)
     public String duplicatePasswordExceptionHandler(DuplicatePasswordException e, Model model) {
         log.info(e.getMessage());
-        model.addAttribute("type", MessageType.msgBack.getMessage());
+        model.addAttribute("type", MessageType.MSG_BACK.messageType());
         model.addAttribute("message", e.getMessage());
-        return "views/common/message";
+        return URL.MESSAGE.url();
     }
 }

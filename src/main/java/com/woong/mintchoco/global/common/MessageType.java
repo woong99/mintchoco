@@ -1,8 +1,9 @@
 package com.woong.mintchoco.global.common;
 
 public enum MessageType {
-    msgBack("msg+back"),
-    msgUrl("msg+url");
+
+    MSG_BACK("msg+back"),
+    MSG_URL("msg+url");
 
     private final String message;
 
@@ -10,7 +11,7 @@ public enum MessageType {
         this.message = message;
     }
 
-    public String getMessage() {
+    public String messageType() {
         return message;
     }
 }

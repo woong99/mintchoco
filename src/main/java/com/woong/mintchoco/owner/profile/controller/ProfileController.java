@@ -5,6 +5,8 @@ import com.woong.mintchoco.global.auth.entity.User;
 import com.woong.mintchoco.global.auth.model.UserVO;
 import com.woong.mintchoco.global.auth.service.UserService;
 import com.woong.mintchoco.global.common.MessageType;
+import com.woong.mintchoco.global.common.ModelUtils;
+import com.woong.mintchoco.global.common.URL;
 import com.woong.mintchoco.global.file.entity.AttachFile;
 import com.woong.mintchoco.global.file.service.FileManageService;
 import com.woong.mintchoco.owner.profile.service.ProfileService;
@@ -60,20 +62,16 @@ public class ProfileController {
         if (!file.isEmpty()) {
             AttachFile profileImage = fileManageService.saveFile(file);
             if (profileImage == null) {
-                model.addAttribute("type", MessageType.msgUrl.getMessage());
-                model.addAttribute("message", "파일의 이름이나 확장자를 확인해주세요.");
-                model.addAttribute("returnUrl", "/owner/profile/info");
-                return "/views/common/message";
+                ModelUtils.modelMessage(MessageType.MSG_URL, "파일의 이름이나 확장자를 확인해주세요.", "/owner/profile/info", model);
+                return URL.MESSAGE.url();
             }
             userVO.setProfileImage(profileImage);
         }
 
         profileService.updateUserInfo(userVO);
 
-        model.addAttribute("type", MessageType.msgUrl.getMessage());
-        model.addAttribute("message", "사장님 정보가 수정되었습니다.");
-        model.addAttribute("returnUrl", "/owner/profile/info");
-        return "/views/common/message";
+        ModelUtils.modelMessage(MessageType.MSG_URL, "사장님 정보가 수정되었습니다.", "/owner/profile/info", model);
+        return URL.MESSAGE.url();
     }
 
     /**
@@ -117,18 +115,15 @@ public class ProfileController {
     public String profilePasswordChange(@AuthUser User user, UserVO userVO,
                                         ModelMap model) {
         if (!userVO.getNewPwd().equals(userVO.getReNewPwd())) {
-            model.addAttribute("type", MessageType.msgUrl.getMessage());
-            model.addAttribute("message", "새 비밀번호와 새 비밀번호 확인이 일치하지 않습니다.");
-            model.addAttribute("returnUrl", "/owner/profile/password");
-            return "/views/common/message";
+            ModelUtils.modelMessage(MessageType.MSG_URL, "새 비밀번호와 새 비밀번호 확인이 일치하지 않습니다.", "/owner/profile/password",
+                    model);
+            return URL.MESSAGE.url();
         }
 
         userService.changePassword(user, userVO);
 
-        model.addAttribute("type", MessageType.msgUrl.getMessage());
-        model.addAttribute("message", "비밀번호가 성공적으로 변경되었습니다!");
-        model.addAttribute("returnUrl", "/owner/profile/password");
-        return "/views/common/message";
+        ModelUtils.modelMessage(MessageType.MSG_URL, "비밀번호가 성공적으로 변경되었습니다.", "/owner/profile/password", model);
+        return URL.MESSAGE.url();
     }
 
 }

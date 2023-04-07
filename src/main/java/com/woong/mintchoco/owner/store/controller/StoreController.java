@@ -3,7 +3,10 @@ package com.woong.mintchoco.owner.store.controller;
 import com.woong.mintchoco.global.annotation.AuthUser;
 import com.woong.mintchoco.global.auth.entity.User;
 import com.woong.mintchoco.global.auth.model.UserVO;
+import com.woong.mintchoco.global.common.Message;
 import com.woong.mintchoco.global.common.MessageType;
+import com.woong.mintchoco.global.common.ModelUtils;
+import com.woong.mintchoco.global.common.URL;
 import com.woong.mintchoco.owner.store.model.StoreVO;
 import com.woong.mintchoco.owner.store.service.StoreService;
 import java.time.LocalTime;
@@ -53,10 +56,8 @@ public class StoreController {
     public String storeFormInsert(@AuthUser User user, StoreVO storeVO, ModelMap model) {
         storeService.insertStoreInfo(user, storeVO);
 
-        model.addAttribute("type", MessageType.msgUrl.getMessage());
-        model.addAttribute("message", "등록이 완료되었습니다.");
-        model.addAttribute("returnUrl", "/owner/store/form");
-        return "/views/common/message";
+        ModelUtils.modelMessage(MessageType.MSG_URL, Message.SUCCESS_REGISTRATION, "/owner/store/form", model);
+        return URL.MESSAGE.url();
     }
 
 
@@ -73,10 +74,8 @@ public class StoreController {
     public String storeFormUpdate(@AuthUser User user, StoreVO storeVO, ModelMap model) {
         storeService.updateStoreInfo(user, storeVO);
 
-        model.addAttribute("type", MessageType.msgUrl.getMessage());
-        model.addAttribute("message", "수정이 완료되었습니다.");
-        model.addAttribute("returnUrl", "/owner/store/form");
-        return "/views/common/message";
+        ModelUtils.modelMessage(MessageType.MSG_URL, Message.SUCCESS_UPDATE, "/owner/store/form", model);
+        return URL.MESSAGE.url();
     }
 
 
@@ -91,10 +90,9 @@ public class StoreController {
     public String storeInfo(@AuthUser User user, ModelMap model) {
         StoreVO storeVO = storeService.getStoreInfo(user);
         if (storeVO == null) {
-            model.addAttribute("type", MessageType.msgUrl.getMessage());
-            model.addAttribute("message", "등록된 가게 정보가 없습니다. 가게 정보 등록 후 이용해주세요.");
-            model.addAttribute("returnUrl", "/owner/store/form");
-            return "/views/common/message";
+            ModelUtils.modelMessage(MessageType.MSG_URL, "등록된 가게 정보가 없습니다. 가게 정보 등록 후 이용해주세요.", "/owner/store/form",
+                    model);
+            return URL.MESSAGE.url();
         }
 
         UserVO userVO = UserVO.toUserVO(user);

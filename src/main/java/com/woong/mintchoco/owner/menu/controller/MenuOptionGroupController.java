@@ -2,7 +2,10 @@ package com.woong.mintchoco.owner.menu.controller;
 
 import com.woong.mintchoco.global.annotation.AuthUser;
 import com.woong.mintchoco.global.auth.entity.User;
+import com.woong.mintchoco.global.common.Message;
 import com.woong.mintchoco.global.common.MessageType;
+import com.woong.mintchoco.global.common.ModelUtils;
+import com.woong.mintchoco.global.common.URL;
 import com.woong.mintchoco.owner.menu.model.MenuOptionGroupMenuVO;
 import com.woong.mintchoco.owner.menu.model.MenuOptionGroupVO;
 import com.woong.mintchoco.owner.menu.model.MenuOptionVO;
@@ -37,10 +40,8 @@ public class MenuOptionGroupController {
                                         MenuOptionVO menuOptionVO, ModelMap model) {
         menuOptionGroupService.insertMenuOptionGroup(user, menuOptionGroupVO, menuOptionVO);
 
-        model.addAttribute("type", MessageType.msgUrl.getMessage());
-        model.addAttribute("message", "추가가 완료되었습니다.");
-        model.addAttribute("returnUrl", "/owner/menu/info");
-        return "/views/common/message";
+        ModelUtils.modelMessage(MessageType.MSG_URL, Message.SUCCESS_INSERT, URL.MENU_INFO, model);
+        return URL.MESSAGE.url();
     }
 
 
@@ -69,10 +70,8 @@ public class MenuOptionGroupController {
     public String menuOptionGroupUpdate(MenuOptionGroupVO menuOptionGroupVO, ModelMap model) {
         menuOptionGroupService.updateMenuOptionGroup(menuOptionGroupVO);
 
-        model.addAttribute("type", MessageType.msgUrl.getMessage());
-        model.addAttribute("message", "수정이 완료되었습니다.");
-        model.addAttribute("returnUrl", "/owner/menu/info");
-        return "/views/common/message";
+        ModelUtils.modelMessage(MessageType.MSG_URL, Message.SUCCESS_UPDATE, URL.MENU_INFO, model);
+        return URL.MESSAGE.url();
     }
 
 
@@ -122,10 +121,8 @@ public class MenuOptionGroupController {
     public String menuOptionGroupDelete(@RequestParam("menuOptionGroupId") Long menuOptionGroupId, ModelMap model) {
         menuOptionGroupService.deleteMenuOptionGroup(menuOptionGroupId);
 
-        model.addAttribute("type", MessageType.msgUrl.getMessage());
-        model.addAttribute("message", "삭제가 완료되었습니다.");
-        model.addAttribute("returnUrl", "/owner/menu/info");
-        return "/views/common/message";
+        ModelUtils.modelMessage(MessageType.MSG_URL, Message.SUCCESS_DELETE, URL.MENU_INFO, model);
+        return URL.MESSAGE.url();
     }
 
 }

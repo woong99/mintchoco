@@ -1,6 +1,7 @@
 package com.woong.mintchoco.admin;
 
 import com.woong.mintchoco.global.common.MessageType;
+import com.woong.mintchoco.global.common.URL;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -26,10 +27,10 @@ public class AdminController {
         }
 
         if (error != null && error.equals("true")) {
-            model.addAttribute("type", MessageType.msgUrl.getMessage());
+            model.addAttribute("type", MessageType.MSG_URL.messageType());
             model.addAttribute("message", message);
             model.addAttribute("returnUrl", "/admin/login");
-            return "/views/common/message";
+            return URL.MESSAGE.url();
         }
         return "/views/admin/login";
     }
