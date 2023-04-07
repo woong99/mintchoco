@@ -1,20 +1,26 @@
 package com.woong.mintchoco.service;
 
 import com.woong.mintchoco.domain.AttachFile;
+import com.woong.mintchoco.domain.Menu;
 import com.woong.mintchoco.domain.MenuGroup;
 import com.woong.mintchoco.domain.MenuOption;
 import com.woong.mintchoco.domain.MenuOptionGroup;
+import com.woong.mintchoco.domain.MenuOptionGroupMenu;
 import com.woong.mintchoco.domain.Store;
 import com.woong.mintchoco.domain.User;
 import com.woong.mintchoco.repository.FileRepository;
+import com.woong.mintchoco.repository.menu.MenuRepository;
 import com.woong.mintchoco.repository.menu.group.MenuGroupRepository;
 import com.woong.mintchoco.repository.menu.option.MenuOptionRepository;
 import com.woong.mintchoco.repository.menu.option.group.MenuOptionGroupRepository;
+import com.woong.mintchoco.repository.menu.option.group.menu.MenuOptionGroupMenuRepository;
 import com.woong.mintchoco.repository.store.StoreRepository;
 import com.woong.mintchoco.repository.user.UserRepository;
 import com.woong.mintchoco.vo.MenuGroupVO;
+import com.woong.mintchoco.vo.MenuOptionGroupMenuVO;
 import com.woong.mintchoco.vo.MenuOptionGroupVO;
 import com.woong.mintchoco.vo.MenuOptionVO;
+import com.woong.mintchoco.vo.MenuVO;
 import com.woong.mintchoco.vo.StoreVO;
 import com.woong.mintchoco.vo.UserVO;
 import java.util.List;
@@ -40,6 +46,10 @@ public class OwnerService {
     private final MenuOptionGroupRepository menuOptionGroupRepository;
 
     private final MenuOptionRepository menuOptionRepository;
+
+    private final MenuRepository menuRepository;
+
+    private final MenuOptionGroupMenuRepository menuOptionGroupMenuRepository;
 
     /**
      * 사용자의 아이디로 사용자의 정보를 조회환다.
@@ -141,7 +151,8 @@ public class OwnerService {
      */
     public List<MenuGroupVO> selectAllMenuGroup(User user) {
         Long storeId = user.getStore().getId();
-        return menuGroupRepository.findAllByStoreIdOrderByGroupOrder(storeId).stream().map(MenuGroupVO::toMenuGroupVO)
+
+        return menuGroupRepository.selectAllMenuGroupWithMenu(storeId).stream().map(MenuGroupVO::toMenuGroupVO)
                 .toList();
     }
 
@@ -177,14 +188,35 @@ public class OwnerService {
     }
 
 
-    public List<MenuOptionGroupVO> selectAllMenuOptionGroup(User user) {
+    /**
+     * 모든 메뉴 옵션 그룹과 연관된 옵션들을 조회한다.
+     *
+     * @param user 인증 정보
+     * @return 모든 메뉴 옵션 그룹 및 연관된 옵션들
+     */
+    public List<MenuOptionGroupVO> selectAllMenuOptionGroupWithMenuOption(User user) {
         Long storeId = user.getStore().getId();
 
         return menuOptionGroupRepository.selectAllMenuOptionGroupWithMenuOptionOrderByMenuOrder(storeId).stream()
-                .map(MenuOptionGroupVO::toMenuOptionGroupVO).toList();
+                .map(MenuOptionGroupVO::toMenuOptionGroupVOWithMenuOption).toList();
     }
 
 
+    public List<MenuOptionGroupVO> selectAllMenuOptionGroup(User user) {
+        Long storeId = user.getStore().getId();
+
+        return menuOptionGroupRepository.findAllByStoreId(storeId).stream().map(MenuOptionGroupVO::toMenuOptionGroupVO)
+                .toList();
+    }
+
+
+    /**
+     * 메뉴 옵션 그룹과 메뉴 옵션들을 저장한다.
+     *
+     * @param user              인증 정보
+     * @param menuOptionGroupVO 메뉴 옵션 그룹 정보
+     * @param menuOptionVO      메뉴 옵션 정보
+     */
     @Transactional
     public void insertMenuOptionGroup(User user, MenuOptionGroupVO menuOptionGroupVO, MenuOptionVO menuOptionVO) {
         Store store = storeRepository.findById(user.getStore().getId()).orElseThrow(NoSuchElementException::new);
@@ -200,12 +232,23 @@ public class OwnerService {
     }
 
 
+    /**
+     * 단일 메뉴 옵션 그룹과 연관된 메뉴 옵션들을 조회한다.
+     *
+     * @param menuOptionGroupId 메뉴 옵션 그룹 ID
+     * @return 단일 메뉴 옵션 그룹 및 연관된 메뉴 옵션들
+     */
     public MenuOptionGroupVO selectMenuOptionGroup(Long menuOptionGroupId) {
-        return MenuOptionGroupVO.toMenuOptionGroupVO(
+        return MenuOptionGroupVO.toMenuOptionGroupVOWithMenuOption(
                 menuOptionGroupRepository.selectMenuOptionGroupWithMenuOptionOrderByMenuOrder(menuOptionGroupId));
     }
 
 
+    /**
+     * 메뉴 옵션 그룹 및 연관된 메뉴 옵션들을 수정한다.
+     *
+     * @param menuOptionGroupVO 메뉴 옵션 그룹 정보
+     */
     @Transactional
     public void updateMenuOptionGroup(MenuOptionGroupVO menuOptionGroupVO) {
         MenuOptionGroup menuOptionGroup = menuOptionGroupRepository.findById(menuOptionGroupVO.getMenuOptionGroupId())
@@ -222,6 +265,82 @@ public class OwnerService {
             MenuOption menuOption = MenuOption.toMenuOption(data);
             menuOptionRepository.save(menuOption);
         }
+    }
+
+
+    public void insertMenu(Long menuGroupId, MenuVO menuVO) {
+        MenuGroup menuGroup = menuGroupRepository.findById(menuGroupId).orElseThrow(NoSuchElementException::new);
+        Menu menu = Menu.toMenu(menuVO);
+        menu.setMenuGroup(menuGroup);
+
+        int lastMenuOrder = menuRepository.findLastMenuOrder(menuGroupId);
+        menu.setMenuOrder(lastMenuOrder + 1);
+
+        menuRepository.save(menu);
+    }
+
+
+    public MenuVO selectMenu(Long menuId) {
+        return MenuVO.toMenuVO(menuRepository.findById(menuId).orElseThrow(NoSuchElementException::new));
+    }
+
+
+    public void updateMenu(MenuVO menuVO) {
+        menuRepository.updateMenu(menuVO);
+    }
+
+
+    public List<MenuVO> selectMenus(Long menuGroupId) {
+        return menuRepository.findByMenuGroupId(menuGroupId).stream().map(MenuVO::toMenuVO).toList();
+    }
+
+
+    public void updateMenusOrder(Long[] menuIdList) {
+        menuRepository.updateMenusOrder(menuIdList);
+    }
+
+
+    @Transactional
+    public void insertMenuOptionGroupConnectMenu(Long[] optionGroupIdList, Long menuId) {
+        menuOptionGroupMenuRepository.deleteByMenuId(menuId);
+        Menu menu = menuRepository.getReferenceById(menuId);
+
+        for (int i = 0; i < optionGroupIdList.length; i++) {
+            MenuOptionGroup menuOptionGroup = menuOptionGroupRepository.getReferenceById(optionGroupIdList[i]);
+            MenuOptionGroupMenu menuOptionGroupMenu = new MenuOptionGroupMenu();
+            menuOptionGroupMenu.setMenuOptionGroup(menuOptionGroup);
+            menuOptionGroupMenu.setMenu(menu);
+            menuOptionGroupMenu.setMenuOptionGroupOrder(i + 1);
+            menuOptionGroupMenuRepository.save(menuOptionGroupMenu);
+        }
+    }
+
+    public List<MenuOptionGroupMenuVO> selectMenuOptionGroupConnectMenu(Long menuId) {
+        List<MenuOptionGroupMenu> menuOptionGroupMenuList = menuOptionGroupMenuRepository.findByMenuIdOrderByMenuId(
+                menuId);
+
+        return menuOptionGroupMenuList.stream().map(MenuOptionGroupMenuVO::toMenuOptionGroupMenuVO).toList();
+    }
+
+
+    public List<MenuVO> selectMenuOptionGroupConnectedMenu(Long menuOptionGroupId) {
+        List<Menu> menuList = menuRepository.selectMenuOptionGroupConnectedMenu(menuOptionGroupId);
+
+        return menuList.stream().map(MenuVO::toMenuVO).toList();
+    }
+
+    public void deleteMenuOptionGroup(Long menuOptionGroupId) {
+        menuOptionGroupRepository.deleteById(menuOptionGroupId);
+    }
+
+
+    public void deleteMenu(Long menuId) {
+        menuRepository.deleteById(menuId);
+    }
+
+
+    public void deleteMenuGroup(Long menuGroupId) {
+        menuGroupRepository.deleteById(menuGroupId);
     }
 
     /**

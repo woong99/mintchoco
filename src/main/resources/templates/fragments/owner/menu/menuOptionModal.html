@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="menuOptionModal">
+    <div aria-hidden="true" aria-labelledby="menuOptionGroupModalLabel"
+         class="modal fade"
+         data-bs-backdrop="static" data-bs-keyboard="false" id="menuOptionGroupModal"
+         tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered position-relative">
+            <form class="w-100" id="menuOptionGroupModalForm">
+                <input id="maxSelect" name="menuOptionGroupMaxSelect" type="hidden"/>
+                <input id="menuOptionGroupId" name="menuOptionGroupId" type="hidden">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="menuOptionGroupModalLabel">옵션그룹
+                            추가</h1>
+                    </div>
+                    <!-- 옵션 추가/수정 모달 첫 번째 페이지 S -->
+                    <div class="modal-body" id="menuOptionGroupModalFirstPage">
+                        <div class="mb-4">
+                            <label class="form-label fs-6" for="menuOptionGroupTitle">옵션그룹명
+                                <em
+                                        class="text-danger">*</em></label>
+                            <div class="float-end text-secondary count-text-limit"
+                                 id="menuOptionGroupTitleLength">
+                                0/20
+                            </div>
+                            <input class="form-control" id="menuOptionGroupTitle"
+                                   name="menuOptionGroupTitle"
+                                   placeholder="예) 사이드메뉴 추가선택" type="text">
+                        </div>
+                        <div class="position-relative" id="menuOptionSortable">
+                            <label class="form-label fs-6" id="menuOptionTitleLabel">옵션
+                                내용<em
+                                        class="text-danger">*</em></label>
+                            <button class="btn btn-outline-primary btn-sm fs-0-8 float-end"
+                                    id="changeOrderBtn" type="button">
+                                순서 변경
+                            </button>
+                            <div class="row g-3 align-items-center mb-1 menu-option-content clear">
+                                <input class="menuOptionOrder" type="hidden">
+                                <div class="col-7 position-relative">
+                                    <label class="d-none"
+                                           for="menuOptionTitle"></label>
+                                    <div class="position-absolute text-secondary count-text-limit end-0 top-50 translate-middle-y me-3"
+                                         id="menuOptionLength">
+                                        0/20
+                                    </div>
+                                    <input
+                                            class="form-control menu-option pe-5"
+                                            id="menuOptionTitle"
+                                            type="text">
+                                </div>
+                                <div class="col-4 position-relative">
+                                    <label class="position-absolute end-0 top-50 translate-middle-y me-3 text-secondary"
+                                           for="menuOptionPrice"
+                                           style="font-size: 0.8rem">원</label>
+                                    <input
+                                            class="form-control menu-option-price"
+                                            id="menuOptionPrice"
+                                            type="text"
+                                    >
+                                </div>
+                                <div class="icon col-1 d-flex align-items-center ps-0 pointer menu-option-delete">
+                                    <i class="bx bx-x fs-2"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="ps-0 btn d-flex align-items-center text-primary fs-0-8 mt-1"
+                                id="addOption"
+                                type="button">
+                            <div class="icon">
+                                <i class="bx bx-plus"></i>
+                            </div>
+                            옵션추가
+                        </button>
+                    </div>
+                    <!-- 옵션 추가/수정 모달 첫 번째 페이지 E -->
+                    <!-- 옵션 추가/수정 모달 두 번째 페이지 S -->
+                    <div class="modal-body d-none" id="menuOptionGroupModalSecondPage">
+                        <div class="mb-4">
+                            <label class="form-label fs-6" for="menuOptionGroupTitle">옵션
+                                유형<em class="text-danger">*</em></label>
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <input autocomplete="off"
+                                           checked
+                                           class="btn-check" id="requiredOption"
+                                           name="menuOptionGroupRequired"
+                                           type="radio" value="Y">
+                                    <label class="btn w-100 btn-outline-primary"
+                                           for="requiredOption">
+                                        필수 옵션
+                                    </label>
+                                </div>
+                                <div class="col-6">
+                                    <input autocomplete="off"
+                                           class="btn-check"
+                                           id="noRequiredOption"
+                                           name="menuOptionGroupRequired" type="radio"
+                                           value="N">
+                                    <label class="btn w-100 btn-outline-primary"
+                                           for="noRequiredOption">
+                                        선택 옵션
+                                    </label></div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="form-label fs-6" for="menuOptionGroupTitle">옵션
+                                수<em class="text-danger">*</em></label>
+                            <div>
+                                <!-- 필수 옵션 선택 시 S -->
+                                <div class="row g-3 bg-gray-light mt-1 py-2 rounded-1 px-2"
+                                     id="requiredOptionView">
+                                    <div class="col-8 fs-0-8 mt-0 d-flex align-items-center py-3">
+                                        고객은 <span class="fw-bold"> &nbsp;필수
+                                                                    몇 개</span>의 옵션을 선택할 수
+                                        있나요?
+                                    </div>
+                                    <div class="col-4 mt-0 py-3">
+                                        <div class="row g-3 me-3">
+                                            <div class="col-3-half icon d-flex align-items-center border border-gray-light justify-content-center bg-white border-left-radius pointer"
+                                                 id="requiredOptionMinus">
+                                                <i class="bx bx-minus fs-5"></i>
+                                            </div>
+                                            <div class="col-5 p-2 border-top border-bottom border-gray-light text-center bg-white"
+                                                 id="selectRequiredOptionCount">
+                                                2개
+                                            </div>
+                                            <div class="col-3-half icon d-flex align-items-center border border-gray-light justify-content-center border-right-radius bg-gray text-gray"
+                                                 id="requiredOptionPlus">
+                                                <i class="bx bx-plus fs-5"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="fs-0-8 border-top border-2 pt-3 pb-1 mt-0">
+                                        이 옵션그룹에는 옵션이 <span class="fw-bold"
+                                                           id="requiredOptionCount">총 2개</span>
+                                        있습니다.
+                                    </div>
+                                </div>
+                                <!-- 필수 옵션 선택 시 E -->
+                                <!-- 선택 옵션 선택 시 S -->
+                                <div class="row g-3 py-2 d-none justify-content-center"
+                                     id="noRequiredOptionView">
+                                    <div class="col-6">
+                                        <input autocomplete="off" checked
+                                               class="btn-check"
+                                               id="maxOptions" name="optionCountButton"
+                                               type="radio" value="Y">
+                                        <label class="btn w-100 btn-outline-primary"
+                                               for="maxOptions">
+                                            최대 선택 개수 지정
+                                        </label>
+                                    </div>
+                                    <div class="col-6">
+                                        <input autocomplete="off" class="btn-check"
+                                               id="allOptions"
+                                               name="optionCountButton" type="radio"
+                                               value="N">
+                                        <label class="btn w-100 btn-outline-primary"
+                                               for="allOptions">
+                                            모든 옵션 선택 가능
+                                        </label>
+                                    </div>
+                                    <div class="row g-3 bg-gray-light mt-3 py-2 rounded-1 px-2"
+                                         id="maxSelectView">
+                                        <div class="col-8 fs-0-8 mt-0 d-flex align-items-center py-3">
+                                            고객은 <span class="fw-bold"> &nbsp;최대
+                                                                    몇 개</span>의 옵션을 선택할 수
+                                            있나요?
+                                        </div>
+                                        <div class="col-4 mt-0 py-3">
+                                            <div class="row g-3 me-3">
+                                                <div class="col-3-half icon d-flex align-items-center border border-gray-light justify-content-center bg-white border-left-radius pointer"
+                                                     id="noRequiredOptionMinus">
+                                                    <i class="bx bx-minus fs-5"></i>
+                                                </div>
+                                                <div class="col-5 p-2 border-top border-bottom border-gray-light text-center bg-white"
+                                                     id="selectNoRequiredOptionCount">
+                                                </div>
+                                                <div class="col-3-half icon d-flex align-items-center border border-gray-light justify-content-center border-right-radius bg-gray text-gray"
+                                                     id="noRequiredOptionPlus">
+                                                    <i class="bx bx-plus fs-5"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="fs-0-8 border-top border-2 pt-3 pb-1 mt-0">
+                                            이 옵션그룹에는 옵션이 <span class="fw-bold"
+                                                               id="noRequiredOptionCount">총 2개</span>
+                                            있습니다.
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 선택 옵션 선택 시 E -->
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 옵션 추가/수정 모달 두 번째 페이지 E -->
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary px-4"
+                                id="menuOptionGroupModalCancel" type="button">
+                            취소
+                        </button>
+                        <button class="btn btn-secondary px-4 d-none"
+                                id="menuOptionGroupModalPrev" type="button">이전
+                        </button>
+                        <button class="btn btn-primary px-4"
+                                id="menuOptionGroupModalNext" type="button">다음
+                        </button>
+                        <button class="btn btn-primary px-4 d-none" data-command="insert"
+                                id="menuOptionGroupModalSubmit" type="button">추가
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <div class="toast-container position-absolute top-50 start-50 translate-middle p-3">
+                <div aria-atomic="true" aria-live="assertive" class="toast fade hide"
+                     id="toast"
+                     role="alert">
+                    <div class="toast-body text-center">한 개 이상의 옵션이 필요합니다.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+</html>

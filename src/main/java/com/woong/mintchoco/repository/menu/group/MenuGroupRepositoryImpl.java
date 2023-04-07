@@ -1,6 +1,8 @@
 package com.woong.mintchoco.repository.menu.group;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.woong.mintchoco.domain.MenuGroup;
+import com.woong.mintchoco.domain.QMenu;
 import com.woong.mintchoco.domain.QMenuGroup;
 import com.woong.mintchoco.vo.MenuGroupVO;
 import java.time.LocalDateTime;
@@ -14,7 +16,10 @@ import org.springframework.stereotype.Repository;
 public class MenuGroupRepositoryImpl implements MenuGroupRepositoryCustom {
 
     private final JPAQueryFactory jpaQueryFactory;
+
     QMenuGroup qMenuGroup = QMenuGroup.menuGroup;
+
+    QMenu qMenu = QMenu.menu;
 
 
     /**
@@ -68,6 +73,22 @@ public class MenuGroupRepositoryImpl implements MenuGroupRepositoryCustom {
                     .where(qMenuGroup.id.eq(menuGroupIdList[i]))
                     .execute();
         }
+    }
+
+
+    /**
+     * 메뉴와 메뉴그룹을 조인해 조회한다.
+     * @param storeId 스토어 ID
+     * @return 메뉴그룹 및 연관된 메뉴
+     */
+    @Override
+    public List<MenuGroup> selectAllMenuGroupWithMenu(Long storeId) {
+        return jpaQueryFactory
+                .selectFrom(qMenuGroup)
+                .leftJoin(qMenuGroup.menus, qMenu).fetchJoin()
+                .where(qMenuGroup.store.id.eq(storeId))
+                .orderBy(qMenuGroup.groupOrder.asc(), qMenu.menuOrder.asc())
+                .fetch();
     }
 }
 

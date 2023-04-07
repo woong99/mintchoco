@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="menuReOrderModal">
+    <div aria-hidden="true" aria-labelledby="menuGroupModalLabel" class="modal fade"
+         data-bs-backdrop="static" data-bs-keyboard="false" id="menuOrderModal"
+         tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="menuOrderModalLabel">메뉴
+                        순서변경</h1>
+                </div>
+                <div class="modal-body" id="menuSortable">
+                    <form id="menuOrderFrm">
+                        <input id="menuIdList" name="menuIdList"
+                               type="hidden">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary px-4"
+                            id="menuOrderModalCancel" type="button">
+                        취소
+                    </button>
+                    <button class="btn btn-primary px-4" data-command="insert"
+                            id="menuOrderModalSubmit" type="button">저장
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+</html>

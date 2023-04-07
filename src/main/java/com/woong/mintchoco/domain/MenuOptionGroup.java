@@ -1,6 +1,7 @@
 package com.woong.mintchoco.domain;
 
 import com.woong.mintchoco.vo.MenuOptionGroupVO;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -42,9 +43,13 @@ public class MenuOptionGroup extends BaseEntity {
     @Exclude
     private Store store;
 
-    @OneToMany(mappedBy = "menuOptionGroup", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "menuOptionGroup", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Exclude
     private List<MenuOption> menuOptions;
+
+    @OneToMany(mappedBy = "menuOptionGroup", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @Exclude
+    private List<MenuOptionGroupMenu> menuOptionGroupMenus;
 
     public static MenuOptionGroup toMenuOptionGroup(MenuOptionGroupVO menuOptionGroupVO) {
         return MenuOptionGroup.builder()

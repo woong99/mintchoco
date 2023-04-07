@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="optionGroupConnectModal">
+    <div aria-hidden="true" aria-labelledby="optionGroupConnectModalLabel" class="modal fade"
+         data-bs-backdrop="static" data-bs-keyboard="false" id="optionGroupConnectModal"
+         tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="optionGroupConnectModalLabel">옵션그룹 연결
+                    </h1>
+                </div>
+                <div class="modal-body">
+                    <form id="optionGroupConnectFrm">
+                        <input id="optionGroupIdList" name="optionGroupIdList" type="hidden">
+                        <input id="menuId" name="menuId" type="hidden">
+                    </form>
+                    <div class="card">
+                        <div class="card-body menu-option-unconnected">
+                            <h5 class="card-title">옵션 그룹</h5>
+                            <div class="list-group align-items-center"
+                                 th:data-id="${menuOptionGroupVO.menuOptionGroupId}"
+                                 th:each="menuOptionGroupVO : ${menuOptionGroupVOList}">
+                                <div class="list-group-item d-flex align-items-center justify-content-between col-12">
+                                    <span th:text="${menuOptionGroupVO.menuOptionGroupTitle}"></span>
+                                    <div class="icon pointer menu-option-connect-btn">
+                                        <i class="bx bxs-plus-circle fs-3"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body menu-option-connected" id="menuOptionConnectSortable">
+                            <h5 class="card-title" id="connectTitle">연결</h5>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary px-4"
+                            id="optionGroupConnectModalCancel" type="button">
+                        취소
+                    </button>
+                    <button class="btn btn-primary px-4" data-command="insert"
+                            id="optionGroupConnectModalSubmit" type="button">저장
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:inline="javascript">
+        $(function () {
+            const menuOptionGroupMenuVOList = [[${menuOptionGroupMenuVOList}]];
+            let menuOptionGroupIdList = [];
+            $(".menu-option-unconnected").children(".list-group").each((index, item) => {
+                menuOptionGroupIdList.push(parseInt($(item).attr("data-id")));
+            })
+            menuOptionGroupMenuVOList.forEach((item) => {
+                if (menuOptionGroupIdList.includes(item.menuOptionGroupId)) {
+                    const connectedOptionGroup = $(".menu-option-unconnected").children("[data-id='" + item.menuOptionGroupId + "']");
+                    connectedOptionGroup.find(".menu-option-connect-btn").addClass("menu-option-disconnect-btn");
+                    connectedOptionGroup.find(".menu-option-connect-btn").removeClass("menu-option-connect-btn");
+                    $(".menu-option-connected").append(connectedOptionGroup);
+                    connectedOptionGroup.addClass("menu-option-connect-sortable");
+                    connectedOptionGroup.find(".menu-option-disconnect-btn").replaceWith(optionDisconnectNode)
+                }
+            })
+        })
+    </script>
+</th:block>
+</html>

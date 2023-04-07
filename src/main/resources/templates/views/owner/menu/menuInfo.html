@@ -59,113 +59,19 @@
                                         <div>메뉴그룹 추가</div>
                                     </button>
                                 </div>
-                                <!-- 메뉴그룹 추가 모달 S -->
-                                <div aria-hidden="true" aria-labelledby="menuGroupModalLabel" class="modal fade"
-                                     data-bs-backdrop="static" data-bs-keyboard="false" id="menuGroupModal"
-                                     tabindex="-1">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <form class="w-100" id="menuGroupModalForm">
-                                            <input id="menuGroupId" name="id" type="hidden">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h1 class="modal-title fs-5" id="menuGroupModalLabel">메뉴그룹 추가</h1>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="mb-4">
-                                                        <label class="form-label fs-6" for="menuGroupTitle">메뉴그룹명 <em
-                                                                class="text-danger">*</em></label>
-                                                        <div class="float-end text-secondary count-text-limit"
-                                                             id="menuGroupTitleLength">
-                                                            0/20
-                                                        </div>
-                                                        <input class="form-control" id="menuGroupTitle"
-                                                               name="menuGroupTitle"
-                                                               placeholder="예) 민트초코 세트 메뉴" type="text">
-                                                    </div>
-                                                    <div class="mb-4">
-                                                        <label class="form-label" for="menuGroupExplanation">메뉴그룹
-                                                            설명 </label>
-                                                        <div class="float-end text-secondary count-text-limit"
-                                                             id="menuGroupExplanationLength">0/70
-                                                        </div>
-                                                        <textarea class="form-control no-resize-textarea"
-                                                                  id="menuGroupExplanation" name="menuGroupExplanation"
-                                                                  placeholder="예) 민트초코를 담은 세트 메뉴입니다."
-                                                        ></textarea>
-                                                    </div>
-                                                    <div class="btn-group col-4">
-                                                        <div class="col-6">
-                                                            <input checked class="btn-check" id="menuGroupExposure"
-                                                                   name="menuGroupExposure" type="radio" value="Y">
-                                                            <label class="btn btn-outline-primary w-100"
-                                                                   for="menuGroupExposure"
-                                                                   style="border-bottom-right-radius: 0; border-top-right-radius: 0;">노출</label>
-                                                        </div>
-                                                        <div class="col-6">
-                                                            <input class="btn-check" id="menuGroupNonExposure"
-                                                                   name="menuGroupExposure"
-                                                                   type="radio" value="N">
-                                                            <label class="btn btn-outline-primary w-100"
-                                                                   for="menuGroupNonExposure"
-                                                                   style="border-bottom-left-radius: 0; border-top-left-radius: 0;">비노출</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button class="btn btn-secondary px-4"
-                                                            id="menuGroupModalCancel" type="button">
-                                                        취소
-                                                    </button>
-                                                    <button class="btn btn-primary px-4" data-command="insert"
-                                                            id="menuGroupModalSubmit" type="button">추가
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                                <!-- 메뉴그룹 추가 모달 E -->
-                                <!-- 메뉴그룹 순서변경 모달 S -->
-                                <div aria-hidden="true" aria-labelledby="menuGroupModalLabel" class="modal fade"
-                                     data-bs-backdrop="static" data-bs-keyboard="false" id="menuGroupOrderModal"
-                                     tabindex="-1">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h1 class="modal-title fs-5" id="menuGroupOrderModalLabel">메뉴그룹
-                                                    순서변경</h1>
-                                            </div>
-                                            <div class="modal-body" id="sortable">
-                                                <form id="menuGroupOrderFrm">
-                                                    <input id="menuGroupIdList" name="menuGroupIdList" type="hidden">
-                                                </form>
-                                                <div class="list-group align-items-center"
-                                                     th:data-id="${menuGroupVO.id}"
-                                                     th:data-order="${menuGroupVO.menuGroupOrder}"
-                                                     th:each="menuGroupVO : ${menuGroupVOList}"
-                                                     th:id="${'menuGroupOrder' + menuGroupVOStat.count}">
-                                                    <div class="list-group-item d-flex align-items-center justify-content-between col-12">
-                                                        <span th:text="${menuGroupVO.menuGroupTitle}"></span>
-                                                        <div class="icon">
-                                                            <i class="bx bx-list-ul fs-2"></i>
-                                                        </div>
-                                                    </div>
-                                                </div>
 
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button class="btn btn-secondary px-4"
-                                                        id="menuGroupOrderModalCancel" type="button">
-                                                    취소
-                                                </button>
-                                                <button class="btn btn-primary px-4" data-command="insert"
-                                                        id="menuGroupOrderModalSubmit" type="button">저장
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <!-- 메뉴그룹 추가 모달 S -->
+                                <th:block th:replace="~{/fragments/owner/menu/menuGroupModal}"></th:block>
+                                <!-- 메뉴그룹 추가 모달 E -->
+
+                                <!-- 메뉴그룹 순서변경 모달 S -->
+                                <th:block th:replace="~{/fragments/owner/menu/menuGroupReOrderModal}"></th:block>
                                 <!-- 메뉴그룹 순서변경 모달 E -->
+
+                                <!-- 메뉴 연결 모달 S -->
+                                <div id="optionGroupConnectModalWrapper"></div>
+                                <!-- 메뉴 연결 모달 E -->
+
                                 <div class="card clear">
                                     <!-- 메뉴가 있는 경우 S -->
                                     <div class="card-body" th:if="${!#lists.isEmpty(menuGroupVOList)}">
@@ -185,43 +91,152 @@
                                                 <div>: 메뉴 추가</div>
                                             </div>
                                         </div>
-                                        <div class="accordion mt-5 clear">
+
+                                        <!-- 메뉴 순서변경 모달 S -->
+                                        <th:block th:replace="~{/fragments/owner/menu/menuReOrderModal}"></th:block>
+                                        <!-- 메뉴 순서변경 모달 E -->
+
+                                        <!-- 메뉴 추가/수정 모달 S -->
+                                        <th:block th:replace="~{/fragments/owner/menu/menuModal}"></th:block>
+                                        <!-- 메뉴 추가/수정 모달 E -->
+
+                                        <div class="accordion mt-5 clear position-relative">
+                                            <form id="menuRemoveFrm">
+                                                <input id="menuRemoveId" name="menuId" type="hidden">
+                                                <input id="menuGroupRemoveId" name="menuGroupId" type="hidden">
+                                            </form>
                                             <div class="accordion-item" th:each="menuGroupVO : ${menuGroupVOList}">
-                                                <h2 class="accordion-header d-flex position-relative">
-                                                    <button class="accordion-button align-items-center"
+                                                <h2 class="accordion-header d-flex position-relative"
+                                                    th:style="${'z-index : ' + (menuGroupVOStat.size - menuGroupVOStat.index)}">
+                                                    <button class="accordion-button align-items-center position-relative"
                                                             data-bs-toggle="collapse"
                                                             th:data-bs-target="${'#menu' + menuGroupVOStat.count}"
-                                                            th:utext="${menuGroupVO.getMenuGroupTitle() + '<h5 class=&quot;mb-0 ms-2&quot;><span class=&quot;badge rounded-pill text-bg-primary&quot;>' + (menuGroupVO.menuGroupExposure == 'Y' ?  '노출' : '비노출') + '</span></h5>'}"
                                                             type="button">
+                                                        [[${menuGroupVO.getMenuGroupTitle()}]]
+                                                        <h5 class="mb-0 ms-2">
+                                                            <span class="badge rounded-pill text-bg-primary">
+                                                                [[${menuGroupVO.menuGroupExposure == 'Y' ? '노출' : '비노출'}]]
+                                                            </span>
+                                                        </h5>
                                                     </button>
-                                                    <div class="position-absolute top-0 end-0 d-flex align-items-center h-100 z-3 me-4rem">
-                                                        <button class="btn btn-primary btn-sm d-flex align-items-center me-2 me-sm-3 menu-group-edit"
-                                                                th:data-id="${menuGroupVO.id}">
-                                                            <div class="icon d-flex align-items-center pe-sm-1">
-                                                                <i class="bx bxs-pencil"></i>
+                                                    <div class="dropdown position-absolute top-50 end-0 translate-middle-y me-5rem menu-group-option"
+                                                         style="z-index: 2">
+                                                        <a aria-expanded="false"
+                                                           class="btn btn-primary btn-sm dropdown-toggle d-flex align-items-center"
+                                                           data-bs-display="static"
+                                                           data-bs-toggle="dropdown"
+                                                           role="button">
+                                                            <div class="icon d-flex align-items-center pe-1">
+                                                                <i class="bx bxs-cog"></i>
                                                             </div>
-                                                            <div class="d-none d-sm-block">수정</div>
-                                                        </button>
-                                                        <button class="btn btn-primary btn-sm d-flex align-items-center me-2 me-sm-3 menu-group-remove"
-                                                                th:data-id="${menuGroupVO.id}">
-                                                            <div class="icon d-flex align-items-center pe-sm-1">
-                                                                <i class="bx bx-trash"></i>
-                                                            </div>
-                                                            <div class="d-none d-sm-block">삭제</div>
-                                                        </button>
-                                                        <button class="btn btn-primary btn-sm d-flex align-items-center">
-                                                            <div class="icon d-flex align-items-center pe-sm-1">
-                                                                <i class="bx bxs-plus-circle"></i>
-                                                            </div>
-                                                            <div class="d-none d-sm-block">메뉴 추가</div>
-                                                        </button>
+                                                            <div> 옵션</div>
+                                                        </a>
+                                                        <ul class="dropdown-menu">
+                                                            <li>
+                                                                <div class="btn d-flex align-items-center w-100 "
+                                                                     th:data-id="${menuGroupVO.id}">
+                                                                    <div class="icon d-flex align-items-center pe-2 text-primary">
+                                                                        <i class="bx bxs-mask"></i>
+                                                                    </div>
+                                                                    <div>미리보기</div>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="btn d-flex align-items-center w-100 menu-group-edit"
+                                                                     th:data-id="${menuGroupVO.id}">
+                                                                    <div class="icon d-flex align-items-center pe-2 text-primary">
+                                                                        <i class="bx bxs-pencil"></i>
+                                                                    </div>
+                                                                    <div>수정</div>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="btn d-flex align-items-center w-100 menu-group-delete"
+                                                                     th:data-id="${menuGroupVO.id}">
+                                                                    <div class="icon d-flex align-items-center pe-2 text-primary">
+                                                                        <i class="bx bx-trash"></i>
+                                                                    </div>
+                                                                    <div>삭제</div>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="btn d-flex align-items-center w-100 menuAddBtn"
+                                                                     th:data-id="${menuGroupVO.id}">
+                                                                    <div class="icon d-flex align-items-center pe-2 text-primary">
+                                                                        <i class="bx  bxs-purchase-tag"></i>
+                                                                    </div>
+                                                                    <div>메뉴 추가</div>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="btn d-flex align-items-center w-100 menuReOrderBtn"
+                                                                     th:data-id="${menuGroupVO.id}">
+                                                                    <div class="icon d-flex align-items-center pe-2 text-primary">
+                                                                        <i class="bx bx-move"></i>
+                                                                    </div>
+                                                                    <div>메뉴 순서변경</div>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
                                                     </div>
                                                 </h2>
                                                 <div class="accordion-collapse collapse show"
                                                      th:id="${'menu' + menuGroupVOStat.count}">
-                                                    <div class="accordion-body">
+                                                    <div class="accordion-body not-last-border-bottom mx-3 position-relative d-flex align-items-center"
+                                                         th:each="menuVO :  ${menuGroupVO.getMenuVOList()}">
+                                                        <div>[[${menuVO.menuTitle}]] ([[${menuVO.menuPrice}]]원)</div>
+                                                        <div>
+                                                            <span class="badge rounded-pill text-bg-success ms-2">[[${menuVO.menuExposure == 'Y' ? '노출' : '비노출'}]]</span>
+                                                        </div>
+                                                        <div class="dropdown ms-auto">
+                                                            <button aria-expanded="false"
+                                                                    class="btn btn-success btn-sm dropdown-toggle d-flex align-items-center"
+                                                                    data-bs-toggle="dropdown"
+                                                                    type="button">
+                                                                <div class="icon d-flex align-items-center pe-1">
+                                                                    <i class="bx bxs-cog"></i>
+                                                                </div>
+                                                                <div> 옵션</div>
+                                                            </button>
+                                                            <ul class="dropdown-menu">
+                                                                <li>
+                                                                    <button class="btn d-flex align-items-center w-100">
+                                                                        <div class="icon d-flex align-items-center pe-2 text-success">
+                                                                            <i class="bx bxs-mask"></i>
+                                                                        </div>
+                                                                        <div>미리보기</div>
+                                                                    </button>
+                                                                </li>
+                                                                <li>
+                                                                    <button class="btn d-flex align-items-center w-100 menu-edit"
+                                                                            th:data-id="${menuVO.menuId}">
+                                                                        <div class="icon d-flex align-items-center pe-2 text-success">
+                                                                            <i class="bx bxs-pencil"></i>
+                                                                        </div>
+                                                                        <div>수정</div>
+                                                                    </button>
+                                                                </li>
+                                                                <li>
+                                                                    <button class="btn d-flex align-items-center w-100 menu-remove"
+                                                                            th:data-id="${menuVO.menuId}">
+                                                                        <div class="icon d-flex align-items-center pe-2 text-success">
+                                                                            <i class="bx bx-trash"></i>
+                                                                        </div>
+                                                                        <div>삭제</div>
+                                                                    </button>
+                                                                </li>
+                                                                <li>
+                                                                    <button class="btn d-flex align-items-center w-100 menu-add-option-group"
+                                                                            th:data-id="${menuVO.menuId}">
+                                                                        <div class="icon d-flex align-items-center pe-2 text-success">
+                                                                            <i class="bx  bxs-purchase-tag"></i>
+                                                                        </div>
+                                                                        <div>옵션그룹 연결</div>
+                                                                    </button>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
                                                         <!--  TODO : 메뉴 설명 ui 추가하기 -->
-                                                        메뉴메뉴메뉴메뉴
                                                     </div>
                                                 </div>
                                             </div>
@@ -259,256 +274,60 @@
                                         <div>옵션 추가</div>
                                     </button>
                                 </div>
+
                                 <!-- 옵션 추가/수정 모달 S -->
-                                <div aria-hidden="true" aria-labelledby="menuOptionGroupModalLabel"
-                                     class="modal fade"
-                                     data-bs-backdrop="static" data-bs-keyboard="false" id="menuOptionGroupModal"
-                                     tabindex="-1">
-                                    <div class="modal-dialog modal-dialog-centered position-relative">
-                                        <form class="w-100" id="menuOptionGroupModalForm">
-                                            <input id="maxSelect" name="menuOptionGroupMaxSelect" type="hidden"/>
-                                            <input id="menuOptionGroupId" name="menuOptionGroupId" type="hidden">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h1 class="modal-title fs-5" id="menuOptionGroupModalLabel">옵션그룹
-                                                        추가</h1>
-                                                </div>
-                                                <!-- 옵션 추가/수정 모달 첫 번째 페이지 S -->
-                                                <div class="modal-body" id="menuOptionGroupModalFirstPage">
-                                                    <div class="mb-4">
-                                                        <label class="form-label fs-6" for="menuOptionGroupTitle">옵션그룹명
-                                                            <em
-                                                                    class="text-danger">*</em></label>
-                                                        <div class="float-end text-secondary count-text-limit"
-                                                             id="menuOptionGroupTitleLength">
-                                                            0/20
-                                                        </div>
-                                                        <input class="form-control" id="menuOptionGroupTitle"
-                                                               name="menuOptionGroupTitle"
-                                                               placeholder="예) 사이드메뉴 추가선택" type="text">
-                                                    </div>
-                                                    <div class="position-relative" id="menuOptionSortable">
-                                                        <label class="form-label fs-6" id="menuOptionTitleLabel">옵션
-                                                            내용<em
-                                                                    class="text-danger">*</em></label>
-                                                        <button class="btn btn-outline-primary btn-sm fs-0-8 float-end"
-                                                                id="changeOrderBtn" type="button">
-                                                            순서 변경
-                                                        </button>
-                                                        <div class="row g-3 align-items-center mb-1 menu-option-content clear">
-                                                            <input class="menuOptionOrder" type="hidden">
-                                                            <div class="col-7 position-relative">
-                                                                <label class="d-none"
-                                                                       for="menuOptionTitle"></label>
-                                                                <div class="position-absolute text-secondary count-text-limit end-0 top-50 translate-middle-y me-3"
-                                                                     id="menuOptionLength">
-                                                                    0/20
-                                                                </div>
-                                                                <input
-                                                                        class="form-control menu-option pe-5"
-                                                                        id="menuOptionTitle"
-                                                                        type="text">
-                                                            </div>
-                                                            <div class="col-4 position-relative">
-                                                                <label class="position-absolute end-0 top-50 translate-middle-y me-3 text-secondary"
-                                                                       for="menuOptionPrice"
-                                                                       style="font-size: 0.8rem">원</label>
-                                                                <input
-                                                                        class="form-control menu-option-price"
-                                                                        id="menuOptionPrice"
-                                                                        type="text"
-                                                                >
-                                                            </div>
-                                                            <div class="icon col-1 d-flex align-items-center ps-0 pointer menu-option-delete">
-                                                                <i class="bx bx-x fs-2"></i>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <button class="ps-0 btn d-flex align-items-center text-primary fs-0-8 mt-1"
-                                                            id="addOption"
-                                                            type="button">
-                                                        <div class="icon">
-                                                            <i class="bx bx-plus"></i>
-                                                        </div>
-                                                        옵션추가
-                                                    </button>
-                                                </div>
-                                                <!-- 옵션 추가/수정 모달 첫 번째 페이지 E -->
-                                                <!-- 옵션 추가/수정 모달 두 번째 페이지 S -->
-                                                <div class="modal-body d-none" id="menuOptionGroupModalSecondPage">
-                                                    <div class="mb-4">
-                                                        <label class="form-label fs-6" for="menuOptionGroupTitle">옵션
-                                                            유형<em class="text-danger">*</em></label>
-                                                        <div class="row g-3">
-                                                            <div class="col-6">
-                                                                <input autocomplete="off"
-                                                                       checked
-                                                                       class="btn-check" id="requiredOption"
-                                                                       name="menuOptionGroupRequired"
-                                                                       type="radio" value="Y">
-                                                                <label class="btn w-100 btn-outline-primary"
-                                                                       for="requiredOption">
-                                                                    필수 옵션
-                                                                </label>
-                                                            </div>
-                                                            <div class="col-6">
-                                                                <input autocomplete="off"
-                                                                       class="btn-check"
-                                                                       id="noRequiredOption"
-                                                                       name="menuOptionGroupRequired" type="radio"
-                                                                       value="N">
-                                                                <label class="btn w-100 btn-outline-primary"
-                                                                       for="noRequiredOption">
-                                                                    선택 옵션
-                                                                </label></div>
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <label class="form-label fs-6" for="menuOptionGroupTitle">옵션
-                                                            수<em class="text-danger">*</em></label>
-                                                        <div>
-                                                            <!-- 필수 옵션 선택 시 S -->
-                                                            <div class="row g-3 bg-gray-light mt-1 py-2 rounded-1 px-2"
-                                                                 id="requiredOptionView">
-                                                                <div class="col-8 fs-0-8 mt-0 d-flex align-items-center py-3">
-                                                                    고객은 <span class="fw-bold"> &nbsp;필수
-                                                                    몇 개</span>의 옵션을 선택할 수
-                                                                    있나요?
-                                                                </div>
-                                                                <div class="col-4 mt-0 py-3">
-                                                                    <div class="row g-3 me-3">
-                                                                        <div class="col-3-half icon d-flex align-items-center border border-gray-light justify-content-center bg-white border-left-radius pointer"
-                                                                             id="requiredOptionMinus">
-                                                                            <i class="bx bx-minus fs-5"></i>
-                                                                        </div>
-                                                                        <div class="col-5 p-2 border-top border-bottom border-gray-light text-center bg-white"
-                                                                             id="selectRequiredOptionCount">
-                                                                            2개
-                                                                        </div>
-                                                                        <div class="col-3-half icon d-flex align-items-center border border-gray-light justify-content-center border-right-radius bg-gray text-gray"
-                                                                             id="requiredOptionPlus">
-                                                                            <i class="bx bx-plus fs-5"></i>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="fs-0-8 border-top border-2 pt-3 pb-1 mt-0">
-                                                                    이 옵션그룹에는 옵션이 <span class="fw-bold"
-                                                                                       id="requiredOptionCount">총 2개</span>
-                                                                    있습니다.
-                                                                </div>
-                                                            </div>
-                                                            <!-- 필수 옵션 선택 시 E -->
-                                                            <!-- 선택 옵션 선택 시 S -->
-                                                            <div class="row g-3 py-2 d-none justify-content-center"
-                                                                 id="noRequiredOptionView">
-                                                                <div class="col-6">
-                                                                    <input autocomplete="off" checked
-                                                                           class="btn-check"
-                                                                           id="maxOptions" name="optionCountButton"
-                                                                           type="radio" value="Y">
-                                                                    <label class="btn w-100 btn-outline-primary"
-                                                                           for="maxOptions">
-                                                                        최대 선택 개수 지정
-                                                                    </label>
-                                                                </div>
-                                                                <div class="col-6">
-                                                                    <input autocomplete="off" class="btn-check"
-                                                                           id="allOptions"
-                                                                           name="optionCountButton" type="radio"
-                                                                           value="N">
-                                                                    <label class="btn w-100 btn-outline-primary"
-                                                                           for="allOptions">
-                                                                        모든 옵션 선택 가능
-                                                                    </label>
-                                                                </div>
-                                                                <div class="row g-3 bg-gray-light mt-3 py-2 rounded-1 px-2"
-                                                                     id="maxSelectView">
-                                                                    <div class="col-8 fs-0-8 mt-0 d-flex align-items-center py-3">
-                                                                        고객은 <span class="fw-bold"> &nbsp;최대
-                                                                    몇 개</span>의 옵션을 선택할 수
-                                                                        있나요?
-                                                                    </div>
-                                                                    <div class="col-4 mt-0 py-3">
-                                                                        <div class="row g-3 me-3">
-                                                                            <div class="col-3-half icon d-flex align-items-center border border-gray-light justify-content-center bg-white border-left-radius pointer"
-                                                                                 id="noRequiredOptionMinus">
-                                                                                <i class="bx bx-minus fs-5"></i>
-                                                                            </div>
-                                                                            <div class="col-5 p-2 border-top border-bottom border-gray-light text-center bg-white"
-                                                                                 id="selectNoRequiredOptionCount">
-                                                                            </div>
-                                                                            <div class="col-3-half icon d-flex align-items-center border border-gray-light justify-content-center border-right-radius bg-gray text-gray"
-                                                                                 id="noRequiredOptionPlus">
-                                                                                <i class="bx bx-plus fs-5"></i>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="fs-0-8 border-top border-2 pt-3 pb-1 mt-0">
-                                                                        이 옵션그룹에는 옵션이 <span class="fw-bold"
-                                                                                           id="noRequiredOptionCount">총 2개</span>
-                                                                        있습니다.
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <!-- 선택 옵션 선택 시 E -->
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!-- 옵션 추가/수정 모달 두 번째 페이지 E -->
-                                                <div class="modal-footer">
-                                                    <button class="btn btn-secondary px-4"
-                                                            id="menuOptionGroupModalCancel" type="button">
-                                                        취소
-                                                    </button>
-                                                    <button class="btn btn-secondary px-4 d-none"
-                                                            id="menuOptionGroupModalPrev" type="button">이전
-                                                    </button>
-                                                    <button class="btn btn-primary px-4"
-                                                            id="menuOptionGroupModalNext" type="button">다음
-                                                    </button>
-                                                    <button class="btn btn-primary px-4 d-none" data-command="insert"
-                                                            id="menuOptionGroupModalSubmit" type="button">추가
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                        <div class="toast-container position-absolute top-50 start-50 translate-middle p-3">
-                                            <div aria-atomic="true" aria-live="assertive" class="toast fade hide"
-                                                 id="toast"
-                                                 role="alert">
-                                                <div class="toast-body text-center">한 개 이상의 옵션이 필요합니다.</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <th:block th:replace="~{/fragments/owner/menu/menuOptionModal}"></th:block>
                                 <!-- 옵션 추가/수정 모달 E -->
+
                                 <div class="card clear">
                                     <!-- 옵션이 있는 경우 S -->
                                     <div class="card-body" th:if="${!#lists.isEmpty(menuOptionGroupVOList)}">
                                         <div class="accordion mt-5 ">
+                                            <form id="menuOptionGroupFrm">
+                                                <input id="menuOptionGroupIdToRemove" name="menuOptionGroupId"
+                                                       type="hidden">
+                                            </form>
                                             <div class="accordion-item"
                                                  th:each="menuOptionGroupVO : ${menuOptionGroupVOList}">
-                                                <h2 class="accordion-header position-relative">
+                                                <h2 class="accordion-header position-relative"
+                                                    th:style="${'z-index : ' + (menuOptionGroupVOStat.size - menuOptionGroupVOStat.index)}">
                                                     <button class="accordion-button" data-bs-toggle="collapse"
                                                             th:data-bs-target="${'#menuOptionGroup' + menuOptionGroupVOStat.count}"
                                                             th:utext="${menuOptionGroupVO.menuOptionGroupTitle} + '<h5 class=&quot;mb-0 ms-2&quot;><span class=&quot;badge rounded-pill text-bg-primary&quot;>' + ${menuOptionGroupVO.menuOptionGroupRequired == 'Y' ? '필수' : '선택'} + ', ' + ${menuOptionGroupVO.menuOptionGroupMaxSelect} + '개</span></h5>'"
                                                             type="button">
                                                     </button>
-                                                    <div class="position-absolute top-0 end-0 d-flex align-items-center h-100 z-3 me-4rem">
-                                                        <button class="btn btn-primary btn-sm d-flex align-items-center me-2 me-sm-3 menu-option-group-edit"
-                                                                th:data-id="${menuOptionGroupVO.menuOptionGroupId}">
-                                                            <div class="icon d-flex align-items-center pe-sm-1">
-                                                                <i class="bx bxs-pencil"></i>
+                                                    <div class="dropdown position-absolute top-50 end-0 translate-middle-y me-5rem menu-option-group-option"
+                                                         style="z-index: 2">
+                                                        <a aria-expanded="false"
+                                                           class="btn btn-primary btn-sm dropdown-toggle d-flex align-items-center"
+                                                           data-bs-display="static"
+                                                           data-bs-toggle="dropdown"
+                                                           role="button">
+                                                            <div class="icon d-flex align-items-center pe-1">
+                                                                <i class="bx bxs-cog"></i>
                                                             </div>
-                                                            <div class="d-none d-sm-block">수정</div>
-                                                        </button>
-                                                        <button class="btn btn-primary btn-sm d-flex align-items-center menu-option-group-remove"
-                                                                th:data-id="${menuOptionGroupVO.menuOptionGroupId}">
-                                                            <div class="icon d-flex align-items-center pe-sm-1">
-                                                                <i class="bx bx-trash"></i>
-                                                            </div>
-                                                            <div class="d-none d-sm-block">삭제</div>
-                                                        </button>
+                                                            <div> 옵션</div>
+                                                        </a>
+                                                        <ul class="dropdown-menu">
+                                                            <li>
+                                                                <div class="btn d-flex align-items-center w-100 menu-option-group-edit"
+                                                                     th:data-id="${menuOptionGroupVO.menuOptionGroupId}">
+                                                                    <div class="icon d-flex align-items-center pe-2 text-primary">
+                                                                        <i class="bx bxs-pencil"></i>
+                                                                    </div>
+                                                                    <div>수정</div>
+                                                                </div>
+                                                            </li>
+                                                            <li>
+                                                                <div class="btn d-flex align-items-center w-100 menu-option-group-delete"
+                                                                     th:data-id="${menuOptionGroupVO.menuOptionGroupId}">
+                                                                    <div class="icon d-flex align-items-center pe-2 text-primary">
+                                                                        <i class="bx bx-trash"></i>
+                                                                    </div>
+                                                                    <div>삭제</div>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
                                                     </div>
                                                 </h2>
                                                 <div class="accordion-collapse collapse show"

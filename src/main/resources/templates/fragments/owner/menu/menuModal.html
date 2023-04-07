@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="menuModal">
+    <div aria-hidden="true" aria-labelledby="menuModalLabel"
+         class="modal fade" data-bs-backdrop="static"
+         data-bs-keyboard="false" id="menuModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <form class="w-100" id="menuModalForm">
+                <input id="menuModalMenuGroupId" name="menuGroupId"
+                       type="hidden">
+                <input id="menuModalMenuId" name="menuId" type="hidden">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="menuModalLabel">메뉴
+                            추가</h1>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-4">
+                            <label class="form-label" for="menuTitle">메뉴명<em
+                                    class="text-danger">*</em></label>
+                            <div class="float-end text-secondary count-text-limit"
+                                 id="menuTitleLength">
+                                0/20
+                            </div>
+                            <input class="form-control" id="menuTitle"
+                                   name="menuTitle"
+                                   placeholder="예) 민트초코 라떼" type="text">
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label" for="menuExplanation">메뉴
+                                설명<em
+                                        class="text-danger">*</em></label>
+                            <div class="float-end text-secondary count-text-limit"
+                                 id="menuExplanationLength">
+                                0/70
+                            </div>
+                            <textarea
+                                    class="form-control no-resize-textarea"
+                                    id="menuExplanation"
+                                    name="menuExplanation"
+                                    placeholder="예) 민트초코를 갈아 만든 음료입니다."
+                            ></textarea>
+                        </div>
+                        <div>
+                            <label class="form-label" for="menuPrice">메뉴
+                                가격<em class="text-danger">*</em></label>
+                            <div class="position-relative col-4 mt-0">
+                                <span class="position-absolute end-0 top-50 translate-middle-y me-2 text-secondary fs-0-8">원</span>
+                                <input class="form-control pe-4"
+                                       id="menuPrice"
+                                       name="menuPrice" type="text">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between align-items-center">
+                        <div class="btn-group col-4 mt-0 align-items-center">
+                            <div class="col-6 mt-0">
+                                <input
+                                        autocomplete="off"
+                                        checked
+                                        class="btn-check"
+                                        id="menuExposure"
+                                        name="menuExposure"
+                                        type="radio"
+                                        value="Y">
+                                <label class="btn btn-outline-primary w-100"
+                                       for="menuExposure"
+                                       style="border-bottom-right-radius: 0; border-top-right-radius: 0;">노출</label>
+                            </div>
+                            <div class="col-6 mt-0">
+                                <input autocomplete="off"
+                                       class="btn-check"
+                                       id="menuNonExposure"
+                                       name="menuExposure"
+                                       type="radio" value="N">
+                                <label class="btn btn-outline-primary w-100"
+                                       for="menuNonExposure"
+                                       style="border-bottom-left-radius: 0; border-top-left-radius: 0;">비노출</label>
+                            </div>
+                        </div>
+                        <div>
+                            <button class="btn btn-secondary px-4"
+                                    id="menuModalCancel" type="button">
+                                취소
+                            </button>
+                            <button class="btn btn-primary px-4"
+                                    data-command="insert"
+                                    id="menuModalSubmit" type="button">추가
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</th:block>
+</html>
