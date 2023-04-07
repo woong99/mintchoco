@@ -5,9 +5,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
-import com.woong.mintchoco.domain.User;
-import com.woong.mintchoco.repository.user.UserRepository;
-import com.woong.mintchoco.vo.UserVO;
+import com.woong.mintchoco.global.auth.entity.User;
+import com.woong.mintchoco.global.auth.model.UserVO;
+import com.woong.mintchoco.global.auth.repository.UserRepository;
+import com.woong.mintchoco.global.auth.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,6 +26,24 @@ class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    private User createUser() {
+        return User.builder()
+                .userId("userId")
+                .userPwd("userPwd")
+                .name("name")
+                .tel("tel")
+                .build();
+    }
+
+    private UserVO createUserVO() {
+        return UserVO.builder()
+                .userId("userId")
+                .userPwd("userPwd")
+                .name("name")
+                .tel("tel")
+                .build();
+    }
 
     @Nested
     class 회원가입 {
@@ -106,23 +125,5 @@ class UserServiceTest {
             // then
 //            assertThat(result).isNull();
         }
-    }
-
-    private User createUser() {
-        return User.builder()
-                .userId("userId")
-                .userPwd("userPwd")
-                .name("name")
-                .tel("tel")
-                .build();
-    }
-
-    private UserVO createUserVO() {
-        return UserVO.builder()
-                .userId("userId")
-                .userPwd("userPwd")
-                .name("name")
-                .tel("tel")
-                .build();
     }
 }
