@@ -11,10 +11,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-import com.woong.mintchoco.domain.Authority;
-import com.woong.mintchoco.domain.User;
-import com.woong.mintchoco.service.UserService;
-import com.woong.mintchoco.vo.UserVO;
+import com.woong.mintchoco.global.auth.entity.Authority;
+import com.woong.mintchoco.global.auth.entity.User;
+import com.woong.mintchoco.global.auth.model.UserVO;
+import com.woong.mintchoco.global.auth.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,31 +36,6 @@ class OwnerControllerTest {
 
     @MockBean
     private UserService userService;
-
-    @TestConfiguration
-    static class WebSecurityConfig {
-
-        @Bean
-        public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-            return http
-                    .authorizeHttpRequests(
-                            auth -> auth.requestMatchers("/owner/login", "/owner/signUp", "/owner/signUp.do",
-                                            "/owner/duplicateCheck.do",
-                                            "/bootstrap/**", "/css/**", "/js/**")
-                                    .permitAll())
-                    .authorizeHttpRequests(
-                            auth -> auth.requestMatchers("/owner/**").hasAuthority(Authority.OWNER.getAuthority())
-                    )
-                    .formLogin()
-                    .loginPage("/owner/login")
-                    .loginProcessingUrl("/owner/login.do")
-                    .usernameParameter("userId")
-                    .passwordParameter("userPwd")
-                    .and()
-                    .csrf(AbstractHttpConfigurer::disable)
-                    .build();
-        }
-    }
 
     @Test
     @DisplayName("사장님 페이지 - 아이디 중복 검사")
@@ -166,5 +141,30 @@ class OwnerControllerTest {
                 .andExpect(handler().methodName("login"))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl("/owner/main"));
+    }
+
+    @TestConfiguration
+    static class WebSecurityConfig {
+
+        @Bean
+        public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+            return http
+                    .authorizeHttpRequests(
+                            auth -> auth.requestMatchers("/owner/login", "/owner/signUp", "/owner/signUp.do",
+                                            "/owner/duplicateCheck.do",
+                                            "/bootstrap/**", "/css/**", "/js/**")
+                                    .permitAll())
+                    .authorizeHttpRequests(
+                            auth -> auth.requestMatchers("/owner/**").hasAuthority(Authority.OWNER.getAuthority())
+                    )
+                    .formLogin()
+                    .loginPage("/owner/login")
+                    .loginProcessingUrl("/owner/login.do")
+                    .usernameParameter("userId")
+                    .passwordParameter("userPwd")
+                    .and()
+                    .csrf(AbstractHttpConfigurer::disable)
+                    .build();
+        }
     }
 }
