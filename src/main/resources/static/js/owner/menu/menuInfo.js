@@ -695,6 +695,27 @@ $(function () {
             menuRemoveFrm.submit();
         }
     })
+
+    /* 메뉴 미리보기 버튼 이벤트 */
+    $(".menu-preview").click(function () {
+        const menuId = parseInt($(this).attr("data-id"));
+        $.ajax({
+            url: "/owner/menu/info/menu/preview",
+            data: {menuId}
+        })
+            .done(res => {
+                alert(unKnownError);
+                $("#menuPreviewModalWrapper").replaceWith(res);
+                $("#menuPreviewModal").modal("show");
+            })
+            .fail(res => {
+                if (res.status === 404) {
+                    alert("메뉴 조회에 실패했습니다.");
+                } else {
+                    alert(unKnownError);
+                }
+            })
+    })
 })
 
 /* 최대 글자수 체크 및 글자수 표시 텍스트 갱신 */
