@@ -81,8 +81,13 @@ $(function () {
                 menuGroupModalSubmit.attr('data-command', 'update');
                 $("#menuGroupId").val($(this).data("id"));
             })
-            .fail(() => {
-                alert("메뉴그룹을 조회할 수 없습니다.");
+            .fail((res) => {
+                if (res.status === 404) {
+                    alert("메뉴그룹을 조회할 수 없습니다.");
+                } else {
+                    alert(unKnownError);
+                }
+
             })
     })
 
@@ -434,6 +439,13 @@ $(function () {
                 }
                 menuOptionGroupModal.modal('show');
             })
+            .fail(res => {
+                if (res.status === 404) {
+                    alert("메뉴 옵션 그룹을 조회할 수 없습니다.");
+                } else {
+                    alert(unKnownError);
+                }
+            })
     })
 
     /* 메뉴 추가 버튼 이벤트 */
@@ -550,7 +562,12 @@ $(function () {
                 $("#menuModal").modal("show");
             })
             .fail(res => {
-                alert("메뉴를 조회할 수 없습니다.");
+                if (res.status === 404) {
+                    alert("메뉴를 조회할 수 없습니다.");
+                } else {
+                    alert(unKnownError);
+                }
+
             })
     });
 

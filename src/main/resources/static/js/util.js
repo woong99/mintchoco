@@ -8,6 +8,7 @@ const addMessage = "추가하시겠습니까?";
 const saveMessage = "저장하시겠습니까?";
 const updateMessage = "수정하시겠습니까?";
 const deleteMessage = "삭제하시겠습니까?";
+const unKnownError = "알 수 없는 오류입니다.";
 
 /**
  * 값이 존재하는지 검사(단일)

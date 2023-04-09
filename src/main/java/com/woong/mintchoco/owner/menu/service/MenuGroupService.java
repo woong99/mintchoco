@@ -1,7 +1,9 @@
 package com.woong.mintchoco.owner.menu.service;
 
 import com.woong.mintchoco.global.auth.entity.User;
+import com.woong.mintchoco.global.common.ErrorCode;
 import com.woong.mintchoco.owner.menu.entity.MenuGroup;
+import com.woong.mintchoco.owner.menu.exception.MenuGroupNotFoundException;
 import com.woong.mintchoco.owner.menu.model.MenuGroupVO;
 import com.woong.mintchoco.owner.menu.repository.group.MenuGroupRepository;
 import com.woong.mintchoco.owner.store.entity.Store;
@@ -10,10 +12,10 @@ import jakarta.persistence.Query;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -62,7 +64,9 @@ public class MenuGroupService {
      * @return 단일 메뉴그룹(MenuGroupVO)
      */
     public MenuGroupVO selectMenuGroup(Long id) {
-        return MenuGroupVO.toMenuGroupVO(menuGroupRepository.findById(id).orElseThrow(NoSuchElementException::new));
+        return MenuGroupVO.toMenuGroupVO(
+                menuGroupRepository.findById(id).orElseThrow(() -> new MenuGroupNotFoundException(
+                        ErrorCode.MENU_GROUP_NOT_FOUND)));
     }
 
 
@@ -81,6 +85,7 @@ public class MenuGroupService {
      *
      * @param menuGroupIdList 메뉴그룹 ID 리스트
      */
+    @Transactional
     public void updateMenuGroupOrder(Long[] menuGroupIdList) {
         StringBuilder query = new StringBuilder("update MenuGroup mg set mg.groupOrder=case ");
         for (int i = 0; i < menuGroupIdList.length; i++) {

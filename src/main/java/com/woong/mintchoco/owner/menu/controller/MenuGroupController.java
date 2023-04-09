@@ -8,12 +8,9 @@ import com.woong.mintchoco.global.common.ModelUtils;
 import com.woong.mintchoco.global.common.URL;
 import com.woong.mintchoco.owner.menu.model.MenuGroupVO;
 import com.woong.mintchoco.owner.menu.service.MenuGroupService;
-import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -50,12 +47,8 @@ public class MenuGroupController {
      */
     @RequestMapping("/menuGroup/select.do")
     public ResponseEntity<MenuGroupVO> menuGroupSelect(@RequestParam("id") Long id) {
-        MenuGroupVO menuGroupVO;
-        try {
-            menuGroupVO = menuGroupService.selectMenuGroup(id);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+        MenuGroupVO menuGroupVO = menuGroupService.selectMenuGroup(id);
+
         return ResponseEntity.ok(menuGroupVO);
     }
 

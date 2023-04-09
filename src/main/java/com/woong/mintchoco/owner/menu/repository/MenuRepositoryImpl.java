@@ -43,6 +43,7 @@ public class MenuRepositoryImpl implements MenuRepositoryCustom {
      *
      * @param menuVO 메뉴 정보
      */
+    @Transactional
     @Override
     public void updateMenu(MenuVO menuVO) {
         jpaQueryFactory

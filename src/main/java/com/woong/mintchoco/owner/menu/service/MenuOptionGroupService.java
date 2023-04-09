@@ -1,10 +1,12 @@
 package com.woong.mintchoco.owner.menu.service;
 
 import com.woong.mintchoco.global.auth.entity.User;
+import com.woong.mintchoco.global.common.ErrorCode;
 import com.woong.mintchoco.owner.menu.entity.Menu;
 import com.woong.mintchoco.owner.menu.entity.MenuOption;
 import com.woong.mintchoco.owner.menu.entity.MenuOptionGroup;
 import com.woong.mintchoco.owner.menu.entity.MenuOptionGroupMenu;
+import com.woong.mintchoco.owner.menu.exception.MenuOptionGroupNotFoundException;
 import com.woong.mintchoco.owner.menu.model.MenuOptionGroupMenuVO;
 import com.woong.mintchoco.owner.menu.model.MenuOptionGroupVO;
 import com.woong.mintchoco.owner.menu.model.MenuOptionVO;
@@ -88,8 +90,12 @@ public class MenuOptionGroupService {
      * @return 단일 메뉴 옵션 그룹 및 연관된 메뉴 옵션들
      */
     public MenuOptionGroupVO selectMenuOptionGroup(Long menuOptionGroupId) {
-        return MenuOptionGroupVO.toMenuOptionGroupVOWithMenuOption(
-                menuOptionGroupRepository.selectMenuOptionGroupWithMenuOptionOrderByMenuOrder(menuOptionGroupId));
+        MenuOptionGroup menuOptionGroup = menuOptionGroupRepository.selectMenuOptionGroupWithMenuOptionOrderByMenuOrder(
+                menuOptionGroupId);
+        if (menuOptionGroup == null) {
+            throw new MenuOptionGroupNotFoundException(ErrorCode.MENU_OPTION_GROUP_NOT_FOUND);
+        }
+        return MenuOptionGroupVO.toMenuOptionGroupVOWithMenuOption(menuOptionGroup);
     }
 
 

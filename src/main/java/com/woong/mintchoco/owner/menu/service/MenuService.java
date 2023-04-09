@@ -1,9 +1,11 @@
 package com.woong.mintchoco.owner.menu.service;
 
+import com.woong.mintchoco.global.common.ErrorCode;
 import com.woong.mintchoco.owner.menu.entity.Menu;
 import com.woong.mintchoco.owner.menu.entity.MenuGroup;
 import com.woong.mintchoco.owner.menu.entity.MenuOptionGroup;
 import com.woong.mintchoco.owner.menu.entity.MenuOptionGroupMenu;
+import com.woong.mintchoco.owner.menu.exception.MenuNotFoundException;
 import com.woong.mintchoco.owner.menu.model.MenuVO;
 import com.woong.mintchoco.owner.menu.repository.MenuRepository;
 import com.woong.mintchoco.owner.menu.repository.group.MenuGroupRepository;
@@ -15,7 +17,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,7 +71,9 @@ public class MenuService {
      * @return 메뉴 정보
      */
     public MenuVO selectMenu(Long menuId) {
-        return MenuVO.toMenuVO(menuRepository.findById(menuId).orElseThrow(NoSuchElementException::new));
+        return MenuVO.toMenuVO(
+                menuRepository.findById(menuId)
+                        .orElseThrow(() -> new MenuNotFoundException(ErrorCode.MENU_NOT_FOUND)));
     }
 
 
@@ -100,6 +103,7 @@ public class MenuService {
      *
      * @param menuIdList 메뉴 ID 리스트
      */
+    @Transactional
     public void updateMenusOrder(Long[] menuIdList) {
         StringBuilder query = new StringBuilder("update Menu m set m.menuOrder=case ");
         for (int i = 0; i < menuIdList.length; i++) {
