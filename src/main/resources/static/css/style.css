@@ -263,7 +263,7 @@ h6 {
 
 /* Close Button */
 .btn-close {
-    background-size: 25%;
+    background-size: 60%;
 }
 
 .btn-close:focus {
@@ -1336,6 +1336,10 @@ h6 {
 
 .bg-gray-light {
     background-color: #f7f7f7;;
+}
+
+.text-gray-light {
+    color: #f7f7f7;
 }
 
 .bg-gray {

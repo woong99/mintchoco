@@ -157,4 +157,20 @@ public class MenuController {
         ModelUtils.modelMessage(MessageType.MSG_URL, Message.SUCCESS_SAVE, URL.MENU_INFO, model);
         return URL.MESSAGE.url();
     }
+
+
+    /**
+     * 사장님 페이지 > 메뉴 관리 > 메뉴 설정 > 메뉴 미리보기
+     *
+     * @param menuId 메뉴 ID
+     * @param model 모델
+     * @return "/fragments/owner/menu/menuPreviewModal"
+     */
+    @RequestMapping("/menu/preview")
+    public String menuPreview(@RequestParam("menuId") Long menuId, ModelMap model) {
+        MenuVO menuVO = menuService.selectMenuWithMenuOptions(menuId);
+
+        model.addAttribute("menuVO", menuVO);
+        return "/fragments/owner/menu/menuPreviewModal";
+    }
 }

@@ -1,6 +1,7 @@
 package com.woong.mintchoco.owner.menu.model;
 
 import com.woong.mintchoco.owner.menu.entity.Menu;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,6 +30,8 @@ public class MenuVO {
     private int menuPrice;
 
     private MenuGroupVO menuGroupVO;
+
+    private List<MenuOptionGroupVO> menuOptionGroupVOS;
 
     public static MenuVO toMenuVO(Menu menu) {
         return MenuVO.builder()

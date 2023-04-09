@@ -100,6 +100,10 @@
                                         <th:block th:replace="~{/fragments/owner/menu/menuModal}"></th:block>
                                         <!-- 메뉴 추가/수정 모달 E -->
 
+                                        <!-- 메뉴 미리보기 모달 S -->
+                                        <div id="menuPreviewModalWrapper"></div>
+                                        <!-- 메뉴 미리보기 모달 E -->
+
                                         <div class="accordion mt-5 clear position-relative">
                                             <form id="menuRemoveFrm">
                                                 <input id="menuRemoveId" name="menuId" type="hidden">
@@ -200,7 +204,8 @@
                                                             </button>
                                                             <ul class="dropdown-menu">
                                                                 <li>
-                                                                    <button class="btn d-flex align-items-center w-100">
+                                                                    <button class="btn d-flex align-items-center w-100 menu-preview"
+                                                                            th:data-id="${menuVO.menuId}">
                                                                         <div class="icon d-flex align-items-center pe-2 text-success">
                                                                             <i class="bx bxs-mask"></i>
                                                                         </div>

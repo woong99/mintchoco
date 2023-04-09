@@ -6,6 +6,7 @@ import com.woong.mintchoco.owner.menu.entity.MenuGroup;
 import com.woong.mintchoco.owner.menu.entity.MenuOptionGroup;
 import com.woong.mintchoco.owner.menu.entity.MenuOptionGroupMenu;
 import com.woong.mintchoco.owner.menu.exception.MenuNotFoundException;
+import com.woong.mintchoco.owner.menu.model.MenuOptionGroupVO;
 import com.woong.mintchoco.owner.menu.model.MenuVO;
 import com.woong.mintchoco.owner.menu.repository.MenuRepository;
 import com.woong.mintchoco.owner.menu.repository.group.MenuGroupRepository;
@@ -145,4 +146,19 @@ public class MenuService {
         menuOptionGroupMenuRepository.saveAllMenuOptionGroupMenu(menuOptionGroupMenus);
     }
 
+
+    /**
+     * 메뉴 및 메뉴와 연결된 메뉴 옵션들을 조회
+     * @param menuId 메뉴 ID
+     * @return 메뉴 및 메뉴와 연결된 메뉴 옵션들
+     */
+    public MenuVO selectMenuWithMenuOptions(Long menuId) {
+        MenuVO menuVO = MenuVO.toMenuVO(menuRepository.findById(menuId)
+                .orElseThrow(() -> new MenuNotFoundException(ErrorCode.MENU_NOT_FOUND)));
+        List<MenuOptionGroupVO> menuOptionGroupVOs = menuOptionGroupRepository.selectMenuOptionGroupWithMenuOptions(
+                menuId).stream().map(MenuOptionGroupVO::toMenuOptionGroupVOWithMenuOption).toList();
+        menuVO.setMenuOptionGroupVOS(menuOptionGroupVOs);
+
+        return menuVO;
+    }
 }

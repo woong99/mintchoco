@@ -8,6 +8,8 @@ public interface MenuOptionGroupRepositoryCustom {
 
     List<MenuOptionGroup> selectAllMenuOptionGroupWithMenuOptionOrderByMenuOrder(Long storeId);
 
+    List<MenuOptionGroup> selectMenuOptionGroupWithMenuOptions(Long menuId);
+
     MenuOptionGroup selectMenuOptionGroupWithMenuOptionOrderByMenuOrder(Long menuOptionGroupId);
 
     void updateMenuOptionGroup(MenuOptionGroupVO menuOptionGroupVO);

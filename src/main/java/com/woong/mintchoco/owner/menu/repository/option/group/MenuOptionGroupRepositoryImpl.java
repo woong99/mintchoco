@@ -100,4 +100,23 @@ public class MenuOptionGroupRepositoryImpl implements MenuOptionGroupRepositoryC
                 .where(qMenuOptionGroup.id.eq(menuOptionGroupId))
                 .execute();
     }
+
+
+    /**
+     * 메뉴 ID를 통해 조인을 통해 메뉴 옵션 그룹과 연결된 메뉴들을 조회한다.
+     * @param menuId 메뉴 ID
+     * @return 메뉴 그룹들과 그와 연결된 메뉴들
+     */
+    @Override
+    public List<MenuOptionGroup> selectMenuOptionGroupWithMenuOptions(Long menuId) {
+        return jpaQueryFactory
+                .select(qMenuOptionGroup)
+                .from(qMenuOptionGroup)
+                .leftJoin(qMenuOptionGroup.menuOptionGroupMenus, qMenuOptionGroupMenu)
+                .leftJoin(qMenuOptionGroup.menuOptions, qMenuOption).fetchJoin()
+                .where(qMenuOptionGroupMenu.menu.id.eq(menuId))
+                .orderBy(qMenuOptionGroupMenu.menuOptionGroupOrder.asc())
+                .orderBy(qMenuOption.menuOrder.asc())
+                .fetch();
+    }
 }
