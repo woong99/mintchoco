@@ -13,4 +13,6 @@ public interface MenuGroupRepositoryCustom {
     List<MenuGroup> selectAllMenuGroupWithMenu(Long storeId);
 
     void deleteMenuGroup(Long menuGroupId);
+
+    MenuGroup selectMenuGroupWithMenus(Long menuGroupId);
 }

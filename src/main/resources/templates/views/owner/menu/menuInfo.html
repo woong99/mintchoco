@@ -104,6 +104,10 @@
                                         <div id="menuPreviewModalWrapper"></div>
                                         <!-- 메뉴 미리보기 모달 E -->
 
+                                        <!-- 메뉴 그룹 미리보기 모달 S -->
+                                        <div id="menuGroupPreviewModalWrapper"></div>
+                                        <!-- 메뉴 그룹 미리보기 모달 E -->
+
                                         <div class="accordion mt-5 clear position-relative">
                                             <form id="menuRemoveFrm">
                                                 <input id="menuRemoveId" name="menuId" type="hidden">
@@ -137,7 +141,7 @@
                                                         </a>
                                                         <ul class="dropdown-menu">
                                                             <li>
-                                                                <div class="btn d-flex align-items-center w-100 "
+                                                                <div class="btn d-flex align-items-center w-100 menu-group-preview"
                                                                      th:data-id="${menuGroupVO.id}">
                                                                     <div class="icon d-flex align-items-center pe-2 text-primary">
                                                                         <i class="bx bxs-mask"></i>
@@ -188,7 +192,10 @@
                                                      th:id="${'menu' + menuGroupVOStat.count}">
                                                     <div class="accordion-body not-last-border-bottom mx-3 position-relative d-flex align-items-center"
                                                          th:each="menuVO :  ${menuGroupVO.getMenuVOList()}">
-                                                        <div>[[${menuVO.menuTitle}]] ([[${menuVO.menuPrice}]]원)</div>
+                                                        <div>[[${menuVO.menuTitle}]]
+                                                            ([[${#numbers.formatInteger(menuVO.menuPrice, 3,
+                                                            'COMMA')}]]원)
+                                                        </div>
                                                         <div>
                                                             <span class="badge rounded-pill text-bg-success ms-2">[[${menuVO.menuExposure == 'Y' ? '노출' : '비노출'}]]</span>
                                                         </div>
@@ -339,7 +346,7 @@
                                                      th:id="'menuOptionGroup' + ${menuOptionGroupVOStat.count}">
                                                     <div class="accordion-body not-last-border-bottom mx-3"
                                                          th:each="menuOptionVO : ${menuOptionGroupVO.menuOptionVOList}"
-                                                         th:text="${menuOptionVO.menuOptionTitle} + ' (' + ${menuOptionVO.menuOptionPrice} + '원)'">
+                                                         th:text="${menuOptionVO.menuOptionTitle} + ' (' + ${#numbers.formatInteger(menuOptionVO.menuOptionPrice, 3, 'COMMA')} + '원)'">
                                                     </div>
                                                 </div>
                                             </div>

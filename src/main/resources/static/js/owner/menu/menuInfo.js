@@ -704,13 +704,33 @@ $(function () {
             data: {menuId}
         })
             .done(res => {
-                alert(unKnownError);
                 $("#menuPreviewModalWrapper").replaceWith(res);
                 $("#menuPreviewModal").modal("show");
             })
             .fail(res => {
                 if (res.status === 404) {
                     alert("메뉴 조회에 실패했습니다.");
+                } else {
+                    alert(unKnownError);
+                }
+            });
+    });
+
+
+    /* 메뉴 그룹 미리보기 버튼 이벤트 */
+    $(".menu-group-preview").click(function () {
+        const menuGroupId = parseInt($(this).attr("data-id"));
+        $.ajax({
+            url: "/owner/menu/info/menuGroup/preview",
+            data: {menuGroupId}
+        })
+            .done(res => {
+                $("#menuGroupPreviewModalWrapper").replaceWith(res);
+                $("#menuGroupPreviewModal").modal("show");
+            })
+            .fail(res => {
+                if (res.status === 404) {
+                    alert("메뉴 그룹 조회에 실패했습니다.");
                 } else {
                     alert(unKnownError);
                 }
@@ -809,6 +829,16 @@ $(document).on("click", "#optionGroupConnectModalSubmit", function () {
         optionGroupConnectFrm.attr("action", "/owner/menu/info/menu/connectOptionGroup");
         optionGroupConnectFrm.submit();
     }
+})
+
+/* 메뉴 미리보기 모달 닫기 버튼 이벤트 */
+$(document).on("click", "#menuPreviewModalCloseBtn", function () {
+    $("#menuPreviewModal").replaceWith("<div id='menuPreviewModalWrapper'></div>");
+});
+
+/* 메뉴 그룹 미리보기 모달 닫기 버튼 이벤트 */
+$(document).on("click", "#menuGroupPreviewModalCloseBtn", function () {
+    $("#menuGroupPreviewModal").replaceWith("<div id='menuGroupPreviewModalWrapper'></div>");
 })
 
 function removeGrayClass(button) {

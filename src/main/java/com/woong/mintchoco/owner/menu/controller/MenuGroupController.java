@@ -99,4 +99,20 @@ public class MenuGroupController {
         ModelUtils.modelMessage(MessageType.MSG_URL, Message.SUCCESS_DELETE, URL.MENU_INFO, model);
         return URL.MESSAGE.url();
     }
+
+
+    /**
+     * 사장님 페이지 > 메뉴 관리 > 메뉴 설정 > 메뉴그룹 미리보기
+     *
+     * @param menuGroupId 메뉴 그룹 ID
+     * @param model       모델
+     * @return "/views/common/message"
+     */
+    @RequestMapping("/menuGroup/preview")
+    public String menuGroupPreview(@RequestParam("menuGroupId") Long menuGroupId, ModelMap model) {
+        MenuGroupVO menuGroupVO = menuGroupService.selectMenuGroupWithMenus(menuGroupId);
+
+        model.addAttribute("menuGroupVO", menuGroupVO);
+        return "/fragments/owner/menu/menuGroupPreviewModal";
+    }
 }

@@ -112,4 +112,17 @@ public class MenuGroupService {
     public void deleteMenuGroup(Long menuGroupId) {
         menuGroupRepository.deleteMenuGroup(menuGroupId);
     }
+
+
+    /**
+     * 메뉴 그룹과 연결된 메뉴들을 조회한다.
+     *
+     * @param menuGroupId 메뉴 그룹 ID
+     * @return 메뉴 그룹 및 연결된 메뉴 정보
+     */
+    public MenuGroupVO selectMenuGroupWithMenus(Long menuGroupId) {
+        MenuGroup menuGroup = menuGroupRepository.selectMenuGroupWithMenus(menuGroupId);
+
+        return MenuGroupVO.toMenuGroupVOWithMenuVO(menuGroup);
+    }
 }
