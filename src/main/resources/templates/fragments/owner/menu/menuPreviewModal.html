@@ -21,7 +21,7 @@
                     <div class="card mb-3">
                         <div class="card-title d-flex justify-content-between px-3 pt-3 pb-0">
                             <h5>가격</h5>
-                            <div>[[${menuVO.menuPrice}]]원</div>
+                            <div>[[${#numbers.formatInteger(menuVO.menuPrice, 3, 'COMMA')}]]원</div>
                         </div>
                     </div>
                     <div class="card mb-3" th:each="menuOptionGroupVO : ${menuVO.menuOptionGroupVOS}">
@@ -42,7 +42,7 @@
                         <div class="card-body d-flex justify-content-between"
                              th:each="menuOptionVO : ${menuOptionGroupVO.menuOptionVOList}">
                             <div>[[${menuOptionVO.menuOptionTitle}]]</div>
-                            <div>[[${menuOptionVO.menuOptionPrice}]]</div>
+                            <div>[[${#numbers.formatInteger(menuOptionVO.menuOptionPrice, 3, 'COMMA')}]]원</div>
                         </div>
                     </div>
                 </div>
