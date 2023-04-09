@@ -108,5 +108,24 @@ public class MenuGroupRepositoryImpl implements MenuGroupRepositoryCustom {
                 .where(qMenuGroup.id.eq(menuGroupId))
                 .execute();
     }
+
+
+    /**
+     * 메뉴그룹과 연관된 메뉴들을 조회한다.
+     *
+     * @param menuGroupId 메뉴 그룹 ID
+     * @return 메뉴그룹 및 연관된 메뉴들
+     */
+    @Override
+    public MenuGroup selectMenuGroupWithMenus(Long menuGroupId) {
+        return jpaQueryFactory
+                .select(qMenuGroup)
+                .from(qMenuGroup)
+                .leftJoin(qMenuGroup.menus, qMenu).fetchJoin()
+                .where(qMenuGroup.id.eq(menuGroupId))
+                .orderBy(qMenu.menuOrder.asc())
+                .fetchOne();
+
+    }
 }
 
