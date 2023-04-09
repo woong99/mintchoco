@@ -2,7 +2,6 @@ package com.woong.mintchoco.owner.menu.entity;
 
 import com.woong.mintchoco.global.common.entity.BaseEntity;
 import com.woong.mintchoco.owner.menu.model.MenuVO;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -49,7 +48,7 @@ public class Menu extends BaseEntity {
     @Exclude
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "menu", fetch = FetchType.LAZY)
     @Exclude
     private List<MenuOptionGroupMenu> menuOptionGroupMenus;
 

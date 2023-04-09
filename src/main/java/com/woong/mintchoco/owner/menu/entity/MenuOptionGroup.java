@@ -3,7 +3,6 @@ package com.woong.mintchoco.owner.menu.entity;
 import com.woong.mintchoco.global.common.entity.BaseEntity;
 import com.woong.mintchoco.owner.menu.model.MenuOptionGroupVO;
 import com.woong.mintchoco.owner.store.entity.Store;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -45,24 +44,21 @@ public class MenuOptionGroup extends BaseEntity {
     @Exclude
     private Store store;
 
-    @OneToMany(mappedBy = "menuOptionGroup", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "menuOptionGroup", fetch = FetchType.LAZY)
     @Exclude
     private List<MenuOption> menuOptions;
 
-    @OneToMany(mappedBy = "menuOptionGroup", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "menuOptionGroup", fetch = FetchType.LAZY)
     @Exclude
     private List<MenuOptionGroupMenu> menuOptionGroupMenus;
 
     public static MenuOptionGroup toMenuOptionGroup(MenuOptionGroupVO menuOptionGroupVO) {
         return MenuOptionGroup.builder()
+                .id(menuOptionGroupVO.getMenuOptionGroupId())
                 .title(menuOptionGroupVO.getMenuOptionGroupTitle())
                 .required(menuOptionGroupVO.getMenuOptionGroupRequired())
                 .maxSelect(menuOptionGroupVO.getMenuOptionGroupMaxSelect())
                 .store(menuOptionGroupVO.getStore())
                 .build();
-    }
-
-    public void setMenuOptions(List<MenuOption> menuOptions) {
-        this.menuOptions = menuOptions;
     }
 }

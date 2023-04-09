@@ -4,15 +4,19 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.woong.mintchoco.owner.menu.entity.MenuGroup;
 import com.woong.mintchoco.owner.menu.entity.QMenu;
 import com.woong.mintchoco.owner.menu.entity.QMenuGroup;
+import com.woong.mintchoco.owner.menu.entity.QMenuOptionGroupMenu;
 import com.woong.mintchoco.owner.menu.model.MenuGroupVO;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 public class MenuGroupRepositoryImpl implements MenuGroupRepositoryCustom {
 
     private final JPAQueryFactory jpaQueryFactory;
@@ -20,6 +24,8 @@ public class MenuGroupRepositoryImpl implements MenuGroupRepositoryCustom {
     QMenuGroup qMenuGroup = QMenuGroup.menuGroup;
 
     QMenu qMenu = QMenu.menu;
+
+    QMenuOptionGroupMenu qMenuOptionGroupMenu = QMenuOptionGroupMenu.menuOptionGroupMenu;
 
 
     /**
@@ -58,25 +64,6 @@ public class MenuGroupRepositoryImpl implements MenuGroupRepositoryCustom {
 
 
     /**
-     * 메뉴그룹 순서를 업데이트한다.
-     *
-     * @param menuGroupIdList 메뉴그룹 ID 리스트
-     */
-    // TODO : 리팩토링 할 때 최적화하기
-    @Override
-    public void updateMenuGroupOrder(Long[] menuGroupIdList) {
-        for (int i = 0; i < menuGroupIdList.length; i++) {
-            jpaQueryFactory
-                    .update(qMenuGroup)
-                    .set(List.of(qMenuGroup.groupOrder, qMenuGroup.updatedAt),
-                            List.of(i + 1, LocalDateTime.now()))
-                    .where(qMenuGroup.id.eq(menuGroupIdList[i]))
-                    .execute();
-        }
-    }
-
-
-    /**
      * 메뉴와 메뉴그룹을 조인해 조회한다.
      *
      * @param storeId 스토어 ID
@@ -90,6 +77,36 @@ public class MenuGroupRepositoryImpl implements MenuGroupRepositoryCustom {
                 .where(qMenuGroup.store.id.eq(storeId))
                 .orderBy(qMenuGroup.groupOrder.asc(), qMenu.menuOrder.asc())
                 .fetch();
+    }
+
+
+    /**
+     * 메뉴그룹과 메뉴그룹과 연괸된 메뉴, 메뉴와 연결된 메뉴 옵션 그룹을 삭제한다.
+     *
+     * @param menuGroupId 메뉴그룹 ID
+     */
+
+    @Transactional
+    @Override
+    public void deleteMenuGroup(Long menuGroupId) {
+        jpaQueryFactory
+                .delete(qMenuOptionGroupMenu)
+                .where(qMenuOptionGroupMenu.menu.id.in(
+                        jpaQueryFactory
+                                .select(qMenu.id)
+                                .from(qMenu)
+                                .where(qMenuGroup.id.eq(menuGroupId)).fetch()))
+                .execute();
+
+        jpaQueryFactory
+                .delete(qMenu)
+                .where(qMenu.menuGroup.id.eq(menuGroupId))
+                .execute();
+
+        jpaQueryFactory
+                .delete(qMenuGroup)
+                .where(qMenuGroup.id.eq(menuGroupId))
+                .execute();
     }
 }
 

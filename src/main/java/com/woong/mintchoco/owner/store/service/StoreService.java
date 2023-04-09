@@ -5,18 +5,20 @@ import com.woong.mintchoco.global.auth.repository.UserRepository;
 import com.woong.mintchoco.owner.store.entity.Store;
 import com.woong.mintchoco.owner.store.model.StoreVO;
 import com.woong.mintchoco.owner.store.repository.StoreRepository;
-import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class StoreService {
 
     private final StoreRepository storeRepository;
 
     private final UserRepository userRepository;
+
 
     /**
      * 가게 정보를 등록한다.
@@ -27,7 +29,6 @@ public class StoreService {
     @Transactional
     public void insertStoreInfo(User user, StoreVO storeVO) {
         Store store = storeRepository.save(Store.toEntity(storeVO));
-        // TODO : save Dirty Checking 확인
         user.setStore(store);
         userRepository.save(user);
     }
@@ -39,13 +40,13 @@ public class StoreService {
      * @param user 인증 정보
      * @return 가게 정보
      */
-    @Transactional
     public StoreVO getStoreInfo(User user) {
         if (user.getStore() == null) {
             return null;
         }
-        Store store = storeRepository.findById(user.getStore().getId()).orElseThrow(NoSuchElementException::new);
-        return StoreVO.toStoreVO(store);
+
+        Store store = storeRepository.findById(user.getStore().getId()).orElse(null);
+        return store == null ? null : StoreVO.toStoreVO(store);
     }
 
 
@@ -61,6 +62,7 @@ public class StoreService {
             storeRepository.updateStore(user.getStore().getId(), storeVO);
         }
     }
+
 
     /**
      * 영업 유무에 따른 정보를 변경하는 메소드

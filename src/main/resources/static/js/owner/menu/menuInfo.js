@@ -590,6 +590,7 @@ $(function () {
     /* 메뉴 순서변경 모달 취소 버튼 이벤트 */
     $("#menuOrderModalCancel").click(() => {
         if (confirm(cancelMessage)) {
+            $("#menuOrderModal").find(".list-group").remove();
             $("#menuOrderModal").modal("hide");
         }
     })

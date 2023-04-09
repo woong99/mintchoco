@@ -16,13 +16,12 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping("/owner/menu")
+@RequestMapping("/owner/menu/info")
 @RequiredArgsConstructor
 public class MenuController {
 
@@ -40,7 +39,7 @@ public class MenuController {
      * @param model 모델
      * @return "/views/owner/menu/menuInfo"
      */
-    @RequestMapping("/info")
+    @RequestMapping("")
     public String menuInfo(@AuthUser User user, ModelMap model) {
         List<MenuGroupVO> menuGroupVOList = menuGroupService.selectAllMenuGroup(user);
         List<MenuOptionGroupVO> menuOptionGroupVOList = menuOptionGroupService.selectAllMenuOptionGroupWithMenuOption(
@@ -59,7 +58,7 @@ public class MenuController {
      * @param model       모델
      * @return "/views/common/message"
      */
-    @RequestMapping("/info/menu/insert.do")
+    @RequestMapping("/menu/insert.do")
     public String menuInsert(@RequestParam("menuGroupId") Long menuGroupId, MenuVO menuVO, ModelMap model) {
         menuService.insertMenu(menuGroupId, menuVO);
 
@@ -74,7 +73,7 @@ public class MenuController {
      * @param menuId 메뉴 ID
      * @return 단일 메뉴 정보
      */
-    @RequestMapping("/info/menu/select.do")
+    @RequestMapping("/menu/select.do")
     public ResponseEntity<MenuVO> menuSelect(@RequestParam("menuId") Long menuId) {
         MenuVO menuVO = menuService.selectMenu(menuId);
 
@@ -89,8 +88,7 @@ public class MenuController {
      * @param model  모델
      * @return "/views/common/message"
      */
-    @Transactional
-    @RequestMapping("/info/menu/update.do")
+    @RequestMapping("/menu/update.do")
     public String menuUpdate(MenuVO menuVO, ModelMap model) {
         menuService.updateMenu(menuVO);
 
@@ -105,7 +103,7 @@ public class MenuController {
      * @param menuGroupId 메뉴 그룹 ID
      * @return 다수 메뉴 정보
      */
-    @RequestMapping("/info/menus/select.do")
+    @RequestMapping("/menus/select.do")
     public ResponseEntity<List<MenuVO>> menusSelect(@RequestParam("menuGroupId") Long menuGroupId) {
         return ResponseEntity.ok(menuService.selectMenus(menuGroupId));
     }
@@ -118,13 +116,14 @@ public class MenuController {
      * @param model      모델
      * @return "/views/common/message"
      */
-    @RequestMapping("/info/menus/orderUpdate.do")
+    @RequestMapping("/menus/orderUpdate.do")
     public String menusOrderUpdate(@RequestParam("menuIdList") Long[] menuIdList, ModelMap model) {
         menuService.updateMenusOrder(menuIdList);
 
         ModelUtils.modelMessage(MessageType.MSG_URL, Message.SUCCESS_SAVE, URL.MENU_INFO, model);
         return URL.MESSAGE.url();
     }
+
 
     /**
      * 사장님 페이지 > 메뉴 관리 > 메뉴 설정 > 메뉴 삭제 > 삭제 action
@@ -133,13 +132,14 @@ public class MenuController {
      * @param model  모델
      * @return "/views/common/message"
      */
-    @RequestMapping("/info/menu/delete.do")
+    @RequestMapping("/menu/delete.do")
     public String menuDelete(@RequestParam("menuId") Long menuId, ModelMap model) {
         menuService.deleteMenu(menuId);
 
         ModelUtils.modelMessage(MessageType.MSG_URL, Message.SUCCESS_DELETE, URL.MENU_INFO, model);
         return URL.MESSAGE.url();
     }
+
 
     /**
      * 사장님 페이지 > 메뉴 관리 > 메뉴 설정 > 옵션그룹 연결 > 등록 action
@@ -149,7 +149,7 @@ public class MenuController {
      * @param model             모델
      * @return "/views/common/message"
      */
-    @RequestMapping("/info/menu/connectOptionGroup")
+    @RequestMapping("/menu/connectOptionGroup")
     public String connectOptionGroup(@RequestParam("optionGroupIdList") Long[] optionGroupIdList,
                                      @RequestParam("menuId") Long menuId, ModelMap model) {
         menuService.insertMenuOptionGroupConnectMenu(optionGroupIdList, menuId);

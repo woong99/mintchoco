@@ -10,7 +10,7 @@ public interface MenuGroupRepositoryCustom {
 
     void updateMenuGroup(MenuGroupVO menuGroupVO);
 
-    void updateMenuGroupOrder(Long[] menuGroupIdList);
-
     List<MenuGroup> selectAllMenuGroupWithMenu(Long storeId);
+
+    void deleteMenuGroup(Long menuGroupId);
 }

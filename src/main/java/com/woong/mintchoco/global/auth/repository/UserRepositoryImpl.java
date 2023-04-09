@@ -18,6 +18,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
     QUser qUser = QUser.user;
     QAttachFile qAttachFile = QAttachFile.attachFile;
 
+
     /**
      * 사용자의 정보를 업데이트한다. 프로필 사진의 유무에 따라 다른 업데이트 쿼리를 실행한다.
      *
@@ -45,6 +46,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
         }
     }
 
+
     /**
      * 사용자의 프로필 사진을 삭제한다.
      *
@@ -65,6 +67,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                 .where(qAttachFile.id.eq(attachFileId))
                 .execute();
     }
+
 
     /**
      * 사용자의 비밀번호를 변경한다.

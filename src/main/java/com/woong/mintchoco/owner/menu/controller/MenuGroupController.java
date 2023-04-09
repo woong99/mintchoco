@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping("/owner/menu")
+@RequestMapping("/owner/menu/info")
 @RequiredArgsConstructor
 public class MenuGroupController {
 
@@ -33,7 +33,7 @@ public class MenuGroupController {
      * @param model       모델
      * @return "/views/common/message"
      */
-    @RequestMapping("/info/menuGroup/insert.do")
+    @RequestMapping("/menuGroup/insert.do")
     public String menuGroupInsert(@AuthUser User user, MenuGroupVO menuGroupVO, ModelMap model) {
         menuGroupService.insertMenuGroup(user, menuGroupVO);
 
@@ -48,7 +48,7 @@ public class MenuGroupController {
      * @param id 메뉴그룹 ID
      * @return ResponseEntity
      */
-    @RequestMapping("/info/menuGroup/select.do")
+    @RequestMapping("/menuGroup/select.do")
     public ResponseEntity<MenuGroupVO> menuGroupSelect(@RequestParam("id") Long id) {
         MenuGroupVO menuGroupVO;
         try {
@@ -67,8 +67,7 @@ public class MenuGroupController {
      * @param model       모델
      * @return "/views/common/message"
      */
-    @Transactional
-    @RequestMapping("/info/menuGroup/update.do")
+    @RequestMapping("/menuGroup/update.do")
     public String menuGroupUpdate(MenuGroupVO menuGroupVO, ModelMap model) {
         menuGroupService.updateMenuGroup(menuGroupVO);
 
@@ -84,14 +83,14 @@ public class MenuGroupController {
      * @param model           모델
      * @return "/views/common/message"
      */
-    @Transactional
-    @RequestMapping("/info/menuGroup/orderUpdate.do")
+    @RequestMapping("/menuGroup/orderUpdate.do")
     public String menuGroupOrderUpdate(@RequestParam("menuGroupIdList") Long[] menuGroupIdList, ModelMap model) {
         menuGroupService.updateMenuGroupOrder(menuGroupIdList);
 
         ModelUtils.modelMessage(MessageType.MSG_URL, Message.SUCCESS_SAVE, URL.MENU_INFO, model);
         return URL.MESSAGE.url();
     }
+
 
     /**
      * 사장님 페이지 > 메뉴 관리 > 메뉴 설정 > 메뉴 그룹 삭제 > 삭제 action
@@ -100,7 +99,7 @@ public class MenuGroupController {
      * @param model       모델
      * @return "/views/common/message"
      */
-    @RequestMapping("/info/menuGroup/delete.do")
+    @RequestMapping("/menuGroup/delete.do")
     public String menuGroupDelete(@RequestParam("menuGroupId") Long menuGroupId, ModelMap model) {
         menuGroupService.deleteMenuGroup(menuGroupId);
 

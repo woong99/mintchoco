@@ -5,16 +5,24 @@ import com.woong.mintchoco.owner.menu.entity.MenuGroup;
 import com.woong.mintchoco.owner.menu.model.MenuGroupVO;
 import com.woong.mintchoco.owner.menu.repository.group.MenuGroupRepository;
 import com.woong.mintchoco.owner.store.entity.Store;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MenuGroupService {
 
     private final MenuGroupRepository menuGroupRepository;
+
+    private final EntityManager em;
 
 
     /**
@@ -41,7 +49,8 @@ public class MenuGroupService {
     public List<MenuGroupVO> selectAllMenuGroup(User user) {
         Long storeId = user.getStore().getId();
 
-        return menuGroupRepository.selectAllMenuGroupWithMenu(storeId).stream().map(MenuGroupVO::toMenuGroupVO)
+        return menuGroupRepository.selectAllMenuGroupWithMenu(storeId).stream()
+                .map(MenuGroupVO::toMenuGroupVOWithMenuVO)
                 .toList();
     }
 
@@ -73,10 +82,29 @@ public class MenuGroupService {
      * @param menuGroupIdList 메뉴그룹 ID 리스트
      */
     public void updateMenuGroupOrder(Long[] menuGroupIdList) {
-        menuGroupRepository.updateMenuGroupOrder(menuGroupIdList);
+        StringBuilder query = new StringBuilder("update MenuGroup mg set mg.groupOrder=case ");
+        for (int i = 0; i < menuGroupIdList.length; i++) {
+            query.append("when mg.id = :id").append(i).append(" then :order").append(i).append(" ");
+        }
+        query.append("end, mg.updatedAt= :now where mg.id in(:ids)");
+        Query updateQuery = em.createQuery(query.toString());
+
+        for (int i = 0; i < menuGroupIdList.length; i++) {
+            updateQuery.setParameter("id" + i, menuGroupIdList[i]);
+            updateQuery.setParameter("order" + i, i + 1);
+            updateQuery.setParameter("now", LocalDateTime.now());
+        }
+        updateQuery.setParameter("ids", Arrays.asList(menuGroupIdList));
+        updateQuery.executeUpdate();
     }
 
+
+    /**
+     * 메뉴 그룹을 삭제한다.
+     *
+     * @param menuGroupId 메뉴 그룹 ID
+     */
     public void deleteMenuGroup(Long menuGroupId) {
-        menuGroupRepository.deleteById(menuGroupId);
+        menuGroupRepository.deleteMenuGroup(menuGroupId);
     }
 }

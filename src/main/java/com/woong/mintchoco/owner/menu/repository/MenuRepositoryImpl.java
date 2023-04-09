@@ -58,25 +58,6 @@ public class MenuRepositoryImpl implements MenuRepositoryCustom {
 
 
     /**
-     * 메뉴 순서를 업데이트한다.
-     *
-     * @param menuIdList 메뉴 ID 리스트
-     */
-    @Transactional
-    @Override
-    public void updateMenusOrder(Long[] menuIdList) {
-        for (int i = 0; i < menuIdList.length; i++) {
-            jpaQueryFactory
-                    .update(qMenu)
-                    .set(qMenu.menuOrder, i + 1)
-                    .set(qMenu.updatedAt, LocalDateTime.now())
-                    .where(qMenu.id.eq(menuIdList[i]))
-                    .execute();
-        }
-    }
-
-
-    /**
      * 메뉴와 연관된 메뉴 옵션 그룹을 조인해서 조회한다.
      *
      * @param menuOptionGroupId 메뉴 옵션 그룹 ID
@@ -89,5 +70,25 @@ public class MenuRepositoryImpl implements MenuRepositoryCustom {
                 .leftJoin(qMenu.menuOptionGroupMenus, qMenuOptionGroupMenu).fetchJoin()
                 .where(qMenuOptionGroupMenu.menuOptionGroup.id.eq(menuOptionGroupId))
                 .fetch();
+    }
+
+
+    /**
+     * 메뉴와 그와 연결된 메뉴 옵션 그룹 정보를 삭제한다.
+     *
+     * @param menuId 메뉴 ID
+     */
+    @Transactional
+    @Override
+    public void deleteMenu(Long menuId) {
+        jpaQueryFactory
+                .delete(qMenuOptionGroupMenu)
+                .where(qMenuOptionGroupMenu.menu.id.eq(menuId))
+                .execute();
+
+        jpaQueryFactory
+                .delete(qMenu)
+                .where(qMenu.id.eq(menuId))
+                .execute();
     }
 }

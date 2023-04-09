@@ -13,10 +13,7 @@ import com.woong.mintchoco.owner.menu.repository.MenuRepository;
 import com.woong.mintchoco.owner.menu.repository.option.MenuOptionRepository;
 import com.woong.mintchoco.owner.menu.repository.option.group.MenuOptionGroupRepository;
 import com.woong.mintchoco.owner.menu.repository.option.group.menu.MenuOptionGroupMenuRepository;
-import com.woong.mintchoco.owner.store.entity.Store;
-import com.woong.mintchoco.owner.store.repository.StoreRepository;
 import java.util.List;
-import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +30,6 @@ public class MenuOptionGroupService {
 
     private final MenuRepository menuRepository;
 
-    private final StoreRepository storeRepository;
 
     /**
      * 모든 메뉴 옵션 그룹과 연관된 옵션들을 조회한다.
@@ -49,12 +45,19 @@ public class MenuOptionGroupService {
     }
 
 
+    /**
+     * 모든 메뉴 옵션 그룹을 조회한다.
+     *
+     * @param user 인증 정보
+     * @return 모든 메뉴 옵션 그룹들
+     */
     public List<MenuOptionGroupVO> selectAllMenuOptionGroup(User user) {
         Long storeId = user.getStore().getId();
 
         return menuOptionGroupRepository.findAllByStoreId(storeId).stream().map(MenuOptionGroupVO::toMenuOptionGroupVO)
                 .toList();
     }
+
 
     /**
      * 메뉴 옵션 그룹과 메뉴 옵션들을 저장한다.
@@ -65,17 +68,18 @@ public class MenuOptionGroupService {
      */
     @Transactional
     public void insertMenuOptionGroup(User user, MenuOptionGroupVO menuOptionGroupVO, MenuOptionVO menuOptionVO) {
-        Store store = storeRepository.findById(user.getStore().getId()).orElseThrow(NoSuchElementException::new);
-        menuOptionGroupVO.setStore(store);
+        menuOptionGroupVO.setStore(user.getStore());
         MenuOptionGroup menuOptionGroup = menuOptionGroupRepository.save(
                 MenuOptionGroup.toMenuOptionGroup(menuOptionGroupVO));
 
-        List<MenuOptionVO> menuOptionVOList = menuOptionVO.getMenuOptionVOList();
-        for (MenuOptionVO data : menuOptionVOList) {
+        List<MenuOption> menuOptions = menuOptionVO.getMenuOptionVOList().stream().map(MenuOption::toMenuOption)
+                .toList();
+        for (MenuOption data : menuOptions) {
             data.setMenuOptionGroup(menuOptionGroup);
-            menuOptionRepository.save(MenuOption.toMenuOption(data));
         }
+        menuOptionRepository.insertMenuOption(menuOptions);
     }
+
 
     /**
      * 단일 메뉴 옵션 그룹과 연관된 메뉴 옵션들을 조회한다.
@@ -88,6 +92,7 @@ public class MenuOptionGroupService {
                 menuOptionGroupRepository.selectMenuOptionGroupWithMenuOptionOrderByMenuOrder(menuOptionGroupId));
     }
 
+
     /**
      * 메뉴 옵션 그룹 및 연관된 메뉴 옵션들을 수정한다.
      *
@@ -95,26 +100,34 @@ public class MenuOptionGroupService {
      */
     @Transactional
     public void updateMenuOptionGroup(MenuOptionGroupVO menuOptionGroupVO) {
-        MenuOptionGroup menuOptionGroup = menuOptionGroupRepository.findById(menuOptionGroupVO.getMenuOptionGroupId())
-                .orElseThrow(NoSuchElementException::new);
-        menuOptionGroup.setTitle(menuOptionGroupVO.getMenuOptionGroupTitle());
-        menuOptionGroup.setRequired(menuOptionGroupVO.getMenuOptionGroupRequired());
-        menuOptionGroup.setMaxSelect(menuOptionGroupVO.getMenuOptionGroupMaxSelect());
+        menuOptionGroupRepository.updateMenuOptionGroup(menuOptionGroupVO);
+        menuOptionRepository.deleteMenuOption(menuOptionGroupVO.getMenuOptionGroupId());
 
-        menuOptionGroup = menuOptionGroupRepository.save(menuOptionGroup);
-        menuOptionRepository.deleteByMenuOptionGroupId(menuOptionGroup.getId());
-
-        for (MenuOptionVO data : menuOptionGroupVO.getMenuOptionVOList()) {
-            data.setMenuOptionGroup(menuOptionGroup);
-            MenuOption menuOption = MenuOption.toMenuOption(data);
-            menuOptionRepository.save(menuOption);
+        List<MenuOption> menuOptions = menuOptionGroupVO.getMenuOptionVOList().stream().map(MenuOption::toMenuOption)
+                .toList();
+        for (MenuOption data : menuOptions) {
+            data.setMenuOptionGroup(MenuOptionGroup.toMenuOptionGroup(menuOptionGroupVO));
         }
+        menuOptionRepository.insertMenuOption(menuOptions);
     }
 
+
+    /**
+     * 메뉴 옵션 그룹을 삭제한다.
+     *
+     * @param menuOptionGroupId 메뉴 옵션 그룹 ID
+     */
     public void deleteMenuOptionGroup(Long menuOptionGroupId) {
-        menuOptionGroupRepository.deleteById(menuOptionGroupId);
+        menuOptionGroupRepository.deleteMenuOptionGroup(menuOptionGroupId);
     }
 
+
+    /**
+     * 메뉴와 연결된 메뉴 옵션 그룹 정보를 조회한다.
+     *
+     * @param menuId 메뉴 ID
+     * @return 메뉴와 연결된 메뉴 옵션 그룹 정보
+     */
     public List<MenuOptionGroupMenuVO> selectMenuOptionGroupConnectMenu(Long menuId) {
         List<MenuOptionGroupMenu> menuOptionGroupMenuList = menuOptionGroupMenuRepository.findByMenuIdOrderByMenuId(
                 menuId);
@@ -123,6 +136,12 @@ public class MenuOptionGroupService {
     }
 
 
+    /**
+     * 메뉴 옵션 그룹과 연결된 메뉴를 조회한다.
+     *
+     * @param menuOptionGroupId 메뉴 옵션 그룹 ID
+     * @return 연결된 메뉴 정보
+     */
     public List<MenuVO> selectMenuOptionGroupConnectedMenu(Long menuOptionGroupId) {
         List<Menu> menuList = menuRepository.selectMenuOptionGroupConnectedMenu(menuOptionGroupId);
 

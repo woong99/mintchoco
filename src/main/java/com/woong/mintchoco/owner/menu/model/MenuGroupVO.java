@@ -32,7 +32,7 @@ public class MenuGroupVO {
 
     private List<MenuVO> menuVOList;
 
-    public static MenuGroupVO toMenuGroupVO(MenuGroup menuGroup) {
+    public static MenuGroupVO toMenuGroupVOWithMenuVO(MenuGroup menuGroup) {
         return MenuGroupVO.builder()
                 .id(menuGroup.getId())
                 .menuGroupTitle(menuGroup.getTitle())
@@ -40,6 +40,16 @@ public class MenuGroupVO {
                 .menuGroupExposure(menuGroup.getExposure())
                 .menuGroupOrder(menuGroup.getGroupOrder())
                 .menuVOList(menuGroup.getMenus().stream().map(MenuVO::toMenuVO).toList())
+                .build();
+    }
+
+    public static MenuGroupVO toMenuGroupVO(MenuGroup menuGroup) {
+        return MenuGroupVO.builder()
+                .id(menuGroup.getId())
+                .menuGroupTitle(menuGroup.getTitle())
+                .menuGroupExplanation(menuGroup.getExplanation())
+                .menuGroupExposure(menuGroup.getExposure())
+                .menuGroupOrder(menuGroup.getGroupOrder())
                 .build();
     }
 }

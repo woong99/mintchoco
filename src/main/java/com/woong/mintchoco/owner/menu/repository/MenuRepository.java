@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MenuRepository extends JpaRepository<Menu, Long>, MenuRepositoryCustom {
 
-    List<Menu> findByMenuGroupId(Long menuGroupId);
+    List<Menu> findByMenuGroupIdOrderByMenuOrder(Long menuGroupId);
 }

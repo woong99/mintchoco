@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping("/owner/menu")
+@RequestMapping("/owner/menu/info")
 @RequiredArgsConstructor
 public class MenuOptionGroupController {
 
@@ -35,7 +35,7 @@ public class MenuOptionGroupController {
      * @param model             모델
      * @return "/views/common/message"
      */
-    @RequestMapping("/menu/info/menuGroup/menuOptionGroup/insert.do")
+    @RequestMapping("/menuGroup/menuOptionGroup/insert.do")
     public String menuOptionGroupInsert(@AuthUser User user, MenuOptionGroupVO menuOptionGroupVO,
                                         MenuOptionVO menuOptionVO, ModelMap model) {
         menuOptionGroupService.insertMenuOptionGroup(user, menuOptionGroupVO, menuOptionVO);
@@ -51,7 +51,7 @@ public class MenuOptionGroupController {
      * @param menuOptionGroupId 메뉴 옵션 그룹 ID
      * @return ResponseEntity
      */
-    @RequestMapping("/menu/info/menuGroup/menuOptionGroup/select.do")
+    @RequestMapping("/menuGroup/menuOptionGroup/select.do")
     public ResponseEntity<MenuOptionGroupVO> menuOptionGroupSelect(@RequestParam("id") Long menuOptionGroupId) {
         MenuOptionGroupVO menuOptionGroupVO = menuOptionGroupService.selectMenuOptionGroup(menuOptionGroupId);
 
@@ -66,7 +66,7 @@ public class MenuOptionGroupController {
      * @param model             모델
      * @return "/views/common/message"
      */
-    @RequestMapping("/menu/info/menuGroup/menuOptionGroup/update.do")
+    @RequestMapping("/menuGroup/menuOptionGroup/update.do")
     public String menuOptionGroupUpdate(MenuOptionGroupVO menuOptionGroupVO, ModelMap model) {
         menuOptionGroupService.updateMenuOptionGroup(menuOptionGroupVO);
 
@@ -83,7 +83,7 @@ public class MenuOptionGroupController {
      * @param model  모델
      * @return "/fragments/owner/menu/optionGroupConnectModal"
      */
-    @RequestMapping("/menu/info/menuOptionGroup")
+    @RequestMapping("/menuOptionGroup")
     public String menuOptionGroup(@AuthUser User user, @RequestParam("menuId") Long menuId, ModelMap model) {
         List<MenuOptionGroupVO> menuOptionGroupVOList = menuOptionGroupService.selectAllMenuOptionGroup(user);
         List<MenuOptionGroupMenuVO> menuOptionGroupMenuVOList = menuOptionGroupService.selectMenuOptionGroupConnectMenu(
@@ -101,7 +101,7 @@ public class MenuOptionGroupController {
      * @param menuOptionGroupId 메뉴 옵션 그룹 ID
      * @return 메뉴와 연결된 옵션 그룹 정보
      */
-    @RequestMapping("/menu/info/menuOptionGroup/connectedMenu")
+    @RequestMapping("/menuOptionGroup/connectedMenu")
     public ResponseEntity<List<MenuVO>> menuOptionGroupConnectedMenu(
             @RequestParam("menuOptionGroupId") Long menuOptionGroupId) {
         List<MenuVO> menuVOList = menuOptionGroupService.selectMenuOptionGroupConnectedMenu(menuOptionGroupId);
@@ -117,12 +117,11 @@ public class MenuOptionGroupController {
      * @param model             모델
      * @return "/views/common/message"
      */
-    @RequestMapping("/menu/info/menuOptionGroup/delete.do")
+    @RequestMapping("/menuOptionGroup/delete.do")
     public String menuOptionGroupDelete(@RequestParam("menuOptionGroupId") Long menuOptionGroupId, ModelMap model) {
         menuOptionGroupService.deleteMenuOptionGroup(menuOptionGroupId);
 
         ModelUtils.modelMessage(MessageType.MSG_URL, Message.SUCCESS_DELETE, URL.MENU_INFO, model);
         return URL.MESSAGE.url();
     }
-
 }
