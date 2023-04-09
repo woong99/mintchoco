@@ -704,7 +704,6 @@ $(function () {
             data: {menuId}
         })
             .done(res => {
-                alert(unKnownError);
                 $("#menuPreviewModalWrapper").replaceWith(res);
                 $("#menuPreviewModal").modal("show");
             })
@@ -714,8 +713,8 @@ $(function () {
                 } else {
                     alert(unKnownError);
                 }
-            })
-    })
+            });
+    });
 })
 
 /* 최대 글자수 체크 및 글자수 표시 텍스트 갱신 */
@@ -810,6 +809,11 @@ $(document).on("click", "#optionGroupConnectModalSubmit", function () {
         optionGroupConnectFrm.submit();
     }
 })
+
+/* 메뉴 미리보기 모달 닫기 버튼 이벤트 */
+$(document).on("click", "#menuPreviewModalCloseBtn", function () {
+    $("#menuPreviewModal").replaceWith("<div id='menuPreviewModalWrapper'></div>");
+});
 
 function removeGrayClass(button) {
     button.addClass("pointer");
