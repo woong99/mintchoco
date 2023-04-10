@@ -123,6 +123,6 @@ public class MenuGroupService {
     public MenuGroupVO selectMenuGroupWithMenus(Long menuGroupId) {
         MenuGroup menuGroup = menuGroupRepository.selectMenuGroupWithMenus(menuGroupId);
 
-        return MenuGroupVO.toMenuGroupVOWithMenuVO(menuGroup);
+        return MenuGroupVO.toMenuGroupVOWithMenuVOWithMenuImage(menuGroup);
     }
 }

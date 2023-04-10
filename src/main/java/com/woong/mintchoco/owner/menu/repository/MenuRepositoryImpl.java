@@ -1,6 +1,8 @@
 package com.woong.mintchoco.owner.menu.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.woong.mintchoco.global.file.entity.AttachFile;
+import com.woong.mintchoco.global.file.entity.QAttachFile;
 import com.woong.mintchoco.owner.menu.entity.Menu;
 import com.woong.mintchoco.owner.menu.entity.QMenu;
 import com.woong.mintchoco.owner.menu.entity.QMenuOptionGroupMenu;
@@ -17,6 +19,8 @@ public class MenuRepositoryImpl implements MenuRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
 
     QMenu qMenu = QMenu.menu;
+
+    QAttachFile qAttachFile = QAttachFile.attachFile;
 
     QMenuOptionGroupMenu qMenuOptionGroupMenu = QMenuOptionGroupMenu.menuOptionGroupMenu;
 
@@ -90,6 +94,66 @@ public class MenuRepositoryImpl implements MenuRepositoryCustom {
         jpaQueryFactory
                 .delete(qMenu)
                 .where(qMenu.id.eq(menuId))
+                .execute();
+    }
+
+
+    /**
+     * 메뉴와 메뉴 이미지를 조인 조회한다.
+     *
+     * @param menuId 메뉴 ID
+     * @return 메뉴 정보 및 메뉴 이미지
+     */
+    @Override
+    public Menu selectMenuWithMenuImage(Long menuId) {
+        return jpaQueryFactory
+                .select(qMenu)
+                .from(qMenu)
+                .leftJoin(qMenu.menuImage, qAttachFile).fetchJoin()
+                .where(qMenu.id.eq(menuId))
+                .fetchOne();
+    }
+
+
+    /**
+     * 메뉴 이미지를 저장한다.
+     *
+     * @param attachFile 메뉴 이미지
+     * @param menuId     메뉴 ID
+     */
+    @Override
+    public void insertMenuImage(AttachFile attachFile, Long menuId) {
+        jpaQueryFactory
+                .update(qMenu)
+                .set(qMenu.menuImage, attachFile)
+                .set(qMenu.updatedAt, LocalDateTime.now())
+                .where(qMenu.id.eq(menuId))
+                .execute();
+    }
+
+
+    /**
+     * 메뉴 이미지를 삭제한다.
+     *
+     * @param menuId 메뉴 ID
+     */
+    @Transactional
+    @Override
+    public void deleteMenuImage(Long menuId) {
+        Long menuImageId = jpaQueryFactory
+                .select(qMenu.menuImage.id)
+                .from(qMenu)
+                .where(qMenu.id.eq(menuId))
+                .fetchOne();
+        jpaQueryFactory
+                .update(qMenu)
+                .setNull(qMenu.menuImage)
+                .set(qMenu.updatedAt, LocalDateTime.now())
+                .where(qMenu.id.eq(menuId))
+                .execute();
+        jpaQueryFactory
+                .delete(qAttachFile)
+                .where(qAttachFile.id.eq(menuImageId))
                 .execute();
     }
 }

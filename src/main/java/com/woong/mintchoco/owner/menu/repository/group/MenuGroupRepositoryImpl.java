@@ -1,6 +1,7 @@
 package com.woong.mintchoco.owner.menu.repository.group;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.woong.mintchoco.global.file.entity.QAttachFile;
 import com.woong.mintchoco.owner.menu.entity.MenuGroup;
 import com.woong.mintchoco.owner.menu.entity.QMenu;
 import com.woong.mintchoco.owner.menu.entity.QMenuGroup;
@@ -26,6 +27,8 @@ public class MenuGroupRepositoryImpl implements MenuGroupRepositoryCustom {
     QMenu qMenu = QMenu.menu;
 
     QMenuOptionGroupMenu qMenuOptionGroupMenu = QMenuOptionGroupMenu.menuOptionGroupMenu;
+
+    QAttachFile qAttachFile = QAttachFile.attachFile;
 
 
     /**
@@ -85,7 +88,6 @@ public class MenuGroupRepositoryImpl implements MenuGroupRepositoryCustom {
      *
      * @param menuGroupId 메뉴그룹 ID
      */
-
     @Transactional
     @Override
     public void deleteMenuGroup(Long menuGroupId) {
@@ -98,9 +100,20 @@ public class MenuGroupRepositoryImpl implements MenuGroupRepositoryCustom {
                                 .where(qMenuGroup.id.eq(menuGroupId)).fetch()))
                 .execute();
 
+        List<Long> attachId = jpaQueryFactory
+                .select(qMenu.menuImage.id)
+                .from(qMenu)
+                .where(qMenu.menuGroup.id.eq(menuGroupId))
+                .fetch();
+
         jpaQueryFactory
                 .delete(qMenu)
                 .where(qMenu.menuGroup.id.eq(menuGroupId))
+                .execute();
+
+        jpaQueryFactory
+                .delete(qAttachFile)
+                .where(qAttachFile.id.in(attachId))
                 .execute();
 
         jpaQueryFactory
@@ -122,6 +135,7 @@ public class MenuGroupRepositoryImpl implements MenuGroupRepositoryCustom {
                 .select(qMenuGroup)
                 .from(qMenuGroup)
                 .leftJoin(qMenuGroup.menus, qMenu).fetchJoin()
+                .leftJoin(qMenu.menuImage, qAttachFile).fetchJoin()
                 .where(qMenuGroup.id.eq(menuGroupId))
                 .orderBy(qMenu.menuOrder.asc())
                 .fetchOne();

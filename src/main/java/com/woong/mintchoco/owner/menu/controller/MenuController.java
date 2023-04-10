@@ -12,17 +12,21 @@ import com.woong.mintchoco.owner.menu.model.MenuVO;
 import com.woong.mintchoco.owner.menu.service.MenuGroupService;
 import com.woong.mintchoco.owner.menu.service.MenuOptionGroupService;
 import com.woong.mintchoco.owner.menu.service.MenuService;
+import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequestMapping("/owner/menu/info")
 @RequiredArgsConstructor
+@Slf4j
 public class MenuController {
 
     private final MenuService menuService;
@@ -163,7 +167,7 @@ public class MenuController {
      * 사장님 페이지 > 메뉴 관리 > 메뉴 설정 > 메뉴 미리보기
      *
      * @param menuId 메뉴 ID
-     * @param model 모델
+     * @param model  모델
      * @return "/fragments/owner/menu/menuPreviewModal"
      */
     @RequestMapping("/menu/preview")
@@ -172,5 +176,57 @@ public class MenuController {
 
         model.addAttribute("menuVO", menuVO);
         return "/fragments/owner/menu/menuPreviewModal";
+    }
+
+
+    /**
+     * 사장님 페이지 > 메뉴 관리 > 메뉴 설정 > 이미지 설정
+     *
+     * @param menuId 메뉴 ID
+     * @param model  모델
+     * @return "/fragments/owner/menu/menuImageModal"
+     */
+    @RequestMapping("/menu/image")
+    public String menuImage(@RequestParam("menuId") Long menuId, ModelMap model) {
+        MenuVO menuVO = menuService.selectMenuWithMenuImage(menuId);
+
+        model.addAttribute("menuVO", menuVO);
+        return "/fragments/owner/menu/menuImageModal";
+    }
+
+
+    /**
+     * 사장님 페이지 > 메뉴 관리 > 메뉴 설정 > 이미지 설정 > 저장 action
+     *
+     * @param menuId 메뉴 ID
+     * @param file   이미지 파일
+     * @param model  모델
+     * @return "/views/common/message"
+     * @throws IOException
+     */
+    @RequestMapping("/menu/image/update.do")
+    public String menuImageUpdate(@RequestParam("menuId") Long menuId, @RequestParam("file")
+    MultipartFile file, ModelMap model) throws IOException {
+        menuService.insertMenuImage(menuId, file);
+
+        ModelUtils.modelMessage(MessageType.MSG_URL, Message.SUCCESS_SAVE, URL.MENU_INFO, model);
+        return URL.MESSAGE.url();
+    }
+
+
+    /**
+     * 사장님 페이지 > 메뉴 관리 > 메뉴 설정 > 이미지 설정 > 이미지 삭제 > 삭제 action
+     *
+     * @param menuId 메뉴 ID
+     * @param model  모델
+     * @return "/views/common/message"
+     */
+    @RequestMapping("/menu/image/delete.do")
+    public String menuImageDelete(@RequestParam("menuId") Long menuId,
+                                  ModelMap model) {
+        menuService.deleteMenuImage(menuId);
+
+        ModelUtils.modelMessage(MessageType.MSG_URL, Message.SUCCESS_DELETE, URL.MENU_INFO, model);
+        return URL.MESSAGE.url();
     }
 }

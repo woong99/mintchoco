@@ -108,6 +108,10 @@
                                         <div id="menuGroupPreviewModalWrapper"></div>
                                         <!-- 메뉴 그룹 미리보기 모달 E -->
 
+                                        <!-- 메뉴 이미지 설정 모달 S -->
+                                        <div id="menuImageModalWrapper"></div>
+                                        <!-- 메뉴 이지미 설정 모달 E -->
+
                                         <div class="accordion mt-5 clear position-relative">
                                             <form id="menuRemoveFrm">
                                                 <input id="menuRemoveId" name="menuId" type="hidden">
@@ -235,6 +239,15 @@
                                                                             <i class="bx bx-trash"></i>
                                                                         </div>
                                                                         <div>삭제</div>
+                                                                    </button>
+                                                                </li>
+                                                                <li>
+                                                                    <button class="btn d-flex align-items-center w-100 menu-image"
+                                                                            th:data-id="${menuVO.menuId}">
+                                                                        <div class="icon d-flex align-items-center pe-2 text-success">
+                                                                            <i class="bx bxs-image"></i>
+                                                                        </div>
+                                                                        <div>이미지 설정</div>
                                                                     </button>
                                                                 </li>
                                                                 <li>
