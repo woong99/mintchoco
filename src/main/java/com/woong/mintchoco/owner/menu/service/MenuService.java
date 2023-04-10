@@ -70,7 +70,6 @@ public class MenuService {
 
         int lastMenuOrder = menuRepository.findLastMenuOrder(menuGroupId);
         menu.setMenuOrder(lastMenuOrder + 1);
-
         menuRepository.save(menu);
     }
 
@@ -173,6 +172,12 @@ public class MenuService {
     }
 
 
+    /**
+     * 메뉴 및 메뉴와 연결된 메뉴 이미지 조회
+     *
+     * @param menuId 메뉴 ID
+     * @return 메뉴 및 메뉴와 연결된 메뉴 이미지 정보
+     */
     public MenuVO selectMenuWithMenuImage(Long menuId) {
         Menu menu = menuRepository.selectMenuWithMenuImage(menuId);
 
@@ -180,6 +185,13 @@ public class MenuService {
     }
 
 
+    /**
+     * 메뉴 이미지를 저장한다.
+     *
+     * @param menuId 메뉴 ID
+     * @param file   메뉴 이미지
+     * @throws IOException
+     */
     @Transactional
     public void insertMenuImage(Long menuId, MultipartFile file) throws IOException {
         if (file.isEmpty()) {
@@ -194,6 +206,11 @@ public class MenuService {
     }
 
 
+    /**
+     * 메뉴 이미지를 삭제한다.
+     *
+     * @param menuId 메뉴 ID
+     */
     public void deleteMenuImage(Long menuId) {
         menuRepository.deleteMenuImage(menuId);
     }
