@@ -1,6 +1,10 @@
 package com.woong.mintchoco.owner.menu.service;
 
 import com.woong.mintchoco.global.common.ErrorCode;
+import com.woong.mintchoco.global.file.entity.AttachFile;
+import com.woong.mintchoco.global.file.exception.UploadFileErrorException;
+import com.woong.mintchoco.global.file.exception.UploadFileNotFoundException;
+import com.woong.mintchoco.global.file.service.FileManageService;
 import com.woong.mintchoco.owner.menu.entity.Menu;
 import com.woong.mintchoco.owner.menu.entity.MenuGroup;
 import com.woong.mintchoco.owner.menu.entity.MenuOptionGroup;
@@ -14,16 +18,20 @@ import com.woong.mintchoco.owner.menu.repository.option.group.MenuOptionGroupRep
 import com.woong.mintchoco.owner.menu.repository.option.group.menu.MenuOptionGroupMenuRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MenuService {
 
     private final MenuRepository menuRepository;
@@ -35,6 +43,8 @@ public class MenuService {
     private final MenuOptionGroupMenuRepository menuOptionGroupMenuRepository;
 
     private final EntityManager em;
+
+    private final FileManageService fileManageService;
 
 
     /**
@@ -149,16 +159,42 @@ public class MenuService {
 
     /**
      * 메뉴 및 메뉴와 연결된 메뉴 옵션들을 조회
+     *
      * @param menuId 메뉴 ID
      * @return 메뉴 및 메뉴와 연결된 메뉴 옵션들
      */
     public MenuVO selectMenuWithMenuOptions(Long menuId) {
-        MenuVO menuVO = MenuVO.toMenuVO(menuRepository.findById(menuId)
-                .orElseThrow(() -> new MenuNotFoundException(ErrorCode.MENU_NOT_FOUND)));
+        MenuVO menuVO = MenuVO.toMenuVOWithMenuImage(menuRepository.selectMenuWithMenuImage(menuId));
         List<MenuOptionGroupVO> menuOptionGroupVOs = menuOptionGroupRepository.selectMenuOptionGroupWithMenuOptions(
                 menuId).stream().map(MenuOptionGroupVO::toMenuOptionGroupVOWithMenuOption).toList();
         menuVO.setMenuOptionGroupVOS(menuOptionGroupVOs);
 
         return menuVO;
+    }
+
+
+    public MenuVO selectMenuWithMenuImage(Long menuId) {
+        Menu menu = menuRepository.selectMenuWithMenuImage(menuId);
+
+        return MenuVO.toMenuVOWithMenuImage(menu);
+    }
+
+
+    @Transactional
+    public void insertMenuImage(Long menuId, MultipartFile file) throws IOException {
+        if (file.isEmpty()) {
+            throw new UploadFileNotFoundException(ErrorCode.UPLOAD_FILE_NOT_FOUND);
+        }
+
+        AttachFile attachFile = fileManageService.saveFile(file);
+        if (attachFile == null) {
+            throw new UploadFileErrorException(ErrorCode.UPLOAD_FILE_ERROR);
+        }
+        menuRepository.insertMenuImage(attachFile, menuId);
+    }
+
+
+    public void deleteMenuImage(Long menuId) {
+        menuRepository.deleteMenuImage(menuId);
     }
 }

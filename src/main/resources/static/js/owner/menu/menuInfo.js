@@ -735,6 +735,26 @@ $(function () {
                     alert(unKnownError);
                 }
             })
+    });
+
+    /* 메뉴 이미지 설정 버튼 이벤트 */
+    $(".menu-image").click(function () {
+        const menuId = parseInt($(this).attr("data-id"));
+        $.ajax({
+            url: "/owner/menu/info/menu/image",
+            data: {menuId}
+        })
+            .done(res => {
+                $("#menuImageModalWrapper").replaceWith(res);
+                $("#menuImageModal").modal("show");
+            })
+            .fail(res => {
+                if (res.status === 404) {
+                    alert("메뉴 조회에 실패했습니다.");
+                } else {
+                    alert(unKnownError);
+                }
+            });
     })
 })
 
@@ -840,6 +860,16 @@ $(document).on("click", "#menuPreviewModalCloseBtn", function () {
 $(document).on("click", "#menuGroupPreviewModalCloseBtn", function () {
     $("#menuGroupPreviewModal").replaceWith("<div id='menuGroupPreviewModalWrapper'></div>");
 })
+
+/* 메뉴 이미지 설정 모달 닫기 버튼 이벤트 */
+$(document).on("click", "#menuImageModalCancel", function () {
+    if (confirm(cancelMessage)) {
+        const menuImageModal = $("#menuImageModal");
+        menuImageModal.modal("hide");
+        menuImageModal.replaceWith("<div id='menuImageModalWrapper'></div>");
+    }
+})
+
 
 function removeGrayClass(button) {
     button.addClass("pointer");

@@ -33,14 +33,15 @@ public class MenuGroupVO {
     private List<MenuVO> menuVOList;
 
     public static MenuGroupVO toMenuGroupVOWithMenuVO(MenuGroup menuGroup) {
-        return MenuGroupVO.builder()
-                .id(menuGroup.getId())
-                .menuGroupTitle(menuGroup.getTitle())
-                .menuGroupExplanation(menuGroup.getExplanation())
-                .menuGroupExposure(menuGroup.getExposure())
-                .menuGroupOrder(menuGroup.getGroupOrder())
-                .menuVOList(menuGroup.getMenus().stream().map(MenuVO::toMenuVO).toList())
-                .build();
+        MenuGroupVO menuGroupVO = toMenuGroupVO(menuGroup);
+        menuGroupVO.setMenuVOList(menuGroup.getMenus().stream().map(MenuVO::toMenuVO).toList());
+        return menuGroupVO;
+    }
+
+    public static MenuGroupVO toMenuGroupVOWithMenuVOWithMenuImage(MenuGroup menuGroup) {
+        MenuGroupVO menuGroupVO = toMenuGroupVO(menuGroup);
+        menuGroupVO.setMenuVOList(menuGroup.getMenus().stream().map(MenuVO::toMenuVOWithMenuImage).toList());
+        return menuGroupVO;
     }
 
     public static MenuGroupVO toMenuGroupVO(MenuGroup menuGroup) {
