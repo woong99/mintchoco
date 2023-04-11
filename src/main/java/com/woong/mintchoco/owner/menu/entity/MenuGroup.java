@@ -50,6 +50,7 @@ public class MenuGroup extends BaseEntity {
 
     public static MenuGroup toMenuGroup(MenuGroupVO menuGroupVO) {
         return MenuGroup.builder()
+                .id(menuGroupVO.getId())
                 .title(menuGroupVO.getMenuGroupTitle())
                 .explanation(menuGroupVO.getMenuGroupExplanation())
                 .exposure(menuGroupVO.getMenuGroupExposure())
