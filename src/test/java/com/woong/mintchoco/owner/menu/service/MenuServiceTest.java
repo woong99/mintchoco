@@ -1,4 +1,4 @@
-package com.woong.mintchoco.service;
+package com.woong.mintchoco.owner.menu.service;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,7 +29,6 @@ import com.woong.mintchoco.owner.menu.repository.MenuRepository;
 import com.woong.mintchoco.owner.menu.repository.group.MenuGroupRepository;
 import com.woong.mintchoco.owner.menu.repository.option.group.MenuOptionGroupRepository;
 import com.woong.mintchoco.owner.menu.repository.option.group.menu.MenuOptionGroupMenuRepository;
-import com.woong.mintchoco.owner.menu.service.MenuService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import java.io.IOException;
@@ -47,6 +46,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.multipart.MultipartFile;
 
+@DisplayName("[SERVICE 단위 테스트] menuService")
 @ExtendWith(MockitoExtension.class)
 class MenuServiceTest {
 
