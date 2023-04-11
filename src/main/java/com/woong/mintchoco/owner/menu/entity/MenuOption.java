@@ -43,6 +43,7 @@ public class MenuOption extends BaseEntity {
 
     public static MenuOption toMenuOption(MenuOptionVO menuOptionVO) {
         return MenuOption.builder()
+                .id(menuOptionVO.getMenuOptionId())
                 .title(menuOptionVO.getMenuOptionTitle())
                 .price(menuOptionVO.getMenuOptionPrice())
                 .menuOrder(menuOptionVO.getMenuOptionOrder())
