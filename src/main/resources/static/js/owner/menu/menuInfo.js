@@ -60,7 +60,7 @@ $(function () {
     $(".menu-group-edit").click(function (e) {
         $.ajax({
             url: "/owner/menu/info/menuGroup/select.do",
-            data: {id: $(this).data("id")}
+            data: {menuGroupId: $(this).data("id")}
         })
             .done((res) => {
                 const menuGroupTitle = $("#menuGroupTitle");
