@@ -42,12 +42,12 @@ public class MenuGroupController {
     /**
      * 사장님 페이지 > 메뉴 정보 > 메뉴 관리 > 메뉴그룹 수정 > 메뉴그룹 단일 조회
      *
-     * @param id 메뉴그룹 ID
+     * @param menuGroupId 메뉴그룹 ID
      * @return ResponseEntity
      */
     @RequestMapping("/menuGroup/select.do")
-    public ResponseEntity<MenuGroupVO> menuGroupSelect(@RequestParam("id") Long id) {
-        MenuGroupVO menuGroupVO = menuGroupService.selectMenuGroup(id);
+    public ResponseEntity<MenuGroupVO> menuGroupSelect(@RequestParam("menuGroupId") Long menuGroupId) {
+        MenuGroupVO menuGroupVO = menuGroupService.selectMenuGroup(menuGroupId);
 
         return ResponseEntity.ok(menuGroupVO);
     }
