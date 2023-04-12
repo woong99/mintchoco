@@ -37,20 +37,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @DisplayName("[CONTROLLER 단위 테스트] menuOptionGroupController")
 @WebMvcTest(MenuOptionGroupController.class)
-class MenuOptionGroupControllerTest {
-
-    private final static Long menuGroupId1 = 1L;
-    private final static Long menuGroupId2 = 2L;
-    private final static Long menuOptionGroupId1 = 3L;
-    private final static Long menuOptionGroupId2 = 4L;
-    private final static Long menuId1 = 5L;
-    private final static Long menuId2 = 6L;
-    private final static Long menuOptionId1 = 7L;
-    private final static Long menuOptionId2 = 8L;
-    private final static Long attachFileId1 = 9L;
-    private final static Long attachFileId2 = 10L;
-    private final static Long menuOptionGroupMenuId = 11L;
-    private final static String commonURL = "/owner/menu/info";
+class MenuOptionGroupControllerTest extends BaseMenuControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -201,29 +188,5 @@ class MenuOptionGroupControllerTest {
                 .andExpect(view().name(URL.MESSAGE.url()));
 
         then(menuOptionGroupService).should().deleteMenuOptionGroup(menuOptionGroupId1);
-    }
-
-    private MenuOptionVO createMenuOptionVO(Long menuOptionId) {
-        return MenuOptionVO.builder()
-                .menuOptionId(menuOptionId)
-                .build();
-    }
-
-    private MenuOptionGroupVO createMenuOptionGroupVO(Long menuOptionGroupId) {
-        return MenuOptionGroupVO.builder()
-                .menuOptionGroupId(menuOptionGroupId)
-                .build();
-    }
-
-    private MenuOptionGroupMenuVO createMenuOptionGroupMenuVO(Long menuOptionGroupMenuId) {
-        return MenuOptionGroupMenuVO.builder()
-                .id(menuOptionGroupMenuId)
-                .build();
-    }
-
-    private MenuVO createMenuVO(Long menuId) {
-        return MenuVO.builder()
-                .menuId(menuId)
-                .build();
     }
 }

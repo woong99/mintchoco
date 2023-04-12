@@ -12,7 +12,6 @@ import static org.mockito.BDDMockito.willDoNothing;
 
 import com.woong.mintchoco.global.auth.entity.User;
 import com.woong.mintchoco.global.common.ErrorCode;
-import com.woong.mintchoco.owner.menu.entity.Menu;
 import com.woong.mintchoco.owner.menu.entity.MenuGroup;
 import com.woong.mintchoco.owner.menu.exception.MenuGroupNotFoundException;
 import com.woong.mintchoco.owner.menu.model.MenuGroupVO;
@@ -34,7 +33,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @DisplayName("[SERVICE 단위 테스트] menuGroupService")
 @ExtendWith(MockitoExtension.class)
-class MenuGroupServiceTest {
+class MenuGroupServiceTest extends BaseMenuServiceTest {
 
     @InjectMocks
     private MenuGroupService menuGroupService;
@@ -48,15 +47,12 @@ class MenuGroupServiceTest {
     @Test
     void 메뉴그룹_추가() {
         // given
-        Long storeId = 1L;
-        Long userId = 2L;
-        Long menuGroupVOId = 3L;
         int groupOrder = 0;
 
         Store store = createStore(storeId);
         User user = createUser(userId, store);
         MenuGroupVO menuGroupVO = MenuGroupVO.builder()
-                .id(menuGroupVOId)
+                .id(menuGroupId1)
                 .build();
 
         given(menuGroupRepository.findLastGroupOrder(store.getId())).willReturn(groupOrder);
@@ -72,7 +68,7 @@ class MenuGroupServiceTest {
         then(menuGroupRepository).should().save(captor.capture());
         MenuGroup menuGroup = captor.getValue();
 
-        assertThat(menuGroup.getId()).isEqualTo(menuGroupVOId);
+        assertThat(menuGroup.getId()).isEqualTo(menuGroupId1);
         assertThat(menuGroup.getGroupOrder()).isEqualTo(groupOrder + 1);
         assertThat(menuGroup.getStore().getId()).isEqualTo(storeId);
     }
@@ -81,27 +77,12 @@ class MenuGroupServiceTest {
     @Test
     void 모든_메뉴그룹_조회() {
         // given
-        Long storeId = 1L;
-        Long userId = 2L;
-        Long menuGroupId1 = 3L;
-        Long menuGroupId2 = 4L;
-        Long menuId1 = 5L;
-        Long menuId2 = 6L;
-        Long menuId3 = 7L;
-        Long menuId4 = 8L;
-
         Store store = createStore(storeId);
         User user = createUser(userId, store);
 
-        MenuGroup menuGroup1 = MenuGroup.builder()
-                .id(menuGroupId1)
-                .menus(Arrays.asList(createMenu(menuId1), createMenu(menuId2)))
-                .build();
+        MenuGroup menuGroup1 = createMenuGroup(menuGroupId1, Arrays.asList(createMenu(menuId1), createMenu(menuId2)));
 
-        MenuGroup menuGroup2 = MenuGroup.builder()
-                .id(menuGroupId2)
-                .menus(Arrays.asList(createMenu(menuId3), createMenu(menuId4)))
-                .build();
+        MenuGroup menuGroup2 = createMenuGroup(menuGroupId2, Arrays.asList(createMenu(menuId3), createMenu(menuId4)));
 
         given(menuGroupRepository.selectAllMenuGroupWithMenu(storeId)).willReturn(
                 Arrays.asList(menuGroup1, menuGroup2));
@@ -127,17 +108,10 @@ class MenuGroupServiceTest {
     @Test
     void 모든_메뉴그룹_조회_메뉴가_없는_경우() {
         // given
-        Long storeId = 1L;
-        Long userId = 2L;
-        Long menuGroupId = 3L;
-
         Store store = createStore(storeId);
         User user = createUser(userId, store);
 
-        MenuGroup menuGroup = MenuGroup.builder()
-                .id(menuGroupId)
-                .menus(List.of())
-                .build();
+        MenuGroup menuGroup = createMenuGroup(menuGroupId1, List.of());
 
         given(menuGroupRepository.selectAllMenuGroupWithMenu(storeId)).willReturn(Collections.singletonList(menuGroup));
 
@@ -148,7 +122,7 @@ class MenuGroupServiceTest {
         then(menuGroupRepository).should().selectAllMenuGroupWithMenu(storeId);
 
         assertThat(menuGroupVOList).hasSize(1);
-        assertThat(menuGroupVOList.get(0).getId()).isEqualTo(menuGroupId);
+        assertThat(menuGroupVOList.get(0).getId()).isEqualTo(menuGroupId1);
         assertThat(menuGroupVOList.get(0).getMenuVOList()).isEmpty();
     }
 
@@ -156,22 +130,18 @@ class MenuGroupServiceTest {
     @Test
     void 단일_메뉴그룹_조회_성공() {
         // given
-        Long menuGroupId = 1L;
 
-        MenuGroup menuGroup = MenuGroup.builder()
-                .id(menuGroupId)
-                .menus(Arrays.asList(createMenu(2L), createMenu(3L)))
-                .build();
+        MenuGroup menuGroup = createMenuGroup(menuGroupId1, Arrays.asList(createMenu(2L), createMenu(3L)));
 
-        given(menuGroupRepository.findById(menuGroupId)).willReturn(Optional.ofNullable(menuGroup));
+        given(menuGroupRepository.findById(menuGroupId1)).willReturn(Optional.ofNullable(menuGroup));
 
         // when
-        MenuGroupVO menuGroupVO = menuGroupService.selectMenuGroup(menuGroupId);
+        MenuGroupVO menuGroupVO = menuGroupService.selectMenuGroup(menuGroupId1);
 
         // then
-        then(menuGroupRepository).should().findById(menuGroupId);
+        then(menuGroupRepository).should().findById(menuGroupId1);
 
-        assertThat(menuGroupVO.getId()).isEqualTo(menuGroupId);
+        assertThat(menuGroupVO.getId()).isEqualTo(menuGroupId1);
         assertThat(menuGroupVO.getMenuVOList()).isNull();
     }
 
@@ -179,12 +149,10 @@ class MenuGroupServiceTest {
     @Test
     void 단일_메뉴그룹_조회_예외() {
         // given
-        Long menuGroupId = 999L;
-
-        given(menuGroupRepository.findById(menuGroupId)).willReturn(Optional.empty());
+        given(menuGroupRepository.findById(menuGroupId1)).willReturn(Optional.empty());
 
         // when, then
-        assertThatThrownBy(() -> menuGroupService.selectMenuGroup(menuGroupId))
+        assertThatThrownBy(() -> menuGroupService.selectMenuGroup(menuGroupId1))
                 .isInstanceOf(MenuGroupNotFoundException.class)
                 .hasMessageContaining(ErrorCode.MENU_GROUP_NOT_FOUND.Message());
     }
@@ -193,9 +161,8 @@ class MenuGroupServiceTest {
     @Test
     void 메뉴그룹_수정() {
         // given
-        Long menuGroupId = 1L;
         MenuGroupVO menuGroupVO = MenuGroupVO.builder()
-                .id(menuGroupId)
+                .id(menuGroupId1)
                 .build();
 
         willDoNothing().given(menuGroupRepository).updateMenuGroup(menuGroupVO);
@@ -234,37 +201,29 @@ class MenuGroupServiceTest {
     @Test
     void 메뉴그룹_삭제() {
         // given
-        Long menuGroupId = 1L;
-        willDoNothing().given(menuGroupRepository).deleteMenuGroup(menuGroupId);
+        willDoNothing().given(menuGroupRepository).deleteMenuGroup(menuGroupId1);
 
         // when
-        menuGroupService.deleteMenuGroup(menuGroupId);
+        menuGroupService.deleteMenuGroup(menuGroupId1);
 
         // then
-        then(menuGroupRepository).should().deleteMenuGroup(menuGroupId);
+        then(menuGroupRepository).should().deleteMenuGroup(menuGroupId1);
     }
 
     @DisplayName("성공 - 단일 메뉴그룹 및 연결된 메뉴들 정상적으로 조회(selectMenuGroupWithMenus)")
     @Test
     void 메뉴그룹_및_연결된_메뉴들_조회() {
         // given
-        Long menuGroupId = 1L;
-        Long menuId1 = 2L;
-        Long menuId2 = 3L;
-
-        MenuGroup menuGroup = MenuGroup.builder()
-                .id(menuGroupId)
-                .menus(Arrays.asList(createMenu(menuId1), createMenu(menuId2)))
-                .build();
-        given(menuGroupRepository.selectMenuGroupWithMenus(menuGroupId)).willReturn(menuGroup);
+        MenuGroup menuGroup = createMenuGroup(menuGroupId1, Arrays.asList(createMenu(menuId1), createMenu(menuId2)));
+        given(menuGroupRepository.selectMenuGroupWithMenus(menuGroupId1)).willReturn(menuGroup);
 
         // when
-        MenuGroupVO menuGroupVO = menuGroupService.selectMenuGroupWithMenus(menuGroupId);
+        MenuGroupVO menuGroupVO = menuGroupService.selectMenuGroupWithMenus(menuGroupId1);
 
         // then
-        then(menuGroupRepository).should().selectMenuGroupWithMenus(menuGroupId);
+        then(menuGroupRepository).should().selectMenuGroupWithMenus(menuGroupId1);
 
-        assertThat(menuGroupVO.getId()).isEqualTo(menuGroupId);
+        assertThat(menuGroupVO.getId()).isEqualTo(menuGroupId1);
         assertThat(menuGroupVO.getMenuVOList()).hasSize(2);
         assertThat(menuGroupVO.getMenuVOList().get(0).getMenuId()).isEqualTo(menuId1);
         assertThat(menuGroupVO.getMenuVOList().get(1).getMenuId()).isEqualTo(menuId2);
@@ -274,42 +233,16 @@ class MenuGroupServiceTest {
     @Test
     void 메뉴그룹_조회_시_연결된_메뉴가_없는_경우() {
         // given
-        Long menuGroupId = 1L;
-
-        MenuGroup menuGroup = MenuGroup.builder()
-                .id(menuGroupId)
-                .menus(List.of())
-                .build();
-        given(menuGroupRepository.selectMenuGroupWithMenus(menuGroupId)).willReturn(menuGroup);
+        MenuGroup menuGroup = createMenuGroup(menuGroupId1, List.of());
+        given(menuGroupRepository.selectMenuGroupWithMenus(menuGroupId1)).willReturn(menuGroup);
 
         // when
-        MenuGroupVO menuGroupVO = menuGroupService.selectMenuGroupWithMenus(menuGroupId);
+        MenuGroupVO menuGroupVO = menuGroupService.selectMenuGroupWithMenus(menuGroupId1);
 
         // then
-        then(menuGroupRepository).should().selectMenuGroupWithMenus(menuGroupId);
+        then(menuGroupRepository).should().selectMenuGroupWithMenus(menuGroupId1);
 
-        assertThat(menuGroupVO.getId()).isEqualTo(menuGroupId);
+        assertThat(menuGroupVO.getId()).isEqualTo(menuGroupId1);
         assertThat(menuGroupVO.getMenuVOList()).isEmpty();
     }
-
-
-    private Menu createMenu(Long menuId) {
-        return Menu.builder()
-                .id(menuId)
-                .build();
-    }
-
-    private Store createStore(Long storeId) {
-        return Store.builder()
-                .id(storeId)
-                .build();
-    }
-
-    private User createUser(Long userId, Store store) {
-        return User.builder()
-                .id(userId)
-                .store(store)
-                .build();
-    }
-
 }

@@ -32,19 +32,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @DisplayName("[CONTROLLER 단위 테스트] menuGroupController")
 @WebMvcTest(MenuGroupController.class)
-class MenuGroupControllerTest {
-
-    private final static Long menuGroupId1 = 1L;
-    private final static Long menuGroupId2 = 2L;
-    private final static Long menuOptionGroupId1 = 3L;
-    private final static Long menuOptionGroupId2 = 4L;
-    private final static Long menuId1 = 5L;
-    private final static Long menuId2 = 6L;
-    private final static Long menuOptionId1 = 7L;
-    private final static Long menuOptionId2 = 8L;
-    private final static Long attachFileId1 = 9L;
-    private final static Long attachFileId2 = 10L;
-    private final static String commonURL = "/owner/menu/info";
+class MenuGroupControllerTest extends BaseMenuControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -186,11 +174,5 @@ class MenuGroupControllerTest {
                 .andExpect(view().name("/fragments/owner/menu/menuGroupPreviewModal"));
 
         then(menuGroupService).should().selectMenuGroupWithMenus(menuGroupId1);
-    }
-
-    private MenuGroupVO createMenuGroupVO(Long menuGroupId) {
-        return MenuGroupVO.builder()
-                .id(menuGroupId)
-                .build();
     }
 }

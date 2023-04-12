@@ -11,7 +11,6 @@ import static org.mockito.BDDMockito.willDoNothing;
 import com.woong.mintchoco.global.auth.entity.User;
 import com.woong.mintchoco.global.common.ErrorCode;
 import com.woong.mintchoco.owner.menu.entity.Menu;
-import com.woong.mintchoco.owner.menu.entity.MenuOption;
 import com.woong.mintchoco.owner.menu.entity.MenuOptionGroup;
 import com.woong.mintchoco.owner.menu.entity.MenuOptionGroupMenu;
 import com.woong.mintchoco.owner.menu.exception.MenuOptionGroupNotFoundException;
@@ -37,19 +36,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @DisplayName("[SERVICE 단위 테스트] menuOptionGroupService")
 @ExtendWith(MockitoExtension.class)
-class MenuOptionGroupServiceTest {
+class MenuOptionGroupServiceTest extends BaseMenuServiceTest {
 
-    private static final Long userId = 1L;
-    private static final Long storeId = 2L;
-    private static final Long menuOptionGroupId1 = 3L;
-    private static final Long menuOptionGroupId2 = 4L;
-    private static final Long menuOptionId1 = 5L;
-    private static final Long menuOptionId2 = 6L;
-    private static final Long menuOptionId3 = 7L;
-    private static final Long menuOptionId4 = 8L;
-    private static final Long menuOptionGroupMenuId1 = 9L;
-    private static final Long menuOptionGroupMenuId2 = 10L;
-    private static final Long menuId = 11L;
     @InjectMocks
     private MenuOptionGroupService menuOptionGroupService;
     @Mock
@@ -300,14 +288,14 @@ class MenuOptionGroupServiceTest {
         // given
         List<MenuOptionGroupMenu> menuOptionGroupMenus = Arrays.asList(
                 createMenuOptionGroupMenu(menuOptionGroupMenuId1), createMenuOptionGroupMenu(menuOptionGroupMenuId2));
-        given(menuOptionGroupMenuRepository.findByMenuIdOrderByMenuId(menuId)).willReturn(menuOptionGroupMenus);
+        given(menuOptionGroupMenuRepository.findByMenuIdOrderByMenuId(menuId1)).willReturn(menuOptionGroupMenus);
 
         // when
         List<MenuOptionGroupMenuVO> menuOptionGroupMenuVOList = menuOptionGroupService.selectMenuOptionGroupConnectMenu(
-                menuId);
+                menuId1);
 
         // then
-        then(menuOptionGroupMenuRepository).should().findByMenuIdOrderByMenuId(menuId);
+        then(menuOptionGroupMenuRepository).should().findByMenuIdOrderByMenuId(menuId1);
 
         assertThat(menuOptionGroupMenuVOList).hasSize(menuOptionGroupMenus.size());
         assertThat(menuOptionGroupMenuVOList.get(0).getId()).isEqualTo(menuOptionGroupMenuId1);
@@ -319,7 +307,7 @@ class MenuOptionGroupServiceTest {
     void 메뉴옵션그룹과_연결된메뉴조회() {
         // given
         Menu menu = Menu.builder()
-                .id(menuId)
+                .id(menuId1)
                 .build();
         List<Menu> menus = Collections.singletonList(menu);
         given(menuRepository.selectMenuOptionGroupConnectedMenu(menuOptionGroupMenuId1)).willReturn(menus);
@@ -331,7 +319,7 @@ class MenuOptionGroupServiceTest {
         then(menuRepository).should().selectMenuOptionGroupConnectedMenu(menuOptionGroupMenuId1);
 
         assertThat(menuVOS).hasSize(1);
-        assertThat(menuVOS.get(0).getMenuId()).isEqualTo(menuId);
+        assertThat(menuVOS.get(0).getMenuId()).isEqualTo(menuId1);
     }
 
     private Store createStore() {
@@ -339,47 +327,4 @@ class MenuOptionGroupServiceTest {
                 .id(MenuOptionGroupServiceTest.storeId)
                 .build();
     }
-
-    private User createUser(Store store) {
-        return User.builder()
-                .id(MenuOptionGroupServiceTest.userId)
-                .store(store)
-                .build();
-    }
-
-    private MenuOption createMenuOption(Long menuOptionId, int menuOrder) {
-        return MenuOption.builder()
-                .id(menuOptionId)
-                .menuOrder(menuOrder)
-                .build();
-    }
-
-    private MenuOptionVO createMenuOptionVO(Long menuOptionId, int menuOrder) {
-        return MenuOptionVO.builder()
-                .menuOptionId(menuOptionId)
-                .menuOptionOrder(menuOrder)
-                .build();
-    }
-
-    private MenuOptionGroup createMenuOptionGroup(Long menuOptionGroupId, List<MenuOption> menuOptionList) {
-        return MenuOptionGroup.builder()
-                .id(menuOptionGroupId)
-                .menuOptions(menuOptionList)
-                .build();
-    }
-
-    private MenuOptionGroupMenu createMenuOptionGroupMenu(Long menuOptionGroupMenuId) {
-        return MenuOptionGroupMenu.builder()
-                .id(menuOptionGroupMenuId)
-                .menu(createMenu())
-                .menuOptionGroup(createMenuOptionGroup(menuOptionGroupId1, List.of()))
-                .build();
-    }
-
-    private Menu createMenu() {
-        return Menu.builder()
-                .id(100L)
-                .build();
-    }
-
 }

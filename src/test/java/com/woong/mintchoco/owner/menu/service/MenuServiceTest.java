@@ -34,7 +34,6 @@ import jakarta.persistence.Query;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -48,7 +47,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @DisplayName("[SERVICE 단위 테스트] menuService")
 @ExtendWith(MockitoExtension.class)
-class MenuServiceTest {
+class MenuServiceTest extends BaseMenuServiceTest {
 
     @Mock
     FileManageService fileManageService;
@@ -70,30 +69,28 @@ class MenuServiceTest {
     @Test
     void 메뉴_삭제() {
         // given
-        Long menuId = 1L;
 
         // when
-        menuService.deleteMenu(menuId);
+        menuService.deleteMenu(menuId1);
 
         // then
-        then(menuRepository).should().deleteMenu(menuId);
+        then(menuRepository).should().deleteMenu(menuId1);
     }
 
     @DisplayName("성공 - 연관된 정보 없이 메뉴만 정상적으로 조회(selectMenu)")
     @Test
     void 메뉴_조회_성공() {
         // given
-        Long menuId = 1L;
-        Menu mockMenu = makeMenu(menuId);
+        Menu mockMenu = makeMenu(menuId1);
 
-        given(menuRepository.findById(menuId)).willReturn(Optional.of(mockMenu));
+        given(menuRepository.findById(menuId1)).willReturn(Optional.of(mockMenu));
 
         // when
-        MenuVO result = menuService.selectMenu(menuId);
+        MenuVO result = menuService.selectMenu(menuId1);
 
         // then
-        then(menuRepository).should().findById(menuId);
-        assertThat(result.getMenuId()).isEqualTo(menuId);
+        then(menuRepository).should().findById(menuId1);
+        assertThat(result.getMenuId()).isEqualTo(menuId1);
         assertThat(result.getMenuTitle()).isEqualTo(mockMenu.getTitle());
         assertThat(result.getMenuPrice()).isEqualTo(mockMenu.getPrice());
         assertThat(result.getMenuOrder()).isEqualTo(mockMenu.getMenuOrder());
@@ -111,7 +108,7 @@ class MenuServiceTest {
         given(menuRepository.findById(anyLong())).willReturn(Optional.empty());
 
         // when, then
-        assertThatThrownBy(() -> menuService.selectMenu(1L))
+        assertThatThrownBy(() -> menuService.selectMenu(menuId1))
                 .isInstanceOf(MenuNotFoundException.class)
                 .hasMessageContaining(ErrorCode.MENU_NOT_FOUND.Message());
     }
@@ -120,8 +117,7 @@ class MenuServiceTest {
     @Test
     void 메뉴_업데이트() {
         // given
-        MenuVO menuVO = new MenuVO();
-        menuVO.setMenuId(1L);
+        MenuVO menuVO = createMenuVO(menuId1);
         willDoNothing().given(menuRepository).updateMenu(menuVO);
 
         // when
@@ -135,25 +131,24 @@ class MenuServiceTest {
     @Test
     void 메뉴_저장() {
         // given
-        Long menuGroupId = 1L;
-        MenuVO menuVO = new MenuVO();
+        MenuVO menuVO = createMenuVO(menuId1);
         menuVO.setMenuTitle("TEST");
 
         MenuGroup menuGroup = new MenuGroup();
-        given(menuGroupRepository.getReferenceById(menuGroupId)).willReturn(menuGroup);
+        given(menuGroupRepository.getReferenceById(menuGroupId1)).willReturn(menuGroup);
 
         int lastMenuOrder = 1;
-        given(menuRepository.findLastMenuOrder(menuGroupId)).willReturn(lastMenuOrder);
+        given(menuRepository.findLastMenuOrder(menuGroupId1)).willReturn(lastMenuOrder);
 
         ArgumentCaptor<Menu> menuCaptor = ArgumentCaptor.forClass(Menu.class);
         given(menuRepository.save(menuCaptor.capture())).willReturn(new Menu());
 
         // when
-        menuService.insertMenu(menuGroupId, menuVO);
+        menuService.insertMenu(menuGroupId1, menuVO);
 
         // then
-        then(menuGroupRepository).should().getReferenceById(menuGroupId);
-        then(menuRepository).should().findLastMenuOrder(menuGroupId);
+        then(menuGroupRepository).should().getReferenceById(menuGroupId1);
+        then(menuRepository).should().findLastMenuOrder(menuGroupId1);
         then(menuRepository).should().save(any(Menu.class));
 
         Menu savedMenu = menuCaptor.getValue();
@@ -167,16 +162,15 @@ class MenuServiceTest {
     @Test
     void 메뉴들_조회() {
         // given
-        Long menuGroupId = 1L;
-        Menu menu1 = makeMenu(1L, 2);
-        Menu menu2 = makeMenu(2L, 1);
-        given(menuRepository.findByMenuGroupIdOrderByMenuOrder(menuGroupId)).willReturn(Arrays.asList(menu1, menu2));
+        Menu menu1 = makeMenu(menuId1, 2);
+        Menu menu2 = makeMenu(menuId2, 1);
+        given(menuRepository.findByMenuGroupIdOrderByMenuOrder(menuGroupId1)).willReturn(Arrays.asList(menu1, menu2));
 
         // when
-        List<MenuVO> result = menuService.selectMenus(menuGroupId);
+        List<MenuVO> result = menuService.selectMenus(menuGroupId1);
 
         // then
-        then(menuRepository).should().findByMenuGroupIdOrderByMenuOrder(menuGroupId);
+        then(menuRepository).should().findByMenuGroupIdOrderByMenuOrder(menuGroupId1);
         assertThat(result).hasSize(2);
         assertThat(result.get(0).getMenuTitle()).isEqualTo(menu1.getTitle());
         assertThat(result.get(0).getMenuImage()).isNull();
@@ -189,14 +183,13 @@ class MenuServiceTest {
     @Test
     void 메뉴들_조회_빈_리스트() {
         // given
-        Long menuGroupId = 999L;
-        given(menuRepository.findByMenuGroupIdOrderByMenuOrder(menuGroupId)).willReturn(List.of());
+        given(menuRepository.findByMenuGroupIdOrderByMenuOrder(menuGroupId1)).willReturn(List.of());
 
         // when
-        List<MenuVO> result = menuService.selectMenus(menuGroupId);
+        List<MenuVO> result = menuService.selectMenus(menuGroupId1);
 
         // then
-        then(menuRepository).should().findByMenuGroupIdOrderByMenuOrder(menuGroupId);
+        then(menuRepository).should().findByMenuGroupIdOrderByMenuOrder(menuGroupId1);
         assertThat(result).isEmpty();
     }
 
@@ -227,15 +220,14 @@ class MenuServiceTest {
     @Test
     void 메뉴_및_연결된_메뉴_옵션_그룹들_저장() {
         // given
-        Long menuId = 1L;
         Long[] optionGroupIdList = {2L, 3L, 4L};
 
-        willDoNothing().given(menuOptionGroupMenuRepository).deleteMenuOptionGroupMenu(menuId);
+        willDoNothing().given(menuOptionGroupMenuRepository).deleteMenuOptionGroupMenu(menuId1);
 
         Menu menu = Menu.builder()
-                .id(menuId)
+                .id(menuId1)
                 .build();
-        given(menuRepository.getReferenceById(menuId)).willReturn(menu);
+        given(menuRepository.getReferenceById(menuId1)).willReturn(menu);
 
         MenuOptionGroup menuOptionGroup1 = MenuOptionGroup.builder()
                 .id(optionGroupIdList[0])
@@ -253,11 +245,11 @@ class MenuServiceTest {
         given(menuOptionGroupRepository.getReferenceById(optionGroupIdList[2])).willReturn(menuOptionGroup3);
 
         // when
-        menuService.insertMenuOptionGroupConnectMenu(optionGroupIdList, menuId);
+        menuService.insertMenuOptionGroupConnectMenu(optionGroupIdList, menuId1);
 
         // then
-        then(menuOptionGroupMenuRepository).should().deleteMenuOptionGroupMenu(menuId);
-        then(menuRepository).should().getReferenceById(menuId);
+        then(menuOptionGroupMenuRepository).should().deleteMenuOptionGroupMenu(menuId1);
+        then(menuRepository).should().getReferenceById(menuId1);
         then(menuOptionGroupRepository).should().getReferenceById(optionGroupIdList[0]);
         then(menuOptionGroupRepository).should().getReferenceById(optionGroupIdList[1]);
         then(menuOptionGroupRepository).should().getReferenceById(optionGroupIdList[2]);
@@ -286,36 +278,30 @@ class MenuServiceTest {
     @Test
     void 메뉴_및_연결된_메뉴_옵션들_조회() {
         // given
-        Long menuId = 1L;
-        Long attachFileId = 2L;
-        Long menuOptionGroupId = 3L;
-        Long menuOptionId1 = 4L;
-        Long menuOptionId2 = 5L;
-
-        AttachFile attachFile = makeAttachFile(attachFileId);
-        Menu menu = makeMenuWithAttachFile(menuId, attachFile);
+        AttachFile attachFile = makeAttachFile(attachFileId1);
+        Menu menu = makeMenuWithAttachFile(menuId1, attachFile);
         List<MenuOption> menuOptions = Arrays.asList(makeMenuOption(menuOptionId1), makeMenuOption(menuOptionId2));
         List<MenuOptionGroup> menuOptionGroups = new ArrayList<>();
         MenuOptionGroup menuOptionGroup = MenuOptionGroup.builder()
-                .id(menuOptionGroupId)
+                .id(menuOptionGroupId1)
                 .menuOptions(menuOptions)
                 .build();
         menuOptionGroups.add(menuOptionGroup);
 
-        given(menuRepository.selectMenuWithMenuImage(menuId)).willReturn(menu);
-        given(menuOptionGroupRepository.selectMenuOptionGroupWithMenuOptions(menuId)).willReturn(menuOptionGroups);
+        given(menuRepository.selectMenuWithMenuImage(menuId1)).willReturn(menu);
+        given(menuOptionGroupRepository.selectMenuOptionGroupWithMenuOptions(menuId1)).willReturn(menuOptionGroups);
 
         // when
-        MenuVO menuVO = menuService.selectMenuWithMenuOptions(menuId);
+        MenuVO menuVO = menuService.selectMenuWithMenuOptions(menuId1);
 
         // then
-        then(menuRepository).should().selectMenuWithMenuImage(menuId);
-        then(menuOptionGroupRepository).should().selectMenuOptionGroupWithMenuOptions(menuId);
+        then(menuRepository).should().selectMenuWithMenuImage(menuId1);
+        then(menuOptionGroupRepository).should().selectMenuOptionGroupWithMenuOptions(menuId1);
 
-        assertThat(menuVO.getMenuId()).isEqualTo(menuId);
-        assertThat(menuVO.getMenuImage().getId()).isEqualTo(attachFileId);
+        assertThat(menuVO.getMenuId()).isEqualTo(menuId1);
+        assertThat(menuVO.getMenuImage().getId()).isEqualTo(attachFileId1);
         assertThat(menuVO.getMenuOptionGroupVOS()).hasSize(1);
-        assertThat(menuVO.getMenuOptionGroupVOS().get(0).getMenuOptionGroupId()).isEqualTo(menuOptionGroupId);
+        assertThat(menuVO.getMenuOptionGroupVOS().get(0).getMenuOptionGroupId()).isEqualTo(menuOptionGroupId1);
         assertThat(menuVO.getMenuOptionGroupVOS().get(0).getMenuOptionVOList()).hasSize(2);
         assertThat(menuVO.getMenuOptionGroupVOS().get(0).getMenuOptionVOList().get(0).getMenuOptionId()).isEqualTo(
                 menuOptionId1);
@@ -328,48 +314,43 @@ class MenuServiceTest {
     @Test
     void 메뉴_및_메뉴와_연결된_메뉴_이미지_조회() {
         // given
-        Long menuId = 1L;
-        Long attachFileId = 2L;
+        AttachFile attachFile = makeAttachFile(attachFileId1);
+        Menu menu = makeMenuWithAttachFile(menuId1, attachFile);
 
-        AttachFile attachFile = makeAttachFile(attachFileId);
-        Menu menu = makeMenuWithAttachFile(menuId, attachFile);
-
-        given(menuRepository.selectMenuWithMenuImage(menuId)).willReturn(menu);
+        given(menuRepository.selectMenuWithMenuImage(menuId1)).willReturn(menu);
 
         // when
-        MenuVO menuVO = menuService.selectMenuWithMenuImage(menuId);
+        MenuVO menuVO = menuService.selectMenuWithMenuImage(menuId1);
 
         // then
-        then(menuRepository).should().selectMenuWithMenuImage(menuId);
+        then(menuRepository).should().selectMenuWithMenuImage(menuId1);
 
-        assertThat(menuVO.getMenuId()).isEqualTo(menuId);
+        assertThat(menuVO.getMenuId()).isEqualTo(menuId1);
         assertThat(menuVO.getMenuImage()).isNotNull();
-        assertThat(menuVO.getMenuImage().getId()).isEqualTo(attachFileId);
+        assertThat(menuVO.getMenuImage().getId()).isEqualTo(attachFileId1);
     }
 
     @DisplayName("성공 - 메뉴 이미지 저장(insertMenuImage)")
     @Test
     void 메뉴_이미지_저장_성공() throws IOException {
         // given
-        Long menuId = 1L;
-        Long attachFileId = 2L;
         MultipartFile file = mock(MultipartFile.class);
 
         given(file.getOriginalFilename()).willReturn("test.jpg");
         given(file.isEmpty()).willReturn(false);
 
         AttachFile attachFile = AttachFile.builder()
-                .id(attachFileId)
+                .id(attachFileId1)
                 .originName("test.jpg")
                 .savedPath("/path/to/test.jpg")
                 .build();
         given(fileManageService.saveFile(file)).willReturn(attachFile);
 
         // when
-        menuService.insertMenuImage(menuId, file);
+        menuService.insertMenuImage(menuId1, file);
 
         // then
-        then(menuRepository).should().insertMenuImage(attachFile, menuId);
+        then(menuRepository).should().insertMenuImage(attachFile, menuId1);
 
         ArgumentCaptor<AttachFile> fileCaptor = ArgumentCaptor.forClass(AttachFile.class);
         ArgumentCaptor<Long> menuIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -379,20 +360,19 @@ class MenuServiceTest {
 
         assertThat(savedAttachFile.getOriginName()).isEqualTo(file.getOriginalFilename());
         assertThat(savedAttachFile.getSavedPath()).isEqualTo(attachFile.getSavedPath());
-        assertThat(savedMenuId).isEqualTo(menuId);
+        assertThat(savedMenuId).isEqualTo(menuId1);
     }
 
     @DisplayName("실패 - 메뉴 이미지 저장 시 파일이 넘어오지 않은 경우 예외(insertMenuImage)")
     @Test
     void 메뉴_이미지_저장_실패_파일이_없는_경우() {
         // given
-        Long menuId = 1L;
         MultipartFile file = mock(MultipartFile.class);
 
         given(file.isEmpty()).willReturn(true);
 
         // when, then
-        assertThatThrownBy(() -> menuService.insertMenuImage(menuId, file))
+        assertThatThrownBy(() -> menuService.insertMenuImage(menuId1, file))
                 .isInstanceOf(UploadFileNotFoundException.class)
                 .hasMessageContaining(ErrorCode.UPLOAD_FILE_NOT_FOUND.Message());
     }
@@ -401,14 +381,13 @@ class MenuServiceTest {
     @Test
     void 메뉴_이미지_저장_실패_파일_저장_실패한_경우() throws IOException {
         // given
-        Long menuId = 1L;
         MultipartFile file = mock(MultipartFile.class);
 
         given(file.isEmpty()).willReturn(false);
         given(fileManageService.saveFile(file)).willReturn(null);
 
         // when, then
-        assertThatThrownBy(() -> menuService.insertMenuImage(menuId, file))
+        assertThatThrownBy(() -> menuService.insertMenuImage(menuId1, file))
                 .isInstanceOf(UploadFileErrorException.class)
                 .hasMessageContaining(ErrorCode.UPLOAD_FILE_ERROR.Message());
     }
@@ -417,60 +396,12 @@ class MenuServiceTest {
     @Test
     void 메뉴_이미지_삭제() {
         // given
-        Long menuId = 1L;
-        willDoNothing().given(menuRepository).deleteMenuImage(menuId);
+        willDoNothing().given(menuRepository).deleteMenuImage(menuId1);
 
         // when
-        menuService.deleteMenuImage(menuId);
+        menuService.deleteMenuImage(menuId1);
 
         // then
-        then(menuRepository).should().deleteMenuImage(menuId);
-    }
-
-    private MenuOption makeMenuOption(Long menuOptionId) {
-        return MenuOption.builder()
-                .id(menuOptionId)
-                .build();
-    }
-
-    private AttachFile makeAttachFile(Long attachFileId) {
-        return AttachFile.builder()
-                .id(attachFileId)
-                .build();
-    }
-
-    private Menu makeMenuWithAttachFile(Long menuId, AttachFile attachFile) {
-        return Menu.builder()
-                .id(menuId)
-                .menuImage(attachFile)
-                .build();
-    }
-
-    private Menu makeMenu(Long menuId) {
-        return Menu.builder()
-                .id(menuId)
-                .title("test")
-                .explanation("test")
-                .exposure("Y")
-                .menuOrder(1)
-                .price(1000)
-                .menuImage(makeAttachFile(1L))
-                .menuGroup(MenuGroup.builder().id(1L).build())
-                .menuOptionGroupMenus(Collections.singletonList(MenuOptionGroupMenu.builder().id(1L).build()))
-                .build();
-    }
-
-    private Menu makeMenu(Long menuId, int menuOrder) {
-        return Menu.builder()
-                .id(menuId)
-                .title("test")
-                .explanation("test")
-                .exposure("Y")
-                .menuOrder(menuOrder)
-                .price(1000)
-                .menuImage(makeAttachFile(1L))
-                .menuGroup(MenuGroup.builder().id(1L).build())
-                .menuOptionGroupMenus(Collections.singletonList(MenuOptionGroupMenu.builder().id(1L).build()))
-                .build();
+        then(menuRepository).should().deleteMenuImage(menuId1);
     }
 }

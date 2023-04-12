@@ -45,19 +45,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @DisplayName("[CONTROLLER 단위 테스트] menuController")
 @WebMvcTest(MenuController.class)
-class MenuControllerTest {
-
-    private final static Long menuGroupId1 = 1L;
-    private final static Long menuGroupId2 = 2L;
-    private final static Long menuOptionGroupId1 = 3L;
-    private final static Long menuOptionGroupId2 = 4L;
-    private final static Long menuId1 = 5L;
-    private final static Long menuId2 = 6L;
-    private final static Long menuOptionId1 = 7L;
-    private final static Long menuOptionId2 = 8L;
-    private final static Long attachFileId1 = 9L;
-    private final static Long attachFileId2 = 10L;
-    private final static String commonURL = "/owner/menu/info";
+class MenuControllerTest extends BaseMenuControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -433,56 +421,5 @@ class MenuControllerTest {
                 .andExpect(view().name(URL.MESSAGE.url()));
 
         then(menuService).should().deleteMenuImage(menuId1);
-    }
-
-    private MenuGroupVO createMenuGroupVO(Long menuGroupId) {
-        return MenuGroupVO.builder()
-                .id(menuGroupId)
-                .build();
-    }
-
-    private MenuOptionGroupVO createMenuOptionGroupVO(Long menuOptionGroupId) {
-        return MenuOptionGroupVO.builder()
-                .menuOptionGroupId(menuOptionGroupId)
-                .build();
-    }
-
-    private MenuOptionGroupVO createMenuOptionGroupVO(Long menuOptionGroupId, List<MenuOptionVO> menuOptionVOList) {
-        return MenuOptionGroupVO.builder()
-                .menuOptionGroupId(menuOptionGroupId)
-                .menuOptionVOList(menuOptionVOList)
-                .build();
-    }
-
-    private MenuVO createMenuVO(Long menuId) {
-        return MenuVO.builder()
-                .menuId(menuId)
-                .build();
-    }
-
-    private MenuVO createMenuVO(Long menuId, List<MenuOptionGroupVO> menuOptionGroupVOList) {
-        return MenuVO.builder()
-                .menuId(menuId)
-                .menuOptionGroupVOS(menuOptionGroupVOList)
-                .build();
-    }
-
-    private MenuVO createMenuVO(Long menuId, AttachFile attachFile) {
-        return MenuVO.builder()
-                .menuId(menuId)
-                .menuImage(attachFile)
-                .build();
-    }
-
-    private MenuOptionVO createMenuOptionVO(Long menuOptionId) {
-        return MenuOptionVO.builder()
-                .menuOptionId(menuOptionId)
-                .build();
-    }
-
-    private AttachFile createAttachFile(Long attachFileId) {
-        return AttachFile.builder()
-                .id(attachFileId)
-                .build();
     }
 }
