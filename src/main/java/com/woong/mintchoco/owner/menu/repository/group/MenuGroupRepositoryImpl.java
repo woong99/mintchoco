@@ -57,10 +57,10 @@ public class MenuGroupRepositoryImpl implements MenuGroupRepositoryCustom {
     public void updateMenuGroup(MenuGroupVO menuGroupVO) {
         jpaQueryFactory
                 .update(qMenuGroup)
-                .set(List.of(qMenuGroup.title, qMenuGroup.explanation, qMenuGroup.exposure, qMenuGroup.updatedAt),
-                        List.of(menuGroupVO.getMenuGroupTitle(), menuGroupVO.getMenuGroupExplanation(),
-                                menuGroupVO.getMenuGroupExposure(),
-                                LocalDateTime.now()))
+                .set(qMenuGroup.title, menuGroupVO.getMenuGroupTitle())
+                .set(qMenuGroup.explanation, menuGroupVO.getMenuGroupExplanation())
+                .set(qMenuGroup.exposure, menuGroupVO.getMenuGroupExposure())
+                .set(qMenuGroup.updatedAt, LocalDateTime.now())
                 .where(qMenuGroup.id.eq(menuGroupVO.getId()))
                 .execute();
     }
@@ -139,7 +139,6 @@ public class MenuGroupRepositoryImpl implements MenuGroupRepositoryCustom {
                 .where(qMenuGroup.id.eq(menuGroupId))
                 .orderBy(qMenu.menuOrder.asc())
                 .fetchOne();
-
     }
 }
 
