@@ -16,3 +16,8 @@ spring:
     username: sa
     password:
     driver-class-name: org.h2.Driver
+file:
+  dir: /Users/woong_9yo/Desktop/WorkPlace/mintchoco/upload/
+  image:
+    ext: .jpg,.jpeg,.svg,.png
+    max-size: 5242880
